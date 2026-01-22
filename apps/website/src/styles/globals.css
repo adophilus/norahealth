@@ -1,0 +1,84 @@
+@import url("https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Plus+Jakarta+Sans:ital,wght@0,200..800;1,200..800&display=swap");
+@import "tailwindcss";
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+@theme {
+  --color-primary-inverse: #ffffff;
+  --color-background-light: #ffffff;
+  --color-background-dark: #040404;
+  --color-surface-light: #e0e0e0;
+  --color-surface-dark: #1a1a1a;
+  --color-border-light: #e0e0e0;
+  --color-border-dark: #333333;
+  --color-accent: #4b5563;
+
+  --rounded: 0.5rem;
+  --rounded-xl: 1rem;
+  --rounded-2xl: 1.5rem;
+
+  --shadow-glow: 0 0 20px rgba(255, 255, 255, 0.1);
+  --font-display: "Plus Jakarta Sans", sans-serif;
+  --font-sans: "Inter", sans-serif;
+}
+
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #040404;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #333;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #555;
+}
+
+.gradient-border {
+  position: relative;
+  background: #040404;
+  padding: 2px;
+  border-radius: 1.5rem;
+  overflow: hidden;
+}
+
+.gradient-border::before {
+  content: "";
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: conic-gradient(transparent, #ffffff, transparent 30%);
+  animation: rotate 4s linear infinite;
+}
+
+@keyframes rotate {
+  100% {
+    transform: rotate(1turn);
+  }
+}
+
+.gradient-border-content {
+  position: relative;
+  z-index: 10;
+  background: #040404;
+  border-radius: 1.4rem;
+}
+
+html:not(.dark) .gradient-border {
+  background: #e0e0e0;
+}
+
+html:not(.dark) .gradient-border::before {
+  background: conic-gradient(transparent, #040404, transparent 30%);
+}
+
+html:not(.dark) .gradient-border-content {
+  background: #ffffff;
+}

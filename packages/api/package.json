@@ -1,0 +1,23 @@
+{
+  "$schema": "https://json.schemastore.org/package.json",
+  "name": "@nora-health/api",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts",
+    "./common": "./src/common/index.ts",
+    "./*": "./src/*.ts"
+  },
+  "scripts": {
+    "typecheck": "tsc",
+    "lint": "biome lint"
+  },
+  "dependencies": {
+    "http-status-codes": "^2.3.0",
+    "effect": "^3.16.5",
+    "@effect/platform": "^0.82.8",
+    "zod": "^4.1.13",
+    "@nora-health/domain": "workspace:^"
+  }
+}

@@ -1,0 +1,99 @@
+import { it, describe, beforeAll } from '@effect/vitest'
+import { assertFailure } from '@effect/vitest/utils'
+import { Cause, Effect } from 'effect'
+import {
+  type ApiClient,
+  createMockUserSignUpDetails,
+  makeApiClient,
+  ServerLive
+} from '../utils'
+import { FetchHttpClient } from '@effect/platform'
+import EmailAlreadyInUseError from '@nora-health/api/common/EmailAlreadyInUseError'
+import TokenNotExpiredError from '@nora-health/api/common/TokenNotExpiredError'
+
+describe('Auth API', () => {
+  const userDetails = createMockUserSignUpDetails()
+  let otp: string
+  let accessToken: string
+  let Client: ApiClient
+
+  beforeAll(() => {
+    Client = makeApiClient()
+  })
+
+  // it.effect('should send the sign up email', () =>
+  //   Effect.gen(function* () {
+  //     const client = yield* Client
+  //
+  //     yield* client.Auth.sendSignUpEmail({
+  //       payload: userDetails
+  //     })
+  //
+  //     otp = '12345'
+  //   }).pipe(Effect.provide(FetchHttpClient.layer))
+  // )
+  //
+  // it('should not send sign up email email more than once', () =>
+  //   Effect.gen(function* () {
+  //     const client = yield* Client
+  //
+  //     const res = yield* client.Auth.sendSignUpEmail({
+  //       payload: userDetails
+  //     }).pipe(Effect.exit)
+  //
+  //     assertFailure(res, Cause.fail(new EmailAlreadyInUseError()))
+  //   }).pipe(Effect.provide(FetchHttpClient.layer)))
+  //
+  // it.effect('should verify the sign up email', () =>
+  //   Effect.gen(function* () {
+  //     const client = yield* Client
+  //
+  //     yield* client.Auth.verifyEmail({
+  //       payload: {
+  //         email: userDetails.email,
+  //         otp
+  //       }
+  //     })
+  //   }).pipe(Effect.provide(FetchHttpClient.layer))
+  // )
+
+  it.effect('should send the sign in email', () =>
+    Effect.gen(function*() {
+      const client = yield* Client
+
+      yield* client.Auth.sendSignInOtp({
+        payload: { phone_number: '+2348131259783' }
+      })
+    }).pipe(Effect.provide(ServerLive))
+  )
+
+  // it.effect(
+  //   'should not send the sign in email more than once within a short time interval',
+  //   () =>
+  //     Effect.gen(function*() {
+  //       const client = yield* Client
+  //
+  //       const res = yield* client.Auth.sendSignInOtp({
+  //         payload: { phone_number: '+2348131259783' }
+  //       }).pipe(Effect.exit)
+  //
+  //       assertFailure(res, Cause.fail(new TokenNotExpiredError()))
+  //     }).pipe(Effect.provide(FetchHttpClient.layer))
+  // )
+
+  // it.effect('should verify the sign in email', () =>
+  //   Effect.gen(function*() {
+  //     const client = yield* Client
+  //
+  //     const res = yield* client.Auth.verifyEmail({
+  //       payload: {
+  //         email: userDetails.email,
+  //         otp
+  //       }
+  //     })
+  //
+  //     accessToken = res.data.access_token
+  //     Client = makeApiClient(accessToken)
+  //   }).pipe(Effect.provide(FetchHttpClient.layer))
+  // )
+})

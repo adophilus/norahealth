@@ -1,0 +1,21 @@
+{
+  "name": "@nora-health/domain",
+  "version": "0.0.0",
+  "type": "module",
+  "main": "./src/index.ts",
+  "scripts": {
+    "typecheck": "tsc",
+    "lint": "biome lint",
+    "test": "vitest"
+  },
+  "dependencies": {
+    "effect": "^3.16.5",
+    "lodash": "^4.17.21",
+    "viem": "^2.44.4"
+  },
+  "devDependencies": {
+    "@effect/language-service": "^0.56.0",
+    "@types/lodash": "^4.17.23",
+    "vitest": "^4.0.14"
+  }
+}

@@ -1,0 +1,57 @@
+{
+    "frame": {
+        "name": "onscript",
+        "version": "1",
+        "iconUrl": "https://app.staging.onscript.xyz/onscript-logo.png",
+        "homeUrl": "https://app.staging.onscript.xyz",
+        "imageUrl": "https://app.staging.onscript.xyz/image.png",
+        "buttonTitle": "open onscript",
+        "splashImageUrl": "https://app.staging.onscript.xyz/splash.jpg",
+        "splashBackgroundColor": "#000000",
+        "webhookUrl": "https://app.staging.onscript.xyz/api/webhook",
+        "subtitle": "Crosspost and Schedule Now",
+        "description": "Onscript is the ultimate crossposting and scheduling platform. Publish once, reach everywhere — schedule posts across multiple social platforms effortlessly.",
+        "primaryCategory": "social",
+        "tags": [
+            "content-creators",
+            "schedulling",
+            "cross-posting",
+            "onscript",
+            "social-media"
+        ],
+        "tagline": "content-creator, scheduling",
+        "ogTitle": "crosspost, schedule everywhere",
+        "ogDescription": "Crosspost and schedule everywhere"
+    },
+    "miniapp": {
+        "version": "1",
+        "name": "Onscript",
+        "homeUrl": "https://app.staging.onscript.xyz",
+        "iconUrl": "https://app.staging.onscript.xyz/onscript-logo.png",
+        "splashImageUrl": "https://app.staging.onscript.xyz/splash.jpg",
+        "splashBackgroundColor": "#000000",
+        "webhookUrl": "https://app.staging.onscript.xyz/api/webhook",
+        "subtitle": "Cross-post and schedule",
+        "description": "Crosspost and schedule content across Farcaster, Instagram, Facebook, and more. Onscript combines social scheduling with blockchain immutability.",
+        "primaryCategory": "social",
+        "screenshotUrls": [
+            "https://app.staging.onscript.xyz/auth.png"
+        ],
+        "tags": [
+            "onscript",
+            "scheduling",
+            "cross-post",
+            "social"
+        ],
+        "heroImageUrl": "https://app.staging.onscript.xyz/onscript.png",
+        "tagline": "Schedule instantly",
+        "ogTitle": "Onscript - Schedule Social Posts",
+        "ogDescription": "Cross-post and schedule content across Farcaster, Instagram, Facebook, and more.",
+        "noindex": false
+    },
+    "accountAssociation": {
+        "header": "eyJmaWQiOjIwNjQ2MzUsInR5cGUiOiJjdXN0b2R5Iiwia2V5IjoiMHgyRTEzMTRiOTBCMUQ1QTFhMEQ4NzNDRUFBRjYxMEEyMjBhZDU3MGZDIn0",
+        "payload": "eyJkb21haW4iOiJhcHAuc3RhZ2luZy5vbnNjcmlwdC54eXoifQ",
+        "signature": "tGneO4Jsqyxx84F7f8UQ7stEzfrgyOV9l2bf0oOIlmIHe5ISlZYLf5dTi2YOdiDiBolIffBzsJRY0g6WRurXpBs="
+    }
+}

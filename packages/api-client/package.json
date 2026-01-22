@@ -1,0 +1,24 @@
+{
+  "$schema": "https://json.schemastore.org/package.json",
+  "name": "@nora-health/api-client",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "scripts": {
+    "typecheck": "tsc",
+    "build": "tsx ./scripts/build.ts",
+    "dev": "tsx --watch ./scripts/build.ts",
+    "lint": "biome lint"
+  },
+  "dependencies": {
+    "effect": "^3.16.5",
+    "@effect/platform": "^0.82.8",
+    "@nora-health/api": "workspace:^",
+    "openapi-fetch": "^0.15.0",
+    "openapi-react-query": "^0.5.1",
+    "openapi-typescript": "^7.10.1"
+  }
+}

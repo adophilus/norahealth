@@ -1,0 +1,37 @@
+.split-words {
+  @apply overflow-hidden inline-block will-change-transform;
+}
+.split-chars {
+  @apply inline-block translate-y-full will-change-transform;
+}
+.split-lines {
+  @apply overflow-hidden inline-block will-change-transform;
+}
+
+/* hero title */
+.split-chars-hero-title {
+  @apply inline-block translate-y-full will-change-transform;
+}
+.split-words-hero-title {
+  @apply inline-block translate-y-full will-change-transform opacity-0;
+}
+.split-lines-hero-title {
+  @apply overflow-hidden inline-flex leading-[1.25] gap-3 will-change-transform;
+}
+
+/* hero desc */
+.split-words-hero-desc {
+  @apply overflow-hidden inline-block will-change-transform;
+}
+.split-chars-hero-desc {
+  @apply inline-block translate-y-full will-change-transform text-gray-600;
+}
+
+/* desc */
+.split-lines-desc {
+  @apply overflow-hidden inline-block will-change-transform text-gray-600;
+}
+
+.split-words-desc {
+  @apply inline-block translate-y-full will-change-transform text-gray-600;
+}

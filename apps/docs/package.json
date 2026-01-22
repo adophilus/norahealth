@@ -1,0 +1,31 @@
+{
+  "$schema": "https://json.schemastore.org/package.json",
+  "name": "@nora-health/docs",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "vitepress build docs",
+    "dev": "vitepress dev docs --port $DOCS_PORT",
+    "lint": "biome lint",
+    "start": "vitepress serve docs --port $DOCS_PORT",
+    "typecheck": "tsc",
+    "preview": "vitepress preview docs"
+  },
+  "dependencies": {
+    "@effect/platform": "^0.82.8",
+    "@scalar/api-reference": "1.34.6",
+    "vitepress-plugin-d2": "^1.0.4",
+    "zod": "^4.1.13"
+  },
+  "devDependencies": {
+    "@nora-health/api": "workspace:^",
+    "@t3-oss/env-core": "^0.12.0",
+    "@types/node": "^22.7.2",
+    "@types/react": "^18.3.9",
+    "@types/react-dom": "^18.3.0",
+    "vite-tsconfig-paths": "^5.1.4",
+    "vitepress": "1.6.3"
+  },
+  "packageManager": "pnpm@10.10.0"
+}

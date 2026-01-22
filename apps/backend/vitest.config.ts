@@ -1,0 +1,17 @@
+import tsconfigPaths from 'vite-tsconfig-paths'
+import { defineConfig } from 'vitest/config'
+
+export default defineConfig({
+  plugins: [tsconfigPaths()],
+  test: {
+    // silent: false,
+    // disableConsoleIntercept: true,
+    alias: {
+      '@/': new URL('./src/', import.meta.url).pathname
+    },
+    cache: false,
+    bail: 1,
+    include: ['tests/**/*.test.ts'],
+    maxConcurrency: 1
+  }
+})

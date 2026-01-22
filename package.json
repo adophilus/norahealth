@@ -1,0 +1,34 @@
+{
+  "$schema": "https://json.schemastore.org/package.json",
+  "scripts": {
+    "dev": "nx run-many -t dev --parallel 10",
+    "build": "nx run-many -t build",
+    "build:backend": "nx run-many -t build -p @nora-health/backend",
+    "build:docs": "nx run-many -t build -p @nora-health/docs",
+    "build:waitlist": "nx run-many -t build -p @nora-health/waitlist",
+    "build:website": "nx run-many -t build -p @nora-health/website",
+    "start:backend": "nx run-many -t start -p @nora-health/backend",
+    "start:docs": "nx run-many -t start -p @nora-health/docs",
+    "start:waitlist": "nx run-many -t start -p @nora-health/waitlist",
+    "start:website": "nx run-many -t start -p @nora-health/website",
+    "lint": "nx run-many -t lint",
+    "typecheck": "nx run-many -t typecheck",
+    "test": "nx run-many -t test"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "^2.3.11",
+    "@nx/vite": "^22.3.3",
+    "@nx/web": "^22.3.3",
+    "nx": "^22.3.3",
+    "sort-package-json": "^3.6.0",
+    "tsx": "^4.21.0",
+    "typescript": "^5.9.3",
+    "@types/node": "^22.10.2",
+    "@types/react": "^18.3.1",
+    "@types/react-dom": "^18.3.1"
+  },
+  "dependencies": {
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1"
+  }
+}
