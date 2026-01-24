@@ -2,7 +2,7 @@
 
 ## Overview
 
-The domain layer (@nora-health/domain) contains core business logic, types, and domain models for the entire nora-health system. This is the foundation layer that all other packages depend on.
+The domain layer (@nora-health/domain) contains core business logic, types, and domain models for the entire NoraHealth system. This is the foundation layer that all other packages depend on.
 
 ## Purpose
 
@@ -11,6 +11,7 @@ The domain layer serves as the single source of truth for:
 - Data validation and transformation rules
 - Type definitions used across backend and frontend
 - Domain-specific error types
+- Agent types and conversation models
 
 ## Technology Stack
 
@@ -22,12 +23,13 @@ The domain layer serves as the single source of truth for:
 
 ## Domain Models
 
-### Authentication Models
+### Authentication & User Models
 
 #### User
 Represents a user account in the system.
-- Fields: id, email, first_name, last_name, created_at, updated_at
-- Used across auth, user management, and post ownership
+- Fields: id, email, display_name, status, role, profile_picture_id, verified_at, resolution_class, dietary_exclusions, physical_constraints, medical_redlines, location_city, location_zip_code, created_at, updated_at, deleted_at
+- Roles: USER, ADMIN
+- Status: NOT_VERIFIED, VERIFIED, BANNED
 
 #### AuthSession
 Manages user authentication sessions.
@@ -43,139 +45,281 @@ Stores OTP-based authentication tokens.
 #### AuthProfile
 Additional authentication profile information.
 - Fields: id, user_id, provider_type, provider_data
-- Extends user authentication with third-party providers (Farcaster, etc.)
+- Extends user authentication with third-party providers
 
-### Content Models
+### Health Profile Models
 
-#### Post
-Represents a social media post.
-- Fields: id, user_id, content, media_ids, scheduled_at, status, created_at, updated_at
-- Status types: DRAFT, SCHEDULED, PUBLISHED, FAILED
-- Links to User (owner)
+#### HealthProfile
+Represents a user's health constraints and goals.
+- Fields: id, user_id, resolution_class, dietary_exclusions, physical_constraints, medical_redlines, fitness_goals, fitness_level, created_at, updated_at
+- Resolution Classes: PERFORMANCE, VITALITY, LONGEVITY
+- Fitness Levels: BEGINNER, INTERMEDIATE, ADVANCED
 
-#### PostPlatform
-Represents a post's relationship with a specific platform.
-- Fields: id, post_id, platform, platform_post_id, published_at, status, created_at
-- Enables multi-platform publishing
-- Tracks publish status per platform
+#### ResolutionClass
+Enum for user's primary health goal:
+- `PERFORMANCE` - Muscle gain, athletic training
+- `VITALITY` - Weight loss, metabolic health
+- `LONGEVITY` - Mobility, stress management, heart health
 
-#### PostStatus
-Enum for post lifecycle states:
-- `DRAFT` - Post is being edited
-- `SCHEDULED` - Post is scheduled for future publish
-- `PUBLISHED` - Post has been successfully published
-- `FAILED` - Post publishing failed
+#### DietaryExclusion
+Enum for common allergens:
+- `PEANUTS`
+- `DAIRY`
+- `GLUTEN`
+- `SOY`
+- `EGGS`
+- `SHELLFISH`
+- `TREE_NUTS`
+- `FISH`
+- `OTHER` (with description field)
 
-#### PostWithPlatforms
-Service-level model combining Post with its Platform relationships.
-- Not a database table
-- Used in service layer responses
+#### PhysicalConstraint
+Enum for common injury types:
+- `KNEE`
+- `BACK`
+- `SHOULDER`
+- `HIP`
+- `ANKLE`
+- `WRIST`
+- `OTHER` (with description field)
 
-### Social Integration Models
+### Nutrition Models
 
-#### ConnectedAccount
-Represents a user's connection to a social media platform.
-- **Key Fields**:
-  - id, user_id, platform, platform_account_id
-  - platform_username, platform_display_name, profile_url, avatar_url
-  - is_active, is_primary
-  - created_at, updated_at, last_connected_at, disconnected_at
+#### Recipe
+Represents a meal recipe.
+- Fields: id, user_id, name, ingredients, instructions, calories, protein, carbs, fat, prep_time_minutes, created_at, updated_at
+- Ingredients: JSON array of strings
+- Instructions: JSON array of step strings
 
-- **Platform Types**: TWITTER, FACEBOOK, INSTAGRAM, FARCASTER, BASEAPP, ZORA
-- **Purpose**: Account metadata only (no OAuth tokens)
-- **Lifecycle**: Created on OAuth connect, soft-deleted on disconnect
+#### MealPlan
+Represents a daily meal plan.
+- Fields: id, user_id, date, meals, notes, created_at, updated_at
+- Meals: JSON array of recipe IDs
+- Date format: YYYY-MM-DD
 
-#### OAuthToken
-Stores OAuth authentication credentials.
-- **Key Fields**:
-  - id, connected_account_id, provider, token_type, platform_account_id
-  - access_token, refresh_token, expires_at, scopes
-  - is_active, created_at, updated_at, last_used_at, revoked_at
+#### PantryItem
+Represents an ingredient in user's pantry.
+- Fields: id, user_id, name, expiry_date, image_url, created_at, updated_at
+- Links to StorageFile for image
 
-- **Token Types**:
-  - `USER_TOKEN` - User-level token (post to user feed)
-  - `PAGE_TOKEN` - Page-level token (post to Facebook Pages)
-  - `APP_TOKEN` - Application-level token (server-to-server)
+### Fitness Models
 
-- **Security**: access_token and refresh_token MUST be encrypted at rest
-- **Purpose**: Separate storage from account metadata
+#### Workout
+Represents an exercise routine.
+- Fields: id, user_id, name, type, is_outdoor, exercises, difficulty_level, duration_minutes, created_at, updated_at
+- Types: CARDIO, STRENGTH, FLEXIBILITY, HIIT, COMPOUND
+- Exercises: JSON array of Exercise objects
+- Difficulty Levels: BEGINNER, INTERMEDIATE, ADVANCED
 
-#### OAuthProvider
-Enum for OAuth2 providers:
-- Inherits from PlatformName
-- Values: TWITTER, FACEBOOK, INSTAGRAM, FARCASTER, BASEAPP, ZORA
+#### Exercise
+Component of a workout.
+- Fields: name, sets, reps, duration_seconds, instructions, modifications
+- Modifications: Array of alternative exercises for injuries
 
-#### OAuthTokenType
-Enum for OAuth token types:
-- `USER_TOKEN`
-- `PAGE_TOKEN`
-- `APP_TOKEN`
+#### WorkoutSession
+Represents a completed workout.
+- Fields: id, workout_id, user_id, completed_at, soreness_level, duration_minutes, notes, created_at
+- Soreness Levels: NONE, MILD, MODERATE, SEVERE
 
-#### OAuthError
-Domain errors for OAuth operations:
-- `OAuthTokenExpiredError` - Token has expired
-- `OAuthTokenInvalidError` - Token is invalid
-- `OAuthInsufficientScopeError` - Token lacks required permissions
+#### FitnessLevel
+Enum for user's fitness experience:
+- `BEGINNER`
+- `INTERMEDIATE`
+- `ADVANCED`
 
-#### PlatformPostResult
-Result of publishing to a platform:
-- Fields: platform, platform_post_id, published_at, status
-- Used for tracking multi-platform publish results
+### Progress Models
 
-#### PlatformPublishError
-Domain errors for platform publishing:
-- `RateLimitError` - Platform rate limit exceeded
-- `PermissionDeniedError` - Insufficient permissions
-- `ValidationError` - Invalid post content for platform
+#### DailyTarget
+Represents daily goals for meals and workouts.
+- Fields: id, user_id, date, meal_plan_id, workout_id, meal_completed, workout_completed, created_at, updated_at
+- Date format: YYYY-MM-DD
 
-#### PostContent
-Content to be published to platforms:
-- Fields: message, media_ids, hashtags, mentions
-- Used in publish operations across platforms
+#### ProgressMetric
+Represents tracked metrics over time.
+- Fields: id, user_id, type, value, date, created_at
+- Types: WEIGHT, COMPLETION_RATE, STREAK, CALORIES_BURNED, CALORIES_CONSUMED
+- Value: Can be number or JSON object
 
-#### ConnectedAccountWithTokens
-Service-level model combining ConnectedAccount with OAuth tokens.
-- Combines account metadata with available tokens
-- Used in service responses
-- Not a database table
+### Agent Models
+
+#### AgentType
+Enum for specialized AI agents:
+- `INTAKE_SAFETY` - Onboarding and safety validation
+- `MEAL_PLANNER` - Recipe and meal plan generation
+- `EXERCISE_COACH` - Workout generation and adaptation
+- `LOGISTICS` - Ingredient sourcing and marketplace
+
+#### AgentConversation
+Represents a conversation with an agent.
+- Fields: id, user_id, agent_type, messages, context, created_at, updated_at
+- Messages: JSON array of Message objects
+- Context: JSON object for shared state across agents
+
+#### Message
+Represents a message in agent conversation.
+- Fields: role (user/assistant/system), content, timestamp, attachments
+- Role: USER, ASSISTANT, SYSTEM
+- Attachments: Array of file references (images, etc.)
+
+### Weather Models
+
+#### WeatherCondition
+Represents local weather data.
+- Fields: condition, temperature, humidity, wind_speed, created_at
+- Conditions: CLEAR, CLOUDS, RAIN, SNOW, STORM, FOG, WIND
+- Temperature: Celsius
+- Humidity: Percentage (0-100)
+- Wind Speed: km/h
 
 ### Storage Models
 
 #### StorageFile
-Represents a media file stored in the system.
+Represents a media file stored in system.
 - Fields: id, original_name, file_data, mime_type, user_id, created_at
-- Used for post media (images, videos)
-- Binary data stored in database
+- Used for fridge photos, workout images, etc.
+- Binary data stored in database (SQLite)
 
-### Analytics Models
+## Usage Patterns
 
-#### DashboardAnalytics
-Analytics data for user dashboard.
-- Fields: total_posts, scheduled_posts, published_posts, engagement_rate, created_at
+### Domain Model Creation
 
-#### CreatorAnalytics
-Creator-focused analytics.
-- Fields: followers, engagement, growth_rate, created_at
+```typescript
+import { Schema } from 'effect'
+import Id from './Id'
 
-#### DashboardInfoTypeString
-String type for dashboard info categories.
+class Recipe extends Schema.Class<Recipe>('Recipe')({
+  id: Id,
+  user_id: Id,
+  name: Schema.String,
+  ingredients: Schema.Array(Schema.String),
+  instructions: Schema.Array(Schema.String),
+  calories: Schema.Number,
+  protein: Schema.Number,
+  carbs: Schema.Number,
+  fat: Schema.Number,
+  prep_time_minutes: Schema.Number,
+  created_at: Timestamp,
+  updated_at: Schema.NullOr(Timestamp)
+}) {}
 
-#### DashboardInfo
-General dashboard information.
+export default Recipe
+```
 
-### Waitlist Models
+### Schema Validation
 
-#### WaitlistEntry
-Represents a waitlist registration.
-- Fields: id, email, created_at
+```typescript
+import { Schema } from 'effect'
 
-### Supporting Types
+const userInput = Schema.decodeUnknown(Recipe)(rawData)
+// Returns Effect<Recipe, DecodeError>
+```
 
-#### Pagination
-Pagination parameters and metadata.
+### Type Export Pattern
+
+```typescript
+// packages/domain/src/index.ts
+export { default as Recipe } from './Recipe'
+export { default as Workout } from './Workout'
+export { default as HealthProfile } from './HealthProfile'
+// ...
+```
+
+## Domain Model Relationships
+
+### User → HealthProfile (One-to-One)
+```
+User (1) ────────── HealthProfile (1)
+```
+
+### User → PantryItem (One-to-Many)
+```
+User (1) ───────────┐
+                   │
+                   ├── PantryItem (Eggs)
+                   ├── PantryItem (Milk)
+                   └── PantryItem (Spinach)
+```
+
+### User → Recipe (One-to-Many)
+```
+User (1) ───────────┐
+                   │
+                   ├── Recipe (1)
+                   ├── Recipe (2)
+                   └── Recipe (3)
+```
+
+### User → MealPlan (One-to-Many)
+```
+User (1) ───────────┐
+                   │
+                   ├── MealPlan (2024-01-15)
+                   ├── MealPlan (2024-01-16)
+                   └── MealPlan (2024-01-17)
+```
+
+### MealPlan → Recipe (Many-to-Many)
+```
+MealPlan ───────────┐
+                   │
+                   ├── Recipe (Breakfast)
+                   ├── Recipe (Lunch)
+                   └── Recipe (Dinner)
+```
+
+### User → Workout (One-to-Many)
+```
+User (1) ───────────┐
+                   │
+                   ├── Workout (1)
+                   ├── Workout (2)
+                   └── Workout (3)
+```
+
+### Workout → WorkoutSession (One-to-Many)
+```
+Workout (1) ──────────┐
+                     │
+                     ├── WorkoutSession (Day 1)
+                     ├── WorkoutSession (Day 2)
+                     └── WorkoutSession (Day 3)
+```
+
+### User → AgentConversation (One-to-Many)
+```
+User (1) ─────────────────┐
+                        │
+                        ├── AgentConversation (INTAKE_SAFETY)
+                        ├── AgentConversation (MEAL_PLANNER)
+                        ├── AgentConversation (EXERCISE_COACH)
+                        └── AgentConversation (LOGISTICS)
+```
+
+### User → DailyTarget (One-to-Many)
+```
+User (1) ───────────┐
+                   │
+                   ├── DailyTarget (2024-01-15)
+                   ├── DailyTarget (2024-01-16)
+                   └── DailyTarget (2024-01-17)
+```
+
+### User → ProgressMetric (One-to-Many)
+```
+User (1) ───────────┐
+                   │
+                   ├── ProgressMetric (WEIGHT)
+                   ├── ProgressMetric (COMPLETION_RATE)
+                   └── ProgressMetric (STREAK)
+```
+
+## Supporting Types
 
 #### Id
-Unique identifier type.
+Unique identifier type (ULID string).
+
+#### Email
+Email type with validation.
 
 #### Timestamp
 Unix timestamp type.
@@ -189,92 +333,8 @@ String representation of time.
 #### Url
 URL type with validation.
 
-### Models (Legacy/Refactoring)
-
-Some models marked for potential refactoring:
-- SocialPlatform
-- CreatorProfile
-- CoverImage
-- Email, FirstName, LastName
-- MediaDescription
-
-## Usage Patterns
-
-### Domain Model Creation
-
-```typescript
-import { Schema } from 'effect'
-import Id from './Id'
-
-class User extends Schema.Class<User>('User')({
-  id: Id,
-  email: Schema.String,
-  first_name: Schema.String,
-  last_name: Schema.String,
-  created_at: Timestamp,
-  updated_at: Schema.NullOr(Timestamp)
-}) {}
-
-export default User
-```
-
-### Schema Validation
-
-```typescript
-import { Schema } from 'effect'
-
-const userInput = Schema.parse(User)(rawData)
-// Returns User | Validation errors
-```
-
-### Type Export Pattern
-
-```typescript
-// packages/domain/src/index.ts
-export { default as User } from './User'
-export { default as Post } from './Post'
-// ...
-```
-
-## Domain Model Relationships
-
-### User → Posts (One-to-Many)
-```
-User (1) ───────────┐
-                       │
-                       ├── Post (1)
-                       ├── Post (2)
-                       └── Post (3)
-```
-
-### Post → Platforms (One-to-Many)
-```
-Post (1) ───────────┐
-                     │
-                     ├── PostPlatform (Facebook)
-                     ├── PostPlatform (Twitter)
-                     └── PostPlatform (Instagram)
-```
-
-### User → ConnectedAccount (One-to-Many)
-```
-User (1) ──────────────┐
-                        │
-                        ├── ConnectedAccount (Facebook)
-                        ├── ConnectedAccount (Twitter)
-                        └── ConnectedAccount (Instagram)
-```
-
-### ConnectedAccount → OAuthToken (One-to-Many)
-```
-ConnectedAccount (1) ───────┐
-                             │
-                             ├── OAuthToken (USER_TOKEN)
-                             ├── OAuthToken (PAGE_TOKEN_1)
-                             └── OAuthToken (PAGE_TOKEN_2)
-```
-
-See [OAuth Integration](./domain-models-oauth.md) for detailed OAuth architecture.
+#### Pagination
+Pagination parameters and metadata.
 
 ## Design Principles
 
@@ -283,12 +343,13 @@ See [OAuth Integration](./domain-models-oauth.md) for detailed OAuth architectur
 3. **Immutability**: Models are immutable by default
 4. **Composition**: Complex models composed from simpler ones
 5. **Export from index**: Central exports in `index.ts` for clean imports
+6. **JSON Arrays for Lists**: Use JSON arrays for multi-value fields (ingredients, exercises, etc.) to simplify database schema
 
 ## Migration Guidelines
 
 When modifying domain models:
 
-1. Update the model file with new fields
+1. Update model file with new fields
 2. Re-export from `index.ts` if it's a new model
 3. Create database migration in backend
 4. Update types in `apps/backend/src/types.ts`
@@ -303,13 +364,42 @@ The domain layer has **no external dependencies** besides:
 
 This ensures domain logic is pure and can be tested in isolation.
 
+## Agent-Specific Patterns
+
+### LLM Integration
+Models that interact with LLMs (Recipe, Workout, etc.) include:
+- Validation schemas for LLM output
+- JSON serialization methods
+- Safety constraint flags
+
+### Safety Validation
+HealthProfile model includes:
+- `dietary_exclusions` - Array of DietaryExclusion
+- `physical_constraints` - Array of PhysicalConstraint
+- `medical_redlines` - Array of chronic conditions
+
+These are cross-referenced by:
+- Meal Planner Agent (excludes allergens)
+- Exercise Coach Agent (modifies for injuries)
+- Intake & Safety Agent (validates all plans)
+
+### Context Sharing
+AgentConversation model includes:
+- `context` - JSON object for shared state
+- `messages` - Complete conversation history
+- `agent_type` - Current agent handling conversation
+
+This enables hand-offs between agents while maintaining context.
+
 ## Summary
 
-The domain layer is the foundation of nora-health:
-- Defines all business entities
+The domain layer is the foundation of NoraHealth:
+- Defines all business entities (User, HealthProfile, Recipe, Workout, etc.)
 - Provides type safety across the system
 - Uses Effect Schema for validation
-- Organized by feature (Auth, Post, Integrations, etc.)
+- Organized by feature (Auth, Wellness, Meals, Workouts, Agents)
 - Minimal dependencies for maximum portability
+- Supports multi-agent system with conversation context
+- Enables safety validation across all agents
 
 All other packages (api, backend, api-client) build on top of these domain models.

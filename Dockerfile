@@ -1,15 +1,24 @@
+# syntax=docker/dockerfile:1.7-labs
 FROM oven/bun:alpine AS builder
 
 ENV PNPM_HOME="/pnpm"
 ENV PATH="$PNPM_HOME:$PATH"
+
 RUN apk add --no-cache python3 make g++ bash nodejs npm
 RUN bun add -g pnpm
 RUN npm add -g @infisical/cli@0.41.1
 
-WORKDIR /app
-COPY . .
-RUN pnpm install --frozen-lockfile
+RUN --mount=type=cache,id=pnpm,target=/pnpm/store \
+  pnpm config set store-dir /pnpm/store
 
+WORKDIR /app
+
+COPY --parents **/package.json pnpm-lock.yaml pnpm-workspace.yaml ./
+
+RUN --mount=type=cache,id=pnpm,target=/pnpm/store \
+  pnpm install --frozen-lockfile
+
+COPY . .
 
 RUN --mount=type=secret,id=INFISICAL_CLIENT_ID,env=INFISICAL_CLIENT_ID \
   --mount=type=secret,id=INFISICAL_CLIENT_SECRET,env=INFISICAL_CLIENT_SECRET \

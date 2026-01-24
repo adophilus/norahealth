@@ -48,6 +48,12 @@ importers:
 
   apps/backend:
     dependencies:
+      '@effect/ai':
+        specifier: ^0.33.2
+        version: 0.33.2(@effect/experimental@0.57.11(@effect/platform@0.82.8(effect@3.19.14))(effect@3.19.14))(@effect/platform@0.82.8(effect@3.19.14))(@effect/rpc@0.59.9(@effect/platform@0.82.8(effect@3.19.14))(effect@3.19.14))(effect@3.19.14)
+      '@effect/ai-google':
+        specifier: ^0.12.1
+        version: 0.12.1(@effect/ai@0.33.2(@effect/experimental@0.57.11(@effect/platform@0.82.8(effect@3.19.14))(effect@3.19.14))(@effect/platform@0.82.8(effect@3.19.14))(@effect/rpc@0.59.9(@effect/platform@0.82.8(effect@3.19.14))(effect@3.19.14))(effect@3.19.14))(@effect/experimental@0.57.11(@effect/platform@0.82.8(effect@3.19.14))(effect@3.19.14))(@effect/platform@0.82.8(effect@3.19.14))(effect@3.19.14)
       '@effect/cli':
         specifier: ^0.61.8
         version: 0.61.8(@effect/platform@0.82.8(effect@3.19.14))(@effect/printer-ansi@0.43.5(@effect/typeclass@0.34.5(effect@3.19.14))(effect@3.19.14))(@effect/printer@0.43.5(@effect/typeclass@0.34.5(effect@3.19.14))(effect@3.19.14))(effect@3.19.14)
@@ -1686,6 +1692,22 @@ packages:
 
   '@dual-bundle/import-meta-resolve@4.2.1':
     resolution: {integrity: sha512-id+7YRUgoUX6CgV0DtuhirQWodeeA7Lf4i2x71JS/vtA5pRb/hIGWlw+G6MeXvsM+MXrz0VAydTGElX1rAfgPg==}
+
+  '@effect/ai-google@0.12.1':
+    resolution: {integrity: sha512-NGzH5RoPkVQRu0rDA4ch6riaYT//GK4rFlAJmg24HpoqCupw2FZ9inl4+y3x6gObyHet2mF6EXLdHnfW/WX+rg==}
+    peerDependencies:
+      '@effect/ai': ^0.33.2
+      '@effect/experimental': ^0.58.0
+      '@effect/platform': ^0.94.1
+      effect: ^3.19.14
+
+  '@effect/ai@0.33.2':
+    resolution: {integrity: sha512-iJ6pz9qiKFXhcnriJJSBQ5+Bz3oEg+6hVQ7OPmmTa0dVkKUPIgX9nHqHfstcwLnDfdXBj/zCl79U+iMpGtQBnA==}
+    peerDependencies:
+      '@effect/experimental': ^0.58.0
+      '@effect/platform': ^0.94.1
+      '@effect/rpc': ^0.73.0
+      effect: ^3.19.14
 
   '@effect/cli@0.61.8':
     resolution: {integrity: sha512-CRdzBUW3SkjsL1Og5bnh7nt1VN0JwNLyfnjlzTWwtIm07WFFdcZXUXquFJfmU++eTP5Kfp8JbZYvsHwmzg/q1w==}
@@ -11096,6 +11118,21 @@ snapshots:
       p-defer: 3.0.0
 
   '@dual-bundle/import-meta-resolve@4.2.1': {}
+
+  '@effect/ai-google@0.12.1(@effect/ai@0.33.2(@effect/experimental@0.57.11(@effect/platform@0.82.8(effect@3.19.14))(effect@3.19.14))(@effect/platform@0.82.8(effect@3.19.14))(@effect/rpc@0.59.9(@effect/platform@0.82.8(effect@3.19.14))(effect@3.19.14))(effect@3.19.14))(@effect/experimental@0.57.11(@effect/platform@0.82.8(effect@3.19.14))(effect@3.19.14))(@effect/platform@0.82.8(effect@3.19.14))(effect@3.19.14)':
+    dependencies:
+      '@effect/ai': 0.33.2(@effect/experimental@0.57.11(@effect/platform@0.82.8(effect@3.19.14))(effect@3.19.14))(@effect/platform@0.82.8(effect@3.19.14))(@effect/rpc@0.59.9(@effect/platform@0.82.8(effect@3.19.14))(effect@3.19.14))(effect@3.19.14)
+      '@effect/experimental': 0.57.11(@effect/platform@0.82.8(effect@3.19.14))(effect@3.19.14)
+      '@effect/platform': 0.82.8(effect@3.19.14)
+      effect: 3.19.14
+
+  '@effect/ai@0.33.2(@effect/experimental@0.57.11(@effect/platform@0.82.8(effect@3.19.14))(effect@3.19.14))(@effect/platform@0.82.8(effect@3.19.14))(@effect/rpc@0.59.9(@effect/platform@0.82.8(effect@3.19.14))(effect@3.19.14))(effect@3.19.14)':
+    dependencies:
+      '@effect/experimental': 0.57.11(@effect/platform@0.82.8(effect@3.19.14))(effect@3.19.14)
+      '@effect/platform': 0.82.8(effect@3.19.14)
+      '@effect/rpc': 0.59.9(@effect/platform@0.82.8(effect@3.19.14))(effect@3.19.14)
+      effect: 3.19.14
+      find-my-way-ts: 0.1.6
 
   '@effect/cli@0.61.8(@effect/platform@0.82.8(effect@3.19.14))(@effect/printer-ansi@0.43.5(@effect/typeclass@0.34.5(effect@3.19.14))(effect@3.19.14))(@effect/printer@0.43.5(@effect/typeclass@0.34.5(effect@3.19.14))(effect@3.19.14))(effect@3.19.14)':
     dependencies:

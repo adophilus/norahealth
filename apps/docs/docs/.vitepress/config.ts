@@ -5,21 +5,14 @@ import { FileType, Layout, Theme } from 'vitepress-plugin-d2/dist/config'
 
 // https://vitepress.dev/reference/site-config
 export default defineConfig({
-  title: 'Onscript',
-  description: 'The official Onscript documentation',
+  title: 'NoraHealth',
+  description: 'AI Agent Wellness Partner - Multi-agent wellness system',
   themeConfig: {
     // https://vitepress.dev/reference/default-theme-config
     nav: [
       { text: 'Home', link: '/' },
       { text: 'Documentation', link: './docs' },
       { text: 'API Reference', link: './api' }
-    ],
-
-    socialLinks: [
-      {
-        icon: 'farcaster',
-        link: 'https://farcaster.xyz/onscript'
-      }
     ],
 
     sidebar: [
@@ -32,10 +25,38 @@ export default defineConfig({
         items: [
           { text: 'Overview', link: '/architecture/overview' },
           { text: 'Domain Layer', link: '/architecture/domain-layer' },
+          { text: 'Agent System', link: '/architecture/agent-system' },
+          { text: 'Feature Overview', link: '/architecture/feature-overview' },
+          { text: 'Data Model', link: '/architecture/data-model' },
+          { text: 'LLM Integration', link: '/architecture/llm-integration' }
+        ]
+      },
+      {
+        text: 'Features',
+        items: [
+          { text: 'Onboarding', link: '/features/onboarding' },
+          { text: 'Safety Validation', link: '/features/safety-validation' },
+          { text: 'Fridge Vision', link: '/features/fridge-vision' },
+          { text: 'Recipe Generation', link: '/features/recipe-generation' },
+          { text: 'Meal Plans', link: '/features/meal-plans' },
+          { text: 'Workout Generation', link: '/features/workout-generation' },
+          { text: 'Weather Adaptation', link: '/features/weather-adaptation' },
           {
-            text: 'OAuth Integration',
-            link: '/architecture/domain-models-oauth'
-          }
+            text: 'Ingredient Sourcing',
+            link: '/features/ingredient-sourcing'
+          },
+          { text: 'Firebase Push', link: '/features/firebase-push' }
+        ]
+      },
+      {
+        text: 'Guides',
+        items: [
+          {
+            text: 'Development Workflow',
+            link: '/guides/development-workflow'
+          },
+          { text: 'Testing', link: '/guides/testing' },
+          { text: 'Demo Preparation', link: '/guides/demo-preparation' }
         ]
       }
     ]

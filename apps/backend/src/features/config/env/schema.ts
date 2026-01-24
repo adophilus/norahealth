@@ -13,8 +13,12 @@ export class EnvSchema extends Schema.Class<EnvSchema>('EnvSchema')({
   MAIL_SUPPORT_EMAIL: Schema.String,
   SERVER_PORT: Schema.Number,
   SERVER_URL: Schema.String,
-  FACEBOOK_APP_ID: Schema.String,
-  FACEBOOK_APP_SECRET: Schema.String,
-  NEYNAR_API_KEY: Schema.String,
-  NEYNAR_SEED_PHRASE: Schema.String
-}) {}
+  LLM_PROVIDER: Schema.Literal('gemini', 'glm'),
+  GEMINI_API_KEY: Schema.String,
+  GLM_API_KEY: Schema.String,
+  OPENWEATHER_API_KEY: Schema.String,
+  GOOGLE_MAPS_API_KEY: Schema.String,
+  FIREBASE_PROJECT_ID: Schema.String,
+  FIREBASE_PRIVATE_KEY: Schema.String,
+  FIREBASE_CLIENT_EMAIL: Schema.String
+})

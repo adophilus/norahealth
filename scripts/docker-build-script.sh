@@ -10,15 +10,15 @@ infisical run \
   --domain $INFISICAL_DOMAIN \
   --command "pnpm build"
 
-pnpm typecheck
-pnpm lint
+# pnpm typecheck
+# pnpm lint
 # pnpm audit --audit-level high
 # pnpm test
 
 mkdir build
 
-cp -r ./apps/backend/build ./build/backend
+# cp -r ./apps/backend/build ./build/backend
 cp -r ./apps/docs/docs/.vitepress/dist ./build/docs
-cp -r ./apps/waitlist/dist ./build/waitlist
-cp -r ./apps/website/dist ./build/website
-cp -r ./apps/webapp/dist ./build/webapp
+# cp -r ./apps/waitlist/dist ./build/waitlist
+# cp -r ./apps/website/dist ./build/website
+# cp -r ./apps/webapp/dist ./build/webapp

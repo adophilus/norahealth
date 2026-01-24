@@ -22,10 +22,14 @@ export const EnvLive = Layer.effect(
       MAIL_SUPPORT_EMAIL: yield* Config.string('MAIL_SUPPORT_EMAIL'),
       SERVER_PORT: yield* Config.number('SERVER_PORT'),
       SERVER_URL: yield* Config.string('SERVER_URL'),
-      FACEBOOK_APP_ID: yield* Config.string('FACEBOOK_APP_ID'),
-      FACEBOOK_APP_SECRET: yield* Config.string('FACEBOOK_APP_SECRET'),
-      NEYNAR_API_KEY: yield* Config.string('NEYNAR_API_KEY'),
-      NEYNAR_SEED_PHRASE: yield* Config.string('NEYNAR_SEED_PHRASE')
+      LLM_PROVIDER: yield* Config.string('LLM_PROVIDER'),
+      GEMINI_API_KEY: yield* Config.string('GEMINI_API_KEY'),
+      GLM_API_KEY: yield* Config.string('GLM_API_KEY'),
+      OPENWEATHER_API_KEY: yield* Config.string('OPENWEATHER_API_KEY'),
+      GOOGLE_MAPS_API_KEY: yield* Config.string('GOOGLE_MAPS_API_KEY'),
+      FIREBASE_PROJECT_ID: yield* Config.string('FIREBASE_PROJECT_ID'),
+      FIREBASE_PRIVATE_KEY: yield* Config.string('FIREBASE_PRIVATE_KEY'),
+      FIREBASE_CLIENT_EMAIL: yield* Config.string('FIREBASE_CLIENT_EMAIL')
     }
 
     const decoder = Schema.decodeUnknown(EnvSchema)

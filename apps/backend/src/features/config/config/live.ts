@@ -61,13 +61,29 @@ export const AppConfigLive = Layer.effect(
         port: env.SERVER_PORT,
         url: env.SERVER_URL
       },
-      facebook: {
-        appId: env.FACEBOOK_APP_ID,
-        appSecret: env.FACEBOOK_APP_SECRET
+      llm: {
+        provider: env.LLM_PROVIDER,
+        gemini: {
+          apiKey: env.GEMINI_API_KEY,
+          model: 'gemini-2.5-flash-vision'
+        },
+        glm: {
+          apiKey: env.GLM_API_KEY,
+          model: 'glm-4-flash'
+        }
       },
-      neynar: {
-        apiKey: env.NEYNAR_API_KEY,
-        seedPhrase: env.NEYNAR_SEED_PHRASE
+      externalApis: {
+        openWeather: {
+          apiKey: env.OPENWEATHER_API_KEY
+        },
+        googleMaps: {
+          apiKey: env.GOOGLE_MAPS_API_KEY
+        },
+        firebase: {
+          projectId: env.FIREBASE_PROJECT_ID,
+          privateKey: env.FIREBASE_PRIVATE_KEY,
+          clientEmail: env.FIREBASE_CLIENT_EMAIL
+        }
       }
     }
 

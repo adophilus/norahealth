@@ -15,6 +15,8 @@
     "test": "vitest run"
   },
   "dependencies": {
+    "@effect/ai": "^0.33.2",
+    "@effect/ai-google": "^0.12.1",
     "@effect/cli": "^0.61.8",
     "@effect/experimental": "^0.57.4",
     "@effect/platform": "^0.82.8",

@@ -52,14 +52,32 @@ export const ServerConfigSchema = Schema.Struct({
   url: Schema.String
 })
 
-export const FacebookConfigSchema = Schema.Struct({
-  appId: Schema.String,
-  appSecret: Schema.String
+// LLM Config Schema
+export const LLMConfigSchema = Schema.Struct({
+  provider: Schema.Literal('gemini', 'glm'),
+  gemini: Schema.Struct({
+    apiKey: Schema.String,
+    model: Schema.String
+  }),
+  glm: Schema.Struct({
+    apiKey: Schema.String,
+    model: Schema.String
+  })
 })
 
-export const NeynarConfigSchema = Schema.Struct({
-  apiKey: Schema.String,
-  seedPhrase: Schema.String
+// External API Config Schema
+export const ExternalApiConfigSchema = Schema.Struct({
+  openWeather: Schema.Struct({
+    apiKey: Schema.String
+  }),
+  googleMaps: Schema.Struct({
+    apiKey: Schema.String
+  }),
+  firebase: Schema.Struct({
+    projectId: Schema.String,
+    privateKey: Schema.String,
+    clientEmail: Schema.String
+  })
 })
 
 export class AppConfigSchema extends Schema.Class<AppConfigSchema>(
@@ -70,6 +88,6 @@ export class AppConfigSchema extends Schema.Class<AppConfigSchema>(
   environment: EnvironmentConfigSchema,
   mail: MailConfigSchema,
   server: ServerConfigSchema,
-  facebook: FacebookConfigSchema,
-  neynar: NeynarConfigSchema
+  llm: LLMConfigSchema,
+  externalApis: ExternalApiConfigSchema
 }) {}

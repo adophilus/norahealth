@@ -12,21 +12,16 @@ cd docs
 echo "Serving static docs..."
 serve -p $DOCS_PORT -s 2>&1 > /dev/null &
 
-cd ../waitlist
-echo "Serving static waitlist..."
-serve -p $WAITLIST_PORT -s 2>&1 > /dev/null &
+# cd ../website
+# echo "Serving static website..."
+# serve -p $WEBSITE_PORT -s 2>&1 > /dev/null &
 
-cd ../website
-echo "Serving static website..."
-serve -p $WEBSITE_PORT -s 2>&1 > /dev/null &
+# cd ../webapp
+# echo "Serving static webapp..."
+# serve -p $WEBAPP_PORT -s 2>&1 > /dev/null &
 
-cd ../webapp
-echo "Serving static webapp..."
-serve -p $WEBAPP_PORT -s 2>&1 > /dev/null &
-
-
-cd ../backend 
-echo "Starting backend..."
-node ./server.mjs &
+# cd ../backend 
+# echo "Starting backend..."
+# node ./server.mjs &
 
 wait
