@@ -20,11 +20,16 @@ RUN --mount=type=cache,id=pnpm,target=/pnpm/store \
 
 COPY . .
 
-RUN --mount=type=secret,id=INFISICAL_CLIENT_ID,env=INFISICAL_CLIENT_ID \
-  --mount=type=secret,id=INFISICAL_CLIENT_SECRET,env=INFISICAL_CLIENT_SECRET \
-  --mount=type=secret,id=INFISICAL_PROJECT_ID,env=INFISICAL_PROJECT_ID \
-  --mount=type=secret,id=INFISICAL_DOMAIN,env=INFISICAL_DOMAIN \
-  --mount=type=secret,id=INFISICAL_ENV,env=INFISICAL_ENV \
+RUN --mount=type=secret,id=INFISICAL_CLIENT_ID \
+  --mount=type=secret,id=INFISICAL_CLIENT_SECRET \
+  --mount=type=secret,id=INFISICAL_PROJECT_ID \
+  --mount=type=secret,id=INFISICAL_DOMAIN \
+  --mount=type=secret,id=INFISICAL_ENV \
+  export INFISICAL_CLIENT_ID=$(cat /run/secrets/INFISICAL_CLIENT_ID) && \
+  export INFISICAL_CLIENT_SECRET=$(cat /run/secrets/INFISICAL_CLIENT_SECRET) && \
+  export INFISICAL_PROJECT_ID=$(cat /run/secrets/INFISICAL_PROJECT_ID) && \
+  export INFISICAL_DOMAIN=$(cat /run/secrets/INFISICAL_DOMAIN) && \
+  export INFISICAL_ENV=$(cat /run/secrets/INFISICAL_ENV) && \
   ./scripts/docker-build-script.sh
 
 FROM oven/bun:alpine AS runner
