@@ -28,7 +28,7 @@ jobs:
           context: .
           file: ./Dockerfile
           push: true
-          tags: ${{ secrets.DOCKERHUB_USERNAME }}/onscript:production
+          tags: ${{ secrets.DOCKERHUB_USERNAME }}/nora-health:production
           secrets: |
             INFISICAL_ENV=production
             INFISICAL_CLIENT_ID=${{ secrets.INFISICAL_CLIENT_ID }}
