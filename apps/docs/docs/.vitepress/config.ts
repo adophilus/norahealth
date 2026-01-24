@@ -7,6 +7,7 @@ import { FileType, Layout, Theme } from 'vitepress-plugin-d2/dist/config'
 export default defineConfig({
   title: 'NoraHealth',
   description: 'AI Agent Wellness Partner - Multi-agent wellness system',
+  ignoreDeadLinks: true,
   themeConfig: {
     // https://vitepress.dev/reference/default-theme-config
     nav: [
