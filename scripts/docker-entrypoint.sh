@@ -12,9 +12,9 @@ cd docs
 echo "Serving static docs..."
 serve -p $DOCS_PORT -s 2>&1 > /dev/null &
 
-# cd ../website
-# echo "Serving static website..."
-# serve -p $WEBSITE_PORT -s 2>&1 > /dev/null &
+cd ../website
+echo "Serving static website..."
+serve -p $WEBSITE_PORT -s 2>&1 > /dev/null &
 
 # cd ../webapp
 # echo "Serving static webapp..."
