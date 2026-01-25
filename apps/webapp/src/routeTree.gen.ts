@@ -76,7 +76,7 @@ export interface FileRoutesByFullPath {
   '/dashboard/compose': typeof DashboardDashboardComposeRoute
   '/dashboard/integrations': typeof DashboardDashboardIntegrationsRoute
   '/dashboard/settings': typeof DashboardDashboardSettingsRoute
-  '/dashboard': typeof DashboardDashboardIndexRoute
+  '/dashboard/': typeof DashboardDashboardIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -110,7 +110,7 @@ export interface FileRouteTypes {
     | '/dashboard/compose'
     | '/dashboard/integrations'
     | '/dashboard/settings'
-    | '/dashboard'
+    | '/dashboard/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -160,7 +160,7 @@ declare module '@tanstack/react-router' {
     '/_dashboard': {
       id: '/_dashboard'
       path: ''
-      fullPath: ''
+      fullPath: '/'
       preLoaderRoute: typeof DashboardRouteImport
       parentRoute: typeof rootRouteImport
     }
@@ -174,7 +174,7 @@ declare module '@tanstack/react-router' {
     '/_dashboard/dashboard/': {
       id: '/_dashboard/dashboard/'
       path: '/dashboard'
-      fullPath: '/dashboard'
+      fullPath: '/dashboard/'
       preLoaderRoute: typeof DashboardDashboardIndexRouteImport
       parentRoute: typeof DashboardRoute
     }
