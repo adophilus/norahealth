@@ -8,7 +8,7 @@ infisical run \
   --projectId $INFISICAL_PROJECT_ID \
   --env $INFISICAL_ENV \
   --domain $INFISICAL_DOMAIN \
-  --command "pnpm --filter docs build"
+  --command "pnpm build"
 
 # pnpm typecheck
 # pnpm lint

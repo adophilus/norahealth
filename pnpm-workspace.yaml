@@ -1,9 +1,5 @@
 packages:
+  - ./apps/*
   - ./packages/*
-  - ./apps/backend
-  - ./apps/docs
-  - ./apps/waitlist
-  - ./apps/website
-  - ./apps/webapp
 onlyBuiltDependencies:
   - better-sqlite3
