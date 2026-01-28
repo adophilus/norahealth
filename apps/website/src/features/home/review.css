@@ -1,258 +1,494 @@
-.reviewcontainerpage {
+/* NoraHealth Testimonials - Bold Redesign */
+.nora-reviews-section {
+    position: relative;
     width: 100%;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    background-color: var(--pri-color);
-    box-sizing: border-box;
+    padding: 100px 0;
+    background: var(--nora-reviews-bg, linear-gradient(180deg, #ffffff 0%, #f8f9fa 100%));
+    overflow: hidden;
+    transition: background 0.3s ease;
 }
 
-.reviewPg {
-    width: 90%;
-    box-sizing: border-box !important;
-    display: flex;
-    flex-direction: row;
-    justify-content: space-around;
-    align-items: center;
-    margin: 50px 0px;
-    box-sizing: border-box;
+[data-theme="dark"] .nora-reviews-section {
+    background: linear-gradient(180deg, #0a0a0a 0%, #1a1a1a 100%);
 }
 
-.mainreviewcontainer {
-    width: 100%;
-    display: flex;
-    flex-direction: column;
-    justify-content: flex-start;
-    align-items: flex-start;
-    box-sizing: border-box !important;
-    font-family: var(--font);
-    padding: 20px 40px;
-}
-
-.rvquotation {
-    width: 100%;
-    margin: 0;
-    padding: 20px 10px;
-    box-sizing: border-box;
-    text-transform: capitalize;
-    font-size: 1.5em;
-    color: var(--dark);
-    text-align: center;
-}
-
-.rvcovercontainer {
-    width: 100%;
-    display: flex;
-    flex-direction: row;
-    justify-content: center;
-    align-items: center;
-    box-sizing: border-box !important;
-    font-family: var(--font);
-}
-
-.reviewcontainer {
-    width: 100%;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    box-sizing: border-box;
-    box-sizing: border-box;
-    color: var(--color);
-}
-
-.reviewcontainersmscreen {
-    display: none;
-}
-
-.rvswipercontainer {
-    width: 100%;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    box-sizing: border-box;
-    background-color: var(--pri-color) !important;
-}
-
-.swiperSlide {
-    width: 100%;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    box-sizing: border-box !important;
-    border-radius: 0px !important;
-    box-shadow: 0px 0px 0px !important;
-    background-color: inherit !important;
-    border: 0px !important;
-}
-
-.rvswipercontainer .rvswiperSlide {
-    width: 100%;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    box-sizing: border-box !important;
-    border-radius: 0px !important;
-    box-shadow: 0px 0px 0px !important;
-    background-color: var(--pri-color) !important;
-}
-
-.review {
-    border-radius: 0px !important;
-    box-shadow: 0px !important;
-    text-align: left !important;
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    justify-content: flex-start !important;
-}
-
-.quoteicon {
-    font-size: 2.5em;
-    color: var(--dark);
+/* Animated Background Pattern */
+.nora-reviews-bg-pattern {
     position: absolute;
-    top: 10px;
-    left: 10px;
-    display: none;
-}
-
-.reviewtext {
-    font-size: .8768em;
-    font-weight: 500;
-    line-height: 1.5;
-    text-align: left;
-}
-
-.reviewername {
-    display: flex;
-    flex-direction: row;
-    justify-content: flex-start;
-    align-items: center !important;
+    top: 0;
+    left: 0;
     width: 100%;
-    box-sizing: border-box;
+    height: 100%;
+    opacity: 0.03;
+    background-image:
+        radial-gradient(circle at 20% 50%, var(--nora-accent, #ff4757) 0%, transparent 50%),
+        radial-gradient(circle at 80% 80%, var(--nora-accent, #ff4757) 0%, transparent 50%);
+    animation: nora-bg-float 20s ease-in-out infinite;
+    pointer-events: none;
 }
 
-.reviewername h5 {
-    text-transform: capitalize;
-    margin-top: 5px;
-    margin-bottom: 20px;
-    color: var(--dark-text);
+[data-theme="dark"] .nora-reviews-bg-pattern {
+    opacity: 0.08;
 }
 
-.reviewerimg {
-    width: 50px !important;
-    height: 50px !important;
-    border-radius: 50%;
-    margin: 0;
-    object-fit: cover;
-    background-size: cover;
-    background-repeat: no-repeat;
-    background-position: top;
-    border: 3px solid var(--dark-text);
-    margin-bottom: 30px;
-    display: none;
-}
+@keyframes nora-bg-float {
 
-.rvp1 {
-    background-image: url(/rv/2.png);
-}
-
-.rvp2f {
-    background-image: url(/rv/13.png);
-}
-
-.rvp3 {
-    background-image: url(/rv/4.png);
-}
-
-.rvp4f {
-    background-image: url(/rv/fb2.png);
-}
-
-.rvp5 {
-    background-image: url(/rv/fb1.png);
-}
-
-.rvp6f {
-    background-image: url(/rv/blog.png);
-}
-
-.rvp7 {
-    background-image: url(/rv/11.png);
-}
-
-.rvp8 {
-    background-image: url(/rv/5.png);
-}
-
-
-
-
-
-
-
-
-/* SwiperSlide */
-
-
-
-@media (max-width: 990px) and (min-width: 768px) {}
-
-@media screen and (max-width: 767px) {
-
-    .reviewPg {
-        width: 90%;
-        flex-direction: column;
+    0%,
+    100% {
+        transform: translate(0, 0) scale(1);
     }
 
-    .divwitimg {
-        width: 100%;
+    50% {
+        transform: translate(20px, -20px) scale(1.1);
+    }
+}
+
+/* Main Container */
+.nora-reviews-container-main {
+    width: 90%;
+    max-width: 1400px;
+    margin: 0 auto;
+    position: relative;
+    z-index: 1;
+}
+
+/* Header Block */
+.nora-reviews-header-block {
+    text-align: center;
+    margin-bottom: 70px;
+    animation: nora-fade-in-up 0.8s ease-out;
+}
+
+@keyframes nora-fade-in-up {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.nora-reviews-badge-pill {
+    display: inline-block;
+    padding: 10px 28px;
+    background: var(--nora-badge-bg, rgba(255, 71, 87, 0.1));
+    border: 2px solid var(--nora-accent, #ff4757);
+    border-radius: 50px;
+    margin-bottom: 24px;
+    backdrop-filter: blur(10px);
+    animation: nora-pulse-glow 3s ease-in-out infinite;
+}
+
+[data-theme="dark"] .nora-reviews-badge-pill {
+    background: rgba(255, 71, 87, 0.15);
+}
+
+@keyframes nora-pulse-glow {
+
+    0%,
+    100% {
+        box-shadow: 0 0 0 0 rgba(255, 71, 87, 0.4);
+    }
+
+    50% {
+        box-shadow: 0 0 20px 8px rgba(255, 71, 87, 0.2);
+    }
+}
+
+.nora-reviews-badge-pill span {
+    color: var(--nora-accent, #ff4757);
+    font-weight: 800;
+    font-size: 0.75rem;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+}
+
+.nora-reviews-main-heading {
+    font-size: 3.5rem;
+    font-weight: 800;
+    color: var(--nora-text-primary, #1a1a1a);
+    margin: 0 0 20px 0;
+    line-height: 1.1;
+    letter-spacing: -1px;
+    transition: color 0.3s ease;
+}
+
+[data-theme="dark"] .nora-reviews-main-heading {
+    color: #ffffff;
+}
+
+.nora-reviews-sub-text {
+    font-size: 1.2rem;
+    color: var(--nora-text-secondary, #666666);
+    margin: 0;
+    transition: color 0.3s ease;
+}
+
+[data-theme="dark"] .nora-reviews-sub-text {
+    color: #b0b0b0;
+}
+
+/* Grid Layout */
+.nora-reviews-grid-layout {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+    gap: 30px;
+    perspective: 1000px;
+}
+
+/* Glass Card */
+.nora-review-glass-card {
+    position: relative;
+    background: var(--nora-glass-bg, rgba(255, 255, 255, 0.7));
+    backdrop-filter: blur(20px);
+    border-radius: 24px;
+    padding: 40px;
+    border: 1px solid var(--nora-glass-border, rgba(255, 255, 255, 0.3));
+    box-shadow:
+        0 8px 32px rgba(0, 0, 0, 0.08),
+        inset 0 1px 0 rgba(255, 255, 255, 0.5);
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    animation: nora-card-float-in 0.6s ease-out backwards;
+    animation-delay: calc(var(--card-index, 0) * 0.1s);
+    cursor: pointer;
+}
+
+[data-theme="dark"] .nora-review-glass-card {
+    background: rgba(30, 30, 30, 0.6);
+    border-color: rgba(255, 255, 255, 0.1);
+    box-shadow:
+        0 8px 32px rgba(0, 0, 0, 0.4),
+        inset 0 1px 0 rgba(255, 255, 255, 0.05);
+}
+
+@keyframes nora-card-float-in {
+    from {
+        opacity: 0;
+        transform: translateY(40px) rotateX(10deg);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0) rotateX(0);
+    }
+}
+
+.nora-review-glass-card:nth-child(1) {
+    --card-index: 0;
+}
+
+.nora-review-glass-card:nth-child(2) {
+    --card-index: 1;
+}
+
+.nora-review-glass-card:nth-child(3) {
+    --card-index: 2;
+}
+
+.nora-review-glass-card:nth-child(4) {
+    --card-index: 3;
+}
+
+.nora-review-glass-card:nth-child(5) {
+    --card-index: 4;
+}
+
+.nora-review-glass-card:nth-child(6) {
+    --card-index: 5;
+}
+
+.nora-review-glass-card:hover,
+.nora-card-active {
+    transform: translateY(-12px) scale(1.02);
+    box-shadow:
+        0 20px 60px rgba(255, 71, 87, 0.2),
+        inset 0 1px 0 rgba(255, 255, 255, 0.8);
+    border-color: var(--nora-accent, #ff4757);
+}
+
+[data-theme="dark"] .nora-review-glass-card:hover,
+[data-theme="dark"] .nora-card-active {
+    box-shadow:
+        0 20px 60px rgba(255, 71, 87, 0.3),
+        inset 0 1px 0 rgba(255, 255, 255, 0.1);
+}
+
+/* Corner Accent */
+.nora-card-corner-accent {
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 80px;
+    height: 80px;
+    background: linear-gradient(135deg, var(--nora-accent, #ff4757) 0%, transparent 70%);
+    border-radius: 0 24px 0 100%;
+    opacity: 0.1;
+    transition: opacity 0.3s ease;
+}
+
+.nora-review-glass-card:hover .nora-card-corner-accent,
+.nora-card-active .nora-card-corner-accent {
+    opacity: 0.2;
+}
+
+/* Rating Stars */
+.nora-rating-stars {
+    display: flex;
+    gap: 4px;
+    margin-bottom: 20px;
+}
+
+.nora-star-icon {
+    color: #FFD700;
+    font-size: 1.1rem;
+    filter: drop-shadow(0 2px 4px rgba(255, 215, 0, 0.3));
+    animation: nora-star-twinkle 2s ease-in-out infinite;
+    animation-delay: calc(var(--star-index, 0) * 0.2s);
+}
+
+@keyframes nora-star-twinkle {
+
+    0%,
+    100% {
+        opacity: 1;
+        transform: scale(1);
+    }
+
+    50% {
+        opacity: 0.7;
+        transform: scale(0.95);
+    }
+}
+
+.nora-star-icon:nth-child(1) {
+    --star-index: 0;
+}
+
+.nora-star-icon:nth-child(2) {
+    --star-index: 1;
+}
+
+.nora-star-icon:nth-child(3) {
+    --star-index: 2;
+}
+
+.nora-star-icon:nth-child(4) {
+    --star-index: 3;
+}
+
+.nora-star-icon:nth-child(5) {
+    --star-index: 4;
+}
+
+/* Quote Text */
+.nora-review-quote-text {
+    font-size: 1rem;
+    line-height: 1.8;
+    color: var(--nora-text-primary, #1a1a1a);
+    margin: 0 0 30px 0;
+    font-weight: 400;
+    font-style: italic;
+    position: relative;
+    transition: color 0.3s ease;
+}
+
+[data-theme="dark"] .nora-review-quote-text {
+    color: #e0e0e0;
+}
+
+.nora-review-quote-text::before {
+    content: '"';
+    position: absolute;
+    left: -20px;
+    top: -10px;
+    font-size: 4rem;
+    color: var(--nora-accent, #ff4757);
+    opacity: 0.2;
+    font-family: Georgia, serif;
+    line-height: 1;
+}
+
+/* Reviewer Profile */
+.nora-reviewer-profile {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin-top: auto;
+}
+
+.nora-avatar-circle {
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: white;
+    flex-shrink: 0;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+    transition: transform 0.3s ease;
+}
+
+.nora-review-glass-card:hover .nora-avatar-circle,
+.nora-card-active .nora-avatar-circle {
+    transform: scale(1.1) rotate(5deg);
+}
+
+.nora-reviewer-details {
+    flex: 1;
+}
+
+.nora-reviewer-name {
+    margin: 0 0 4px 0;
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: var(--nora-text-primary, #1a1a1a);
+    transition: color 0.3s ease;
+}
+
+[data-theme="dark"] .nora-reviewer-name {
+    color: #ffffff;
+}
+
+.nora-reviewer-role {
+    margin: 0;
+    font-size: 0.9rem;
+    color: var(--nora-text-secondary, #666666);
+    transition: color 0.3s ease;
+}
+
+[data-theme="dark"] .nora-reviewer-role {
+    color: #b0b0b0;
+}
+
+/* Responsive Design */
+@media (max-width: 1024px) {
+    .nora-reviews-section {
+        padding: 80px 0;
+    }
+
+    .nora-reviews-main-heading {
+        font-size: 2.8rem;
+    }
+
+    .nora-reviews-grid-layout {
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 24px;
+    }
+
+    .nora-review-glass-card {
+        padding: 32px;
+    }
+}
+
+@media (max-width: 768px) {
+    .nora-reviews-section {
+        padding: 60px 0;
+    }
+
+    .nora-reviews-container-main {
+        width: 95%;
+    }
+
+    .nora-reviews-header-block {
+        margin-bottom: 50px;
+    }
+
+    .nora-reviews-badge-pill {
+        padding: 8px 24px;
         margin-bottom: 20px;
     }
 
-    .mainreviewcontainer {
+    .nora-reviews-badge-pill span {
+        font-size: 0.7rem;
+        letter-spacing: 2px;
+    }
+
+    .nora-reviews-main-heading {
+        font-size: 2.2rem;
+        margin-bottom: 16px;
+    }
+
+    .nora-reviews-sub-text {
+        font-size: 1rem;
+    }
+
+    .nora-reviews-grid-layout {
+        grid-template-columns: 1fr;
+        gap: 20px;
+    }
+
+    .nora-review-glass-card {
+        padding: 28px;
+    }
+
+    .nora-review-quote-text {
+        font-size: 0.95rem;
+        margin-bottom: 24px;
+    }
+
+    .nora-review-quote-text::before {
+        font-size: 3rem;
+        left: -15px;
+    }
+
+    .nora-avatar-circle {
+        width: 50px;
+        height: 50px;
+        font-size: 1.3rem;
+    }
+
+    .nora-reviewer-name {
+        font-size: 1rem;
+    }
+
+    .nora-reviewer-role {
+        font-size: 0.85rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .nora-reviews-section {
+        padding: 50px 0;
+    }
+
+    .nora-reviews-container-main {
         width: 100%;
-        padding-right: 0px;
-        font-size: .9em;
+        padding: 0 16px;
     }
 
-    .rvquotation {
-        width: 100%;
-        text-align: center;
+    .nora-reviews-main-heading {
+        font-size: 1.8rem;
     }
 
-    .staricon {
-        box-sizing: border-box;
-        font-size: .98em;
+    .nora-reviews-sub-text {
+        font-size: 0.9rem;
     }
 
-    .rvcovercontainer {
-        width: 100%;
-        flex-direction: column;
+    .nora-review-glass-card {
+        padding: 24px;
     }
 
-    .rating {
-        width: 100%;
-        text-align: center;
-        padding: 0px;
+    .nora-rating-stars {
+        margin-bottom: 16px;
     }
 
-    .reviewcontainer {
-        width: 100%;
-        padding: 0px;
-        display: none;
+    .nora-star-icon {
+        font-size: 1rem;
     }
 
-    .reviewcontainersmscreen {
-        display: block;
-        width: 100%;
-        padding: 0px;
+    .nora-review-quote-text {
+        font-size: 0.9rem;
+        line-height: 1.7;
     }
 
-    .reviewcontainersmscreen .reviewername {
-        justify-content: center;
-        margin-bottom: 30px;
+    .nora-card-corner-accent {
+        width: 60px;
+        height: 60px;
     }
 }

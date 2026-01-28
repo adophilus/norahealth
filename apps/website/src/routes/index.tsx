@@ -20,7 +20,7 @@ function IndexPage() {
 			<Why />
 			<Abt />
 			<TransparencySection />
-			{/* <NoraTestimonials /> */}
+			<NoraTestimonials />
 			<Footer />
 		</>
 	)
