@@ -39,30 +39,45 @@ export function Header() {
 		<header className="fixed w-full z-50 bg-background-light/90 dark:bg-background-dark/90 backdrop-blur-md border-b border-border-light dark:border-border-dark">
 			<div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
 				<div className="flex items-center gap-2">
-					<div className="w-8 h-8 bg-primary bg-black dark:bg-white rounded-lg flex items-center justify-center">
-						<img src="/icon.jpeg" className="rounded-lg" alt="logo" />
+					<div className="w-25 h-8 bg-primary dark:bg-white rounded-lg flex items-center justify-center">
+						<img src="/logo-black.png" className="rounded-lg w-20" alt="logo" />
 					</div>
-					<span className="font-bold text-xl tracking-tight">nora-health</span>
+					{/* <span className="font-bold text-xl tracking-tight"><img src="/logo-black.png" className="rounded-lg" alt="logo" /></span> */}
 				</div>
 				<nav className="hidden md:flex items-center gap-8">
 					<a
 						className="text-sm font-medium opacity-60 hover:opacity-100 transition"
 						href="/features"
 					>
-						Features
+						how to use
 					</a>
+
+					<a
+						className="text-sm font-medium opacity-60 hover:opacity-100 transition"
+						href="/features"
+					>
+						meal planner
+					</a>
+
+					<a
+						className="text-sm font-medium opacity-60 hover:opacity-100 transition"
+						href="/features"
+					>
+						work out
+					</a>
+
 					<a
 						className="text-sm font-medium opacity-60 hover:opacity-100 transition"
 						href="/faq"
 					>
-						How it Works
+						manage sub
 					</a>
-					<a
+					{/* <a
 						className="text-sm font-medium opacity-60 hover:opacity-100 transition"
 						href="/pricing"
 					>
 						Pricing
-					</a>
+					</a> */}
 				</nav>
 				<div className="flex items-center gap-4">
 					<button

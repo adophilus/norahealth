@@ -1,0 +1,349 @@
+/* How To Use NoraHealth Section - Unique Class Names */
+.nora-howto-wrapper {
+    width: 100%;
+    padding: 80px 0;
+    box-sizing: border-box;
+    transition: background 0.3s ease;
+}
+
+[data-theme="dark"] .nora-howto-wrapper {
+    background: #0a0a0a;
+}
+
+.nora-howto-container {
+    width: 90%;
+    max-width: 1200px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+/* Header Section */
+.nora-howto-header {
+    text-align: center;
+    margin-bottom: 60px;
+}
+
+.nora-howto-label {
+    display: inline-block;
+    border: 2px solid var(--dark-text);
+    padding: 8px 20px;
+    border-radius: 30px;
+    margin-bottom: 20px;
+}
+
+.nora-howto-label span {
+    color: var(--dark-text);
+    font-weight: 700;
+    font-size: 0.7rem;
+    letter-spacing: 2.5px;
+    text-transform: uppercase;
+}
+
+.nora-howto-title {
+    /* color: var(--nora-text-primary, #1a1a1a); */
+    font-size: 2.8rem;
+    font-weight: 700;
+    line-height: 1.2;
+    margin: 0 0 16px 0;
+    transition: color 0.3s ease;
+}
+
+[data-theme="dark"] .nora-howto-title {
+    color: #ffffff;
+}
+
+.nora-howto-subtitle {
+    color: var(--nora-text-secondary, #666666);
+    font-size: 1.1rem;
+    line-height: 1.6;
+    margin: 0;
+    transition: color 0.3s ease;
+}
+
+[data-theme="dark"] .nora-howto-subtitle {
+    color: #b0b0b0;
+}
+
+/* Steps Grid */
+.nora-steps-grid {
+    position: relative;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 50px;
+    width: 100%;
+}
+
+/* Connection Line Between Steps - Desktop Only */
+.nora-steps-connector {
+    display: none;
+}
+
+@media (min-width: 769px) {
+    .nora-steps-connector {
+        display: block;
+        position: absolute;
+        top: 60px;
+        left: 20%;
+        right: 20%;
+        height: 2px;
+        background: linear-gradient(to right,
+                transparent,
+                var(--nora-connector-color, #e0e0e0) 20%,
+                var(--nora-connector-color, #e0e0e0) 80%,
+                transparent);
+        z-index: 0;
+    }
+
+    [data-theme="dark"] .nora-steps-connector {
+        background: linear-gradient(to right,
+                transparent,
+                #2a2a2a 20%,
+                #2a2a2a 80%,
+                transparent);
+    }
+}
+
+/* Individual Step Card */
+.nora-step-card {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    transition: transform 0.3s ease;
+}
+
+.nora-step-card:hover {
+    transform: translateY(-8px);
+}
+
+/* Step Icon Wrapper */
+.nora-step-icon-wrapper {
+    position: relative;
+    margin-bottom: 24px;
+}
+
+.nora-step-icon-box {
+    width: 120px;
+    height: 120px;
+    border-radius: 20px;
+    background: var(--nora-step-icon-bg, #ffffff);
+    border: 2px solid var(--nora-step-border, #e0e0e0);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+}
+
+[data-theme="dark"] .nora-step-icon-box {
+    background: #1e1e1e;
+    border-color: #2a2a2a;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+}
+
+.nora-step-card:hover .nora-step-icon-box {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.12);
+}
+
+[data-theme="dark"] .nora-step-card:hover .nora-step-icon-box {
+    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.5);
+}
+
+.nora-step-icon {
+    font-size: 3.5rem;
+    color: var(--dark);
+    transition: color 0.3s ease;
+}
+
+.nora-step-emoji {
+    font-size: 3rem;
+}
+
+/* Step Number Badge */
+.nora-step-badge {
+    position: absolute;
+    bottom: -8px;
+    right: -8px;
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    background: var(--dark-text);
+    color: #ffffff;
+    font-weight: 800;
+    font-size: 0.85rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 12px rgba(255, 71, 87, 0.3);
+    border: 3px solid var(--nora-badge-border, #f8f9fa);
+    transition: all 0.3s ease;
+}
+
+[data-theme="dark"] .nora-step-badge {
+    border-color: #0a0a0a;
+}
+
+.nora-step-card:hover .nora-step-badge {
+    transform: scale(1.1);
+    box-shadow: 0 6px 16px rgba(255, 71, 87, 0.4);
+}
+
+/* Step Content */
+.nora-step-title {
+    font-size: 1.4rem;
+    font-weight: 700;
+    margin: 0 0 12px 0;
+    line-height: 1.3;
+    transition: color 0.3s ease;
+}
+
+[data-theme="dark"] .nora-step-title {
+    color: #ffffff;
+}
+
+.nora-step-description {
+    color: var(--nora-text-secondary, #666666);
+    font-size: 0.95rem;
+    line-height: 1.6;
+    margin: 0;
+    max-width: 280px;
+    transition: color 0.3s ease;
+}
+
+[data-theme="dark"] .nora-step-description {
+    color: #b0b0b0;
+}
+
+/* Responsive Design */
+@media (max-width: 968px) {
+    .nora-steps-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 40px;
+    }
+
+    .nora-step-card:last-child {
+        grid-column: 1 / -1;
+        max-width: 400px;
+        margin: 0 auto;
+    }
+}
+
+@media (max-width: 768px) {
+    .nora-howto-wrapper {
+        padding: 60px 0;
+    }
+
+    .nora-howto-container {
+        width: 95%;
+    }
+
+    .nora-howto-header {
+        margin-bottom: 50px;
+    }
+
+    .nora-howto-label {
+        padding: 6px 18px;
+        margin-bottom: 16px;
+    }
+
+    .nora-howto-label span {
+        font-size: 0.65rem;
+        letter-spacing: 2px;
+    }
+
+    .nora-howto-title {
+        font-size: 2rem;
+        margin-bottom: 12px;
+    }
+
+    .nora-howto-subtitle {
+        font-size: 1rem;
+    }
+
+    .nora-steps-grid {
+        grid-template-columns: 1fr;
+        gap: 50px;
+    }
+
+    .nora-step-card:last-child {
+        grid-column: 1;
+        max-width: 100%;
+    }
+
+    .nora-step-icon-box {
+        width: 100px;
+        height: 100px;
+    }
+
+    .nora-step-emoji {
+        font-size: 2.5rem;
+    }
+
+    .nora-step-badge {
+        width: 40px;
+        height: 40px;
+        font-size: 0.8rem;
+        bottom: -6px;
+        right: -6px;
+    }
+
+    .nora-step-title {
+        font-size: 1.2rem;
+    }
+
+    .nora-step-description {
+        font-size: 0.9rem;
+        max-width: 100%;
+    }
+}
+
+@media (max-width: 480px) {
+    .nora-howto-wrapper {
+        padding: 50px 0;
+    }
+
+    .nora-howto-container {
+        width: 100%;
+        padding: 0 16px;
+    }
+
+    .nora-howto-title {
+        font-size: 1.6rem;
+    }
+
+    .nora-howto-subtitle {
+        font-size: 0.9rem;
+    }
+
+    .nora-steps-grid {
+        gap: 40px;
+    }
+
+    .nora-step-icon-box {
+        width: 90px;
+        height: 90px;
+    }
+
+    .nora-step-emoji {
+        font-size: 2.2rem;
+    }
+
+    .nora-step-badge {
+        width: 36px;
+        height: 36px;
+        font-size: 0.75rem;
+    }
+
+    .nora-step-title {
+        font-size: 1.1rem;
+    }
+
+    .nora-step-description {
+        font-size: 0.85rem;
+    }
+}

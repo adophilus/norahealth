@@ -1,0 +1,373 @@
+/* NoraHealth Features Section - Unique Class Names */
+.nora-features-wrapper {
+    width: 100%;
+    padding: 80px 0;
+    box-sizing: border-box;
+    transition: background 0.3s ease;
+}
+
+[data-theme="dark"] .nora-features-wrapper {
+    background: #0a0a0a;
+}
+
+.nora-features-layout-split {
+    width: 90%;
+    max-width: 1400px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 60px;
+    box-sizing: border-box;
+}
+
+.nora-center {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    display: flex;
+    flex-direction: column;
+    padding: 20px;
+    box-sizing: border-box;
+}
+
+/* Left Panel - Title & Dynamic Image */
+.nora-features-left-panel {
+    width: 45%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: flex-start;
+    box-sizing: border-box;
+}
+
+.nora-features-badge {
+    display: inline-block;
+    border: 2px solid var(--dark-text);
+    padding: 10px 24px;
+    border-radius: 30px;
+    margin-bottom: 30px;
+}
+
+.nora-features-badge span {
+    color: var(--dark-text);
+    font-weight: 700;
+    font-size: 0.75rem;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+}
+
+.nora-features-heading-main {
+    font-size: 3rem;
+    font-weight: 700;
+    line-height: 1.2;
+    margin: 0 0 50px 0;
+    max-width: 100%;
+    transition: color 0.3s ease;
+    text-align: center;
+}
+
+[data-theme="dark"] .nora-features-heading-main {
+    color: #ffffff;
+}
+
+.nora-features-visual-box {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 20px;
+}
+
+/* Dynamic Showcase Display */
+.nora-showcase-display {
+    width: 100%;
+    max-width: 400px;
+    height: fit-content;
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    border-radius: 24px;
+    /* box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2); */
+    /* position: relative; */
+    overflow: hidden;
+    transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.nora-showcase-display img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 24px;
+}
+
+[data-theme="dark"].nora-showcase-display {
+    border-color: #2a2a2a;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+}
+
+/* Right Panel - Feature Items */
+.nora-features-right-panel {
+    width: 55%;
+    padding: 40px 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-sizing: border-box;
+}
+
+.nora-features-list-stack {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.nora-feature-item {
+    /* background: var(--nora-item-bg, #f8f9fa); */
+    border: 2px solid var(--nora-item-border, #e0e0e0);
+    border-radius: 16px;
+    padding: 24px 28px;
+    display: flex;
+    flex-direction: row;
+    align-items: flex-start;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    cursor: pointer;
+    position: relative;
+}
+
+[data-theme="dark"].nora-feature-item {
+    background: #1e1e1e;
+    border-color: #2a2a2a;
+}
+
+.nora-feature-item::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 4px;
+    height: 0;
+    background: var(--dark-text, #ff4757);
+    border-radius: 0 4px 4px 0;
+    transition: height 0.3s ease;
+}
+
+.nora-feature-item:hover {
+    background: var(--nora-item-hover-bg, #ffffff);
+    border-color: var(--dark-text);
+    color: var(--dark);
+    transform: translateX(8px);
+    box-shadow: 0 8px 24px rgba(255, 71, 87, 0.12);
+}
+
+[data-theme="dark"] .nora-feature-item:hover {
+    background: #252525;
+    box-shadow: 0 8px 24px rgba(255, 71, 87, 0.2);
+}
+
+.nora-feature-item-selected {
+    background: var(--nora-item-active-bg, #ffffff);
+    border-color: var(--dark-text);
+    box-shadow: 0 12px 32px rgba(255, 71, 87, 0.2);
+    transform: translateX(12px);
+}
+
+[data-theme="dark"] .nora-feature-item-selected {
+    background: #2a2a2a;
+    box-shadow: 0 12px 32px rgba(255, 71, 87, 0.3);
+}
+
+.nora-feature-item-selected::before {
+    height: 60%;
+}
+
+.nora-feature-text-block {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.nora-feature-heading {
+    font-size: 1.15rem;
+    font-weight: 700;
+    margin: 0;
+    line-height: 1.3;
+    transition: color 0.3s ease;
+}
+
+[data-theme="dark"] .nora-feature-heading {
+    color: #ffffff;
+}
+
+.nora-feature-item-selected .nora-feature-heading {
+    color: var(--dark-text);
+}
+
+.nora-feature-desc {
+    color: var(--nora-text-secondary, #666666);
+    font-size: 0.92rem;
+    line-height: 1.6;
+    margin: 0;
+    transition: color 0.3s ease;
+}
+
+[data-theme="dark"] .nora-feature-desc {
+    color: #b0b0b0;
+}
+
+.nora-feature-item-selected .nora-feature-desc {
+    color: var(--nora-text-primary, #1a1a1a);
+}
+
+[data-theme="dark"] .nora-feature-item-selected .nora-feature-desc {
+    color: #e0e0e0;
+}
+
+/* Responsive Design */
+@media (max-width: 1200px) {
+    .nora-features-layout-split {
+        gap: 40px;
+    }
+
+    .nora-features-heading-main {
+        font-size: 2.5rem;
+    }
+
+    .nora-showcase-display {
+        max-width: 450px;
+        height: 550px;
+    }
+}
+
+@media (max-width: 968px) {
+    .nora-features-layout-split {
+        flex-direction: column;
+        gap: 50px;
+    }
+
+    .nora-features-left-panel,
+    .nora-features-right-panel {
+        width: 100%;
+        padding: 20px;
+    }
+
+    .nora-features-left-panel {
+        align-items: center;
+        text-align: center;
+    }
+
+    .nora-features-heading-main {
+        font-size: 2.2rem;
+    }
+
+    .nora-showcase-display {
+        width: 100% !important;
+        height: fit-content !important;
+    }
+    .nora-showcase-display img {
+        width: 100% !important;
+        height: 70% !important;
+        object-fit: cover;
+        border-radius: 24px;
+    }
+}
+
+@media (max-width: 768px) {
+    .nora-features-wrapper {
+        padding: 60px 0;
+    }
+
+    .nora-features-layout-split {
+        width: 95%;
+        gap: 40px;
+    }
+
+    .nora-features-badge {
+        padding: 8px 20px;
+        margin-bottom: 24px;
+    }
+
+    .nora-features-badge span {
+        font-size: 0.7rem;
+        letter-spacing: 1.5px;
+    }
+
+    .nora-features-heading-main {
+        font-size: 1.8rem;
+        margin-bottom: 40px;
+    }
+
+    .nora-showcase-display {
+        max-width: 350px;
+        height: 650px;
+    }
+
+    .nora-showcase-display img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        border-radius: 24px;
+    }
+
+    .nora-features-list-stack {
+        gap: 14px;
+    }
+
+    .nora-feature-item {
+        padding: 20px 24px;
+    }
+
+    .nora-feature-item:hover,
+    .nora-feature-item-selected {
+        transform: translateY(-4px);
+    }
+
+    .nora-feature-item::before {
+        width: 3px;
+    }
+
+    .nora-feature-heading {
+        font-size: 1.05rem;
+    }
+
+    .nora-feature-desc {
+        font-size: 0.88rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .nora-features-wrapper {
+        padding: 50px 0;
+    }
+
+    .nora-features-layout-split {
+        width: 100%;
+        padding: 0 16px;
+    }
+
+    .nora-features-heading-main {
+        font-size: 1.5rem;
+        margin-bottom: 30px;
+    }
+
+    .nora-showcase-display {
+        max-width: 100%;
+        height: 400px;
+    }
+
+    .nora-feature-item {
+        padding: 18px 20px;
+    }
+
+    .nora-feature-heading {
+        font-size: 1rem;
+    }
+
+    .nora-feature-desc {
+        font-size: 0.85rem;
+        line-height: 1.5;
+    }
+}

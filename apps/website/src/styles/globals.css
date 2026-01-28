@@ -1,12 +1,39 @@
 @import url("https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Plus+Jakarta+Sans:ital,wght@0,200..800;1,200..800&display=swap");
 @import "tailwindcss";
 
+:root {
+  /* --font: 'Inter'; */
+  --font: 'Plus Jakarta Sans';
+  --color: #999696;
+  --bg-color: #f1f8fd;
+  --dark-mild: #ffffff;
+  --pri-color: #360D3A;
+  --dark: #000000;
+  --dark-text: #e66b1b;
+  /* #fd7e03 */
+  --sec: #006426;
+  --dashLight: #f2f2f2;
+
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  font-family: var(--font);
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
 @custom-variant dark (&:where(.dark, .dark *));
 
 @theme {
-  --color-primary-inverse: #ffffff;
-  --color-background-light: #ffffff;
-  --color-background-dark: #040404;
+  --color-primary-inverse: #f1f8fd;
+  --color-background-light: #f1f8fd;
+  /* --color-background-dark: #040404; */
+  --color-background-dark: #1e1a24;
   --color-surface-light: #e0e0e0;
   --color-surface-dark: #1a1a1a;
   --color-border-light: #e0e0e0;
@@ -31,7 +58,7 @@
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #333;
+  background: #fd7e03;
   border-radius: 4px;
 }
 

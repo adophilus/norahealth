@@ -1,0 +1,258 @@
+.reviewcontainerpage {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    background-color: var(--pri-color);
+    box-sizing: border-box;
+}
+
+.reviewPg {
+    width: 90%;
+    box-sizing: border-box !important;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+    align-items: center;
+    margin: 50px 0px;
+    box-sizing: border-box;
+}
+
+.mainreviewcontainer {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: flex-start;
+    box-sizing: border-box !important;
+    font-family: var(--font);
+    padding: 20px 40px;
+}
+
+.rvquotation {
+    width: 100%;
+    margin: 0;
+    padding: 20px 10px;
+    box-sizing: border-box;
+    text-transform: capitalize;
+    font-size: 1.5em;
+    color: var(--dark);
+    text-align: center;
+}
+
+.rvcovercontainer {
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    box-sizing: border-box !important;
+    font-family: var(--font);
+}
+
+.reviewcontainer {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    box-sizing: border-box;
+    box-sizing: border-box;
+    color: var(--color);
+}
+
+.reviewcontainersmscreen {
+    display: none;
+}
+
+.rvswipercontainer {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    box-sizing: border-box;
+    background-color: var(--pri-color) !important;
+}
+
+.swiperSlide {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    box-sizing: border-box !important;
+    border-radius: 0px !important;
+    box-shadow: 0px 0px 0px !important;
+    background-color: inherit !important;
+    border: 0px !important;
+}
+
+.rvswipercontainer .rvswiperSlide {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    box-sizing: border-box !important;
+    border-radius: 0px !important;
+    box-shadow: 0px 0px 0px !important;
+    background-color: var(--pri-color) !important;
+}
+
+.review {
+    border-radius: 0px !important;
+    box-shadow: 0px !important;
+    text-align: left !important;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: flex-start !important;
+}
+
+.quoteicon {
+    font-size: 2.5em;
+    color: var(--dark);
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    display: none;
+}
+
+.reviewtext {
+    font-size: .8768em;
+    font-weight: 500;
+    line-height: 1.5;
+    text-align: left;
+}
+
+.reviewername {
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    align-items: center !important;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.reviewername h5 {
+    text-transform: capitalize;
+    margin-top: 5px;
+    margin-bottom: 20px;
+    color: var(--dark-text);
+}
+
+.reviewerimg {
+    width: 50px !important;
+    height: 50px !important;
+    border-radius: 50%;
+    margin: 0;
+    object-fit: cover;
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: top;
+    border: 3px solid var(--dark-text);
+    margin-bottom: 30px;
+    display: none;
+}
+
+.rvp1 {
+    background-image: url(/rv/2.png);
+}
+
+.rvp2f {
+    background-image: url(/rv/13.png);
+}
+
+.rvp3 {
+    background-image: url(/rv/4.png);
+}
+
+.rvp4f {
+    background-image: url(/rv/fb2.png);
+}
+
+.rvp5 {
+    background-image: url(/rv/fb1.png);
+}
+
+.rvp6f {
+    background-image: url(/rv/blog.png);
+}
+
+.rvp7 {
+    background-image: url(/rv/11.png);
+}
+
+.rvp8 {
+    background-image: url(/rv/5.png);
+}
+
+
+
+
+
+
+
+
+/* SwiperSlide */
+
+
+
+@media (max-width: 990px) and (min-width: 768px) {}
+
+@media screen and (max-width: 767px) {
+
+    .reviewPg {
+        width: 90%;
+        flex-direction: column;
+    }
+
+    .divwitimg {
+        width: 100%;
+        margin-bottom: 20px;
+    }
+
+    .mainreviewcontainer {
+        width: 100%;
+        padding-right: 0px;
+        font-size: .9em;
+    }
+
+    .rvquotation {
+        width: 100%;
+        text-align: center;
+    }
+
+    .staricon {
+        box-sizing: border-box;
+        font-size: .98em;
+    }
+
+    .rvcovercontainer {
+        width: 100%;
+        flex-direction: column;
+    }
+
+    .rating {
+        width: 100%;
+        text-align: center;
+        padding: 0px;
+    }
+
+    .reviewcontainer {
+        width: 100%;
+        padding: 0px;
+        display: none;
+    }
+
+    .reviewcontainersmscreen {
+        display: block;
+        width: 100%;
+        padding: 0px;
+    }
+
+    .reviewcontainersmscreen .reviewername {
+        justify-content: center;
+        margin-bottom: 30px;
+    }
+}

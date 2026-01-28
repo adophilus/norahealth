@@ -1,15 +1,16 @@
 export function Footer() {
 	return (
 		<footer className="bg-background-light dark:bg-background-dark border-t border-border-light dark:border-border-dark py-12">
+
 			<div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row justify-between items-center gap-6">
 				<div className="flex items-center gap-2">
-					<div className="w-6 h-6 bg-primary dark:bg-white rounded flex items-center justify-center">
-						<img src="/icon.jpeg" className="rounded-lg" alt="logo" />
+					<div className="w-26 h-6 bg-primary dark:bg-white rounded flex items-center justify-center">
+						<img src="/logo-black.png" className="rounded-lg" alt="logo" />
 					</div>
-					<span className="font-bold text-lg">nora-health</span>
+					{/* <span className="font-bold text-lg">nora-health</span> */}
 				</div>
 				<div className="text-sm opacity-50">
-					© 2026 nora-health Protocol. All rights reserved.
+					© 2026. &nbsp; All rights reserved.
 				</div>
 				<div className="flex gap-6">
 					<a
@@ -17,7 +18,7 @@ export function Footer() {
 						href="https://x.com"
 					>
 						<span className="sr-only">Twitter</span>
-						{/** biome-ignore lint/a11y/noSvgWithoutTitle: this is fine */}
+						{/* * biome-ignore lint/a11y/noSvgWithoutTitle: this is fine */}
 						<svg className="h-5 w-5 fill-current" viewBox="0 0 24 24">
 							<path
 								d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.

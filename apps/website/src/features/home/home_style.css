@@ -1,0 +1,291 @@
+/* .heroSectionHM {
+    border: 4px solid red;
+    display: flex;
+    flex-direction: row;
+} */
+.landpagex {
+    width: 100%;
+    height: 80vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: flex-start;
+    box-sizing: border-box;
+    position: relative;
+    display: -webkit-flex;
+    display: -moz-flex;
+    display: -ms-flex;
+    padding: 0px !important;
+
+}
+
+.landscape {
+    width: 100%;
+    /* height: 100vh; */
+    display: flex;
+    flex-direction: row !important;
+    justify-content: space-between;
+    align-items: center;
+    box-sizing: border-box;
+    /* margin-top: 100px; */
+}
+
+.textLeft {
+    width: 50%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    box-sizing: border-box;
+    position: relative;
+    padding: 10px !important;
+}
+
+.innerText {
+    width: 90%;
+    padding-left: 10px;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    position: relative;
+}
+
+.innerText h1 {
+    text-transform: capitalize;
+    font-family: var(--font);
+    font-weight: 700;
+    font-size: 1.962em;
+}
+
+.innerText .emphasy {
+    width: 100%;
+    font-size: 2.5rem;
+    color: var(--dark-text);
+    display: block;
+    font-family: var(--font);
+    font-weight: 600;
+}
+
+.emphasy {
+    width: 100%;
+    font-size: 2.65rem !important;
+    color: var(--dark-text);
+    display: block;
+    font-family: var(--font);
+    font-weight: 600;
+}
+
+.innerText p {
+    width: 80%;
+    color: var(--color);
+    font-family: var(--font);
+    word-wrap: break-word;
+    font-size: small;
+    margin: 1px;
+    line-height: 1.58;
+    text-transform: capitalize;
+    font-weight: 500;
+}
+
+.innerText a {
+    text-decoration: none;
+}
+
+
+
+.imageRight {
+    width: 50%;
+    height: 600px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: flex-start;
+    box-sizing: border-box;
+    position: relative;
+}
+
+.imageRight img {
+    width: 100%;
+    width: fit-content;
+}
+
+.mySwiper {
+    box-sizing: border-box;
+    width: 100%;
+    padding: 0px !important;
+    box-shadow: 0px 0px 0px;
+    height: 550px;
+
+    background-image: url(/img/A1.webp);
+    background-position: center !important;
+    object-fit: cover;
+    background-blend-mode: darken;
+    background-size: cover;
+    transition: background-image 0.5s ease-in-out;
+}
+
+
+.slideContainer {
+    background-position: left;
+    background-size: cover;
+    object-fit: cover;
+    padding: 0 !important;
+    margin: 0 !important;
+    display: -webkit-flex;
+    display: -moz-flex;
+    display: -ms-flex;
+    transform: translateZ(0);
+    transition: all 0.3s ease-in-out;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+/* style for button */
+.lpButton {
+    border: none;
+    display: flex;
+    padding: 0.75rem 1.5rem;
+    background-color: var(--dark);
+    color: #ffffff;
+    font-size: 0.75rem;
+    font-family: var(--font);
+    line-height: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    text-align: center;
+    text-transform: uppercase;
+    vertical-align: middle;
+    align-items: center;
+    border-radius: 0.5rem;
+    user-select: none;
+    gap: 0.75rem;
+    transition: all 0.6s ease;
+    background-image: linear-gradient(60deg, var(--sec), var(--sec));
+}
+
+.lpButton:hover {
+    box-shadow: 0 10px 15px -3px #2c724f49, 0 4px 6px -2px #2c724f49;
+}
+
+.lpButton:focus,
+.lpButton:active {
+    opacity: 0.85;
+    box-shadow: none;
+}
+
+.lpButton svg {
+    width: 1.25rem;
+    height: 1.25rem;
+}
+
+@media (prefers-color-scheme: dark) {
+    .lpButton {
+        background-color: #fff !important;
+    }
+}
+
+
+
+
+@media (max-width: 990px) and (min-width: 768px) {}
+
+@media screen and (max-width: 767px) {
+    .landpagex {
+        width: 100%;
+        height: auto;
+    }
+
+    .landscape {
+        width: 100%;
+        height: auto;
+        flex-direction: column-reverse !important;
+        margin-top: 100px;
+        padding: 0px !important;
+    }
+
+    .textLeft {
+        width: 100%;
+        height: auto;
+        border: none;
+        padding: 0px !important;
+        justify-content: center;
+        align-items: center;
+        margin: 0 !important;
+        margin-bottom: 30px !important;
+    }
+
+    .imageRight {
+        width: 100%;
+        height: 500px;
+        border: none;
+        justify-content: center;
+        align-items: center;
+        position: relative;
+    }
+
+    .imageRight img {
+        width: 100%;
+    }
+
+    .mySwiper {
+        width: 100%;
+        margin: 0px !important;
+
+
+        background-position: center !important;
+        object-fit: cover;
+        background-size: contain;
+        background-size: 100%;
+        background-repeat: no-repeat;
+        background-blend-mode: darken;
+    }
+
+    .innerText {
+        width: 90%;
+        margin-left: 0px;
+        padding-left: 0px;
+    }
+
+    .innerText h1 {
+        font-size: 2em !important;
+        font-weight: 600;
+    }
+
+    .emphasy {
+        font-size: 1.751rem !important;
+        font-weight: bold !important;
+    }
+
+    .innerText p {
+        width: 90%;
+        line-height: 1.5;
+        font-weight: 500;
+    }
+
+    .slideContainer {
+        box-sizing: border-box;
+    }
+
+    .innerText p {
+        width: 100%;
+        word-break: normal;
+        word-wrap: break-word;
+        line-height: 2;
+        box-sizing: border-box;
+    }
+
+    .innerText a {
+        width: 100%;
+    }
+
+
+}

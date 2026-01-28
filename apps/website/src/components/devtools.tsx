@@ -5,11 +5,11 @@ export const Devtools = () =>
   import.meta.env.MODE === "development" ? (
     <TanStackDevtools
       config={{
-        position: "bottom-right",
+        position: "bottom-left",
       }}
       plugins={[
         {
-          name: "Tanstack Router",
+          name: "Tanstack Routerx",
           render: <TanStackRouterDevtoolsPanel />,
         },
       ]}
