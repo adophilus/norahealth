@@ -21,4 +21,4 @@ export class EnvSchema extends Schema.Class<EnvSchema>('EnvSchema')({
   FIREBASE_PROJECT_ID: Schema.String,
   FIREBASE_PRIVATE_KEY: Schema.String,
   FIREBASE_CLIENT_EMAIL: Schema.String
-})
+}) {}
