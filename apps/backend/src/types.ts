@@ -40,6 +40,13 @@ export namespace StorageFile {
   export type Updateable = T['Updateable']
 }
 
+export namespace AgentConversation {
+  type T = GenerateTypes<KyselyDatabaseTables['agent_conversations']>
+  export type Selectable = T['Selectable']
+  export type Insertable = T['Insertable']
+  export type Updateable = T['Updateable']
+}
+
 export namespace WaitlistEntry {
   type T = GenerateTypes<KyselyDatabaseTables['waitlist_entries']>
   export type Selectable = T['Selectable']
