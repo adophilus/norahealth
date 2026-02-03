@@ -15,9 +15,6 @@ import { Route as DashboardRouteImport } from './routes/_dashboard'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as DashboardDashboardIndexRouteImport } from './routes/_dashboard/dashboard/index'
 import { Route as DashboardDashboardSettingsRouteImport } from './routes/_dashboard/dashboard/settings'
-import { Route as DashboardDashboardIntegrationsRouteImport } from './routes/_dashboard/dashboard/integrations'
-import { Route as DashboardDashboardComposeRouteImport } from './routes/_dashboard/dashboard/compose'
-import { Route as DashboardDashboardAnalyticsRouteImport } from './routes/_dashboard/dashboard/analytics'
 
 const EmailRoute = EmailRouteImport.update({
   id: '/email',
@@ -49,32 +46,11 @@ const DashboardDashboardSettingsRoute =
     path: '/dashboard/settings',
     getParentRoute: () => DashboardRoute,
   } as any)
-const DashboardDashboardIntegrationsRoute =
-  DashboardDashboardIntegrationsRouteImport.update({
-    id: '/dashboard/integrations',
-    path: '/dashboard/integrations',
-    getParentRoute: () => DashboardRoute,
-  } as any)
-const DashboardDashboardComposeRoute =
-  DashboardDashboardComposeRouteImport.update({
-    id: '/dashboard/compose',
-    path: '/dashboard/compose',
-    getParentRoute: () => DashboardRoute,
-  } as any)
-const DashboardDashboardAnalyticsRoute =
-  DashboardDashboardAnalyticsRouteImport.update({
-    id: '/dashboard/analytics',
-    path: '/dashboard/analytics',
-    getParentRoute: () => DashboardRoute,
-  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
   '/email': typeof EmailRoute
-  '/dashboard/analytics': typeof DashboardDashboardAnalyticsRoute
-  '/dashboard/compose': typeof DashboardDashboardComposeRoute
-  '/dashboard/integrations': typeof DashboardDashboardIntegrationsRoute
   '/dashboard/settings': typeof DashboardDashboardSettingsRoute
   '/dashboard/': typeof DashboardDashboardIndexRoute
 }
@@ -82,9 +58,6 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
   '/email': typeof EmailRoute
-  '/dashboard/analytics': typeof DashboardDashboardAnalyticsRoute
-  '/dashboard/compose': typeof DashboardDashboardComposeRoute
-  '/dashboard/integrations': typeof DashboardDashboardIntegrationsRoute
   '/dashboard/settings': typeof DashboardDashboardSettingsRoute
   '/dashboard': typeof DashboardDashboardIndexRoute
 }
@@ -94,42 +67,20 @@ export interface FileRoutesById {
   '/_dashboard': typeof DashboardRouteWithChildren
   '/auth': typeof AuthRoute
   '/email': typeof EmailRoute
-  '/_dashboard/dashboard/analytics': typeof DashboardDashboardAnalyticsRoute
-  '/_dashboard/dashboard/compose': typeof DashboardDashboardComposeRoute
-  '/_dashboard/dashboard/integrations': typeof DashboardDashboardIntegrationsRoute
   '/_dashboard/dashboard/settings': typeof DashboardDashboardSettingsRoute
   '/_dashboard/dashboard/': typeof DashboardDashboardIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths:
-    | '/'
-    | '/auth'
-    | '/email'
-    | '/dashboard/analytics'
-    | '/dashboard/compose'
-    | '/dashboard/integrations'
-    | '/dashboard/settings'
-    | '/dashboard/'
+  fullPaths: '/' | '/auth' | '/email' | '/dashboard/settings' | '/dashboard/'
   fileRoutesByTo: FileRoutesByTo
-  to:
-    | '/'
-    | '/auth'
-    | '/email'
-    | '/dashboard/analytics'
-    | '/dashboard/compose'
-    | '/dashboard/integrations'
-    | '/dashboard/settings'
-    | '/dashboard'
+  to: '/' | '/auth' | '/email' | '/dashboard/settings' | '/dashboard'
   id:
     | '__root__'
     | '/'
     | '/_dashboard'
     | '/auth'
     | '/email'
-    | '/_dashboard/dashboard/analytics'
-    | '/_dashboard/dashboard/compose'
-    | '/_dashboard/dashboard/integrations'
     | '/_dashboard/dashboard/settings'
     | '/_dashboard/dashboard/'
   fileRoutesById: FileRoutesById
@@ -185,42 +136,15 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DashboardDashboardSettingsRouteImport
       parentRoute: typeof DashboardRoute
     }
-    '/_dashboard/dashboard/integrations': {
-      id: '/_dashboard/dashboard/integrations'
-      path: '/dashboard/integrations'
-      fullPath: '/dashboard/integrations'
-      preLoaderRoute: typeof DashboardDashboardIntegrationsRouteImport
-      parentRoute: typeof DashboardRoute
-    }
-    '/_dashboard/dashboard/compose': {
-      id: '/_dashboard/dashboard/compose'
-      path: '/dashboard/compose'
-      fullPath: '/dashboard/compose'
-      preLoaderRoute: typeof DashboardDashboardComposeRouteImport
-      parentRoute: typeof DashboardRoute
-    }
-    '/_dashboard/dashboard/analytics': {
-      id: '/_dashboard/dashboard/analytics'
-      path: '/dashboard/analytics'
-      fullPath: '/dashboard/analytics'
-      preLoaderRoute: typeof DashboardDashboardAnalyticsRouteImport
-      parentRoute: typeof DashboardRoute
-    }
   }
 }
 
 interface DashboardRouteChildren {
-  DashboardDashboardAnalyticsRoute: typeof DashboardDashboardAnalyticsRoute
-  DashboardDashboardComposeRoute: typeof DashboardDashboardComposeRoute
-  DashboardDashboardIntegrationsRoute: typeof DashboardDashboardIntegrationsRoute
   DashboardDashboardSettingsRoute: typeof DashboardDashboardSettingsRoute
   DashboardDashboardIndexRoute: typeof DashboardDashboardIndexRoute
 }
 
 const DashboardRouteChildren: DashboardRouteChildren = {
-  DashboardDashboardAnalyticsRoute: DashboardDashboardAnalyticsRoute,
-  DashboardDashboardComposeRoute: DashboardDashboardComposeRoute,
-  DashboardDashboardIntegrationsRoute: DashboardDashboardIntegrationsRoute,
   DashboardDashboardSettingsRoute: DashboardDashboardSettingsRoute,
   DashboardDashboardIndexRoute: DashboardDashboardIndexRoute,
 }

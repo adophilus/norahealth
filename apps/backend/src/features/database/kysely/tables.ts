@@ -33,13 +33,26 @@ type AuthTokensTable = WithImmutableId<
 
 type AuthSessionsTable = WithImmutableId<WithTimestamp<AuthSession>>
 
-type AuthProfilesTable = WithImmutableId<
-  WithTimestamp<Omit<AuthProfile, 'meta'> & { meta: string }>
->
-
 type StorageFilesTable = WithImmutableId<WithTimestamp<StorageFile>>
 
-type HealthProfilesTable = WithImmutableId<WithTimestamp<HealthProfile>>
+type HealthProfilesTable = WithImmutableId<
+  WithTimestamp<
+    Omit<
+      HealthProfile,
+      | 'injuries'
+      | 'medical_conditions'
+      | 'fitness_goals'
+      | 'allergies'
+      | 'location'
+    > & {
+      injuries: string
+      medical_conditions: string
+      fitness_goals: string
+      allergies: string
+      location: string
+    }
+  >
+>
 
 type RecipesTable = WithImmutableId<WithTimestamp<Recipe>>
 

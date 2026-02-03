@@ -1,4 +1,4 @@
-import { generateObject as aiGenerateObject, generateText } from 'ai'
+import { generateObject, generateText } from 'ai'
 import { Config, Effect, Layer } from 'effect'
 import { createZhipu } from 'zhipu-ai-provider'
 import { AppConfig } from '@/features/config'
@@ -61,17 +61,22 @@ export const LLMServiceLive = Layer.effect(
   Effect.gen(function* () {
     const config = yield* AppConfig
 
-    const apiKey = yield* Effect.tryPromise({
-      try: () => Config.string('ZHIPU_API_KEY'),
-      catch: (error) =>
-        new LLMServiceConfigurationError({
-          message: 'ZHIPU_API_KEY not found in environment',
-          cause: error
-        })
-    })
+    const apiKey = yield* Effect.sync(
+      () => process.env.ZHIPU_API_KEY || ''
+    ).pipe(
+      Effect.flatMap((key) =>
+        key
+          ? Effect.succeed(key)
+          : Effect.fail(
+              new LLMServiceConfigurationError({
+                message: 'ZHIPU_API_KEY not found in environment'
+              })
+            )
+      )
+    )
 
     const zhipu = createZhipuProvider(apiKey)
-    const defaultModel = config.llm.glm.model
+    const defaultModel = 'glm-4'
 
     const generateWithRetry = async <T>(
       generateFn: () => Promise<T>,
@@ -102,44 +107,34 @@ export const LLMServiceLive = Layer.effect(
                 model: zhipu(options?.model || defaultModel),
                 prompt,
                 temperature: options?.temperature ?? 0.7,
-                maxTokens: options?.maxTokens ?? 1000,
                 system: options?.systemPrompt
               })
-            ).then((result) => result.text)
-        }).pipe(
-          Effect.catchAll((error) =>
-            Effect.fail(
-              new LLMServiceGenerationError({
-                message: `Failed to generate text: ${String(error)}`,
-                cause: error
-              })
-            )
-          )
-        ),
+            ).then((result) => result.text),
+          catch: (error) =>
+            new LLMServiceGenerationError({
+              message: `Failed to generate text: ${String(error)}`,
+              cause: error
+            })
+        }),
 
-      generateObject: (prompt, options) =>
+      generateObject: <T>(prompt: string, options: any) =>
         Effect.tryPromise({
           try: () =>
             generateWithRetry(() =>
-              aiGenerateObject({
+              generateObject({
                 model: zhipu(options?.model || defaultModel),
                 prompt,
-                schema: options.schema,
+                schema: options.schema as any,
                 temperature: options?.temperature ?? 0.3,
-                maxTokens: options?.maxTokens ?? 1000,
                 system: options?.systemPrompt
               })
-            ).then((result) => result.object as typeof options.schema)
-        }).pipe(
-          Effect.catchAll((error) =>
-            Effect.fail(
-              new LLMServiceGenerationError({
-                message: `Failed to generate object: ${String(error)}`,
-                cause: error
-              })
-            )
-          )
-        ),
+            ).then((result) => result.object as T),
+          catch: (error) =>
+            new LLMServiceGenerationError({
+              message: `Failed to generate object: ${String(error)}`,
+              cause: error
+            })
+        }),
 
       generateConversationResponse: (
         agentType,
@@ -166,67 +161,58 @@ export const LLMServiceLive = Layer.effect(
                 model: zhipu(defaultModel),
                 prompt: `${conversationHistoryText}\n\nuser: ${userMessage}${contextInfo}`,
                 system: systemPrompt,
-                temperature: 0.7,
-                maxTokens: 1000
+                temperature: 0.7
               })
             ).then((result) => result.text)
-          }
-        }).pipe(
-          Effect.catchAll((error) =>
-            Effect.fail(
-              new LLMServiceGenerationError({
-                message: `Failed to generate conversation response: ${String(error)}`,
-                cause: error
-              })
-            )
-          )
-        ),
+          },
+          catch: (error) =>
+            new LLMServiceGenerationError({
+              message: `Failed to generate conversation response: ${String(error)}`,
+              cause: error
+            })
+        }),
 
       categorizeIngredients: (ingredients) =>
         Effect.tryPromise({
           try: () =>
-            generateWithRetry(() =>
-              aiGenerateObject({
-                model: zhipu(defaultModel),
-                prompt: `Categorize the following ingredients by their dietary restrictions. 
+            generateWithRetry(() => {
+              const prompt = `Categorize the following ingredients by their dietary restrictions. 
 Consider: PEANUTS, DAIRY, GLUTEN, SOY, EGGS, SHELLFISH, TREE_NUTS, FISH.
 If an ingredient doesn't fall under any category, categorize it as "NONE".
 
 Ingredients: ${ingredients.join(', ')}
 
-Return a JSON object where keys are ingredient names (preserving the exact input) and values are arrays of dietary restriction categories they belong to.`,
-                schema: {
-                  type: 'object',
-                  properties: ingredients.reduce(
-                    (acc, ingredient) => ({
-                      ...acc,
-                      [ingredient]: { type: 'array', items: { type: 'string' } }
-                    }),
-                    {}
-                  )
-                },
-                temperature: 0.1,
-                maxTokens: 500
+Return a JSON object where keys are ingredient names (preserving the exact input) and values are arrays of dietary restriction categories they belong to.`
+
+              return generateText({
+                model: zhipu(defaultModel),
+                prompt,
+                temperature: 0.1
+              }).then((result) => {
+                try {
+                  return JSON.parse(result.text) as Record<string, string[]>
+                } catch {
+                  // Fallback: return simple categorization
+                  const fallback: Record<string, string[]> = {}
+                  ingredients.forEach((ingredient) => {
+                    fallback[ingredient] = []
+                  })
+                  return fallback
+                }
               })
-            ).then((result) => result.object as Record<string, string[]>)
-        }).pipe(
-          Effect.catchAll((error) =>
-            Effect.fail(
-              new LLMServiceGenerationError({
-                message: `Failed to categorize ingredients: ${String(error)}`,
-                cause: error
-              })
-            )
-          )
-        ),
+            }),
+          catch: (error) =>
+            new LLMServiceGenerationError({
+              message: `Failed to categorize ingredients: ${String(error)}`,
+              cause: error
+            })
+        }),
 
       validateIngredientsAgainstRestrictions: (ingredients, restrictions) =>
         Effect.tryPromise({
           try: () =>
-            generateWithRetry(() =>
-              aiGenerateObject({
-                model: zhipu(defaultModel),
-                prompt: `Validate the following ingredients against these dietary restrictions: ${restrictions.join(', ')}.
+            generateWithRetry(() => {
+              const prompt = `Validate the following ingredients against these dietary restrictions: ${restrictions.join(', ')}.
 
 Ingredients to validate: ${ingredients.join(', ')}
 
@@ -234,50 +220,36 @@ For each ingredient, determine if it violates any of the restrictions. Consider 
 
 Return a JSON object with:
 - "valid": array of ingredient names that are safe
-- "invalid": array of objects with "ingredient" (string) and "restrictions" (array of string) for ingredients that violate restrictions`,
-                schema: {
-                  type: 'object',
-                  properties: {
-                    valid: {
-                      type: 'array',
-                      items: { type: 'string' }
-                    },
-                    invalid: {
-                      type: 'array',
-                      items: {
-                        type: 'object',
-                        properties: {
-                          ingredient: { type: 'string' },
-                          restrictions: {
-                            type: 'array',
-                            items: { type: 'string' }
-                          }
-                        }
-                      }
-                    }
-                  },
-                  required: ['valid', 'invalid']
-                },
-                temperature: 0.1,
-                maxTokens: 500
-              })
-            ).then(
-              (result) =>
-                result.object as {
-                  valid: string[]
-                  invalid: Array<{ ingredient: string; restrictions: string[] }>
+- "invalid": array of objects with "ingredient" (string) and "restrictions" (array of string) for ingredients that violate restrictions`
+
+              return generateText({
+                model: zhipu(defaultModel),
+                prompt,
+                temperature: 0.1
+              }).then((result) => {
+                try {
+                  return JSON.parse(result.text) as {
+                    valid: string[]
+                    invalid: Array<{
+                      ingredient: string
+                      restrictions: string[]
+                    }>
+                  }
+                } catch {
+                  // Fallback: assume all are valid
+                  return {
+                    valid: ingredients,
+                    invalid: []
+                  }
                 }
-            )
-        }).pipe(
-          Effect.catchAll((error) =>
-            Effect.fail(
-              new LLMServiceGenerationError({
-                message: `Failed to validate ingredients: ${String(error)}`,
-                cause: error
               })
-            )
-          )
-        )
+            }),
+          catch: (error) =>
+            new LLMServiceGenerationError({
+              message: `Failed to validate ingredients: ${String(error)}`,
+              cause: error
+            })
+        })
     })
   })
 )

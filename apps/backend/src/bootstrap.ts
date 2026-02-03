@@ -1,6 +1,11 @@
 import { createServer } from 'node:http'
 import { DevTools } from '@effect/experimental'
-import { HttpApiBuilder, HttpMiddleware, HttpServer } from '@effect/platform'
+import {
+  HttpApiBuilder,
+  HttpMiddleware,
+  HttpServer,
+  NodeHttpServer
+} from '@effect/platform-node'
 import { Api } from '@nora-health/api'
 import { Console, Data, Effect, Layer, Logger } from 'effect'
 import type { MigrationResultSet } from 'kysely'
@@ -16,7 +21,18 @@ import {
 } from './features/auth'
 import { AppConfig } from './features/config'
 import { KyselyClient } from './features/database/kysely'
+import { SqliteKyselyClientLive } from './features/database/kysely/db/sqlite'
 import { createKyselyMigrator } from './features/database/kysely/migrator'
+import {
+  HealthProfileServiceLive,
+  KyselyHealthProfileRepositoryLive
+} from './features/health-profile'
+import {
+  KyselyAgentConversationRepositoryLive,
+  LLMServiceLive
+} from './features/llm'
+import { AgentApiLive } from './features/llm/AgentApiLive'
+import { NodemailerMailerLive } from './features/mailer/service/nodemailer'
 import {
   KyselyStorageRepositoryLive,
   StorageApiLive,
@@ -67,6 +83,14 @@ export const UserDepLayer = UserServiceLive.pipe(
   Layer.provideMerge(KyselyStorageRepositoryLive)
 )
 
+export const HealthProfileDepLayer = HealthProfileServiceLive.pipe(
+  Layer.provideMerge(KyselyHealthProfileRepositoryLive)
+)
+
+export const LLMDepLayer = LLMServiceLive.pipe(
+  Layer.provideMerge(KyselyAgentConversationRepositoryLive)
+)
+
 export const AuthDepLayer = AuthSessionServiceLive.pipe(
   Layer.provideMerge(EmailAuthTokenServiceLive),
   Layer.provideMerge(AuthProfileServiceLive),
@@ -78,15 +102,18 @@ export const AuthDepLayer = AuthSessionServiceLive.pipe(
 export const DepLayer = AuthDepLayer.pipe(
   Layer.provideMerge(DatabaseLayer),
   Layer.provideMerge(UserDepLayer),
+  Layer.provideMerge(HealthProfileDepLayer),
   Layer.provideMerge(StorageDepLayer),
-  Layer.provideMerge(MailerLayer)
+  Layer.provideMerge(MailerLayer),
+  Layer.provideMerge(LLMDepLayer)
 )
 
 // Removed: PostDepLayer, IntegrationsDepLayer, FarcasterDepLayer, WaitlistDepLayer
 
 export const ApiEndpointLayer = AuthApiLive.pipe(
   Layer.provideMerge(UserApiLive),
-  Layer.provideMerge(StorageApiLive)
+  Layer.provideMerge(StorageApiLive),
+  Layer.provideMerge(AgentApiLive)
   // Removed: WaitlistApiLive, PostApiLive, IntegrationsApiLive, NeynarApiLive
 )
 

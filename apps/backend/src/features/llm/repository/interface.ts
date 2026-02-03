@@ -1,9 +1,29 @@
+import type { AgentConversation } from '@nora-health/domain'
 import { Context, type Effect, type Option } from 'effect'
-import type { AgentConversation } from '@/types'
 import type {
   AgentConversationRepositoryError,
   AgentConversationRepositoryNotFoundError
 } from './error'
+
+export interface AgentConversationPayload {
+  user_id: string
+  agent_type: 'INTAKE_SAFETY' | 'MEAL_PLANNER' | 'EXERCISE_COACH' | 'LOGISTICS'
+  messages: Array<{
+    role: 'user' | 'assistant' | 'system'
+    content: string
+    timestamp?: number | null
+  }>
+  context?: string | null
+}
+
+export interface AgentConversationUpdatePayload {
+  messages?: Array<{
+    role: 'user' | 'assistant' | 'system'
+    content: string
+    timestamp?: number | null
+  }>
+  context?: string | null
+}
 
 export class AgentConversationRepository extends Context.Tag(
   'AgentConversationRepository'
@@ -11,34 +31,25 @@ export class AgentConversationRepository extends Context.Tag(
   AgentConversationRepository,
   {
     create: (
-      payload: Omit<AgentConversation.Insertable, 'id' | 'created_at'>
-    ) => Effect.Effect<
-      AgentConversation.Selectable,
-      AgentConversationRepositoryError
-    >
+      payload: AgentConversationPayload
+    ) => Effect.Effect<AgentConversation, AgentConversationRepositoryError>
 
     findById: (
       id: string
     ) => Effect.Effect<
-      Option.Option<AgentConversation.Selectable>,
+      Option.Option<AgentConversation>,
       AgentConversationRepositoryError
     >
 
     findByUserId: (
       userId: string,
       agentType?: string
-    ) => Effect.Effect<
-      AgentConversation.Selectable[],
-      AgentConversationRepositoryError
-    >
+    ) => Effect.Effect<AgentConversation[], AgentConversationRepositoryError>
 
     updateById: (
       id: string,
-      payload: Partial<Omit<AgentConversation.Updateable, 'id' | 'created_at'>>
-    ) => Effect.Effect<
-      AgentConversation.Selectable,
-      AgentConversationRepositoryError
-    >
+      payload: AgentConversationUpdatePayload
+    ) => Effect.Effect<AgentConversation, AgentConversationRepositoryError>
 
     deleteById: (
       id: string

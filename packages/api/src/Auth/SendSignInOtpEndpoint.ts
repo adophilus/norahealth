@@ -16,7 +16,10 @@ export class SendSignInOtpRequestBody extends Schema.Class<SendSignInOtpRequestB
 
 export class SendSignInOtpSuccessResponse extends Schema.TaggedClass<SendSignInOtpSuccessResponse>()(
   'SendSignInOtpResponse',
-  {}
+  {
+    otp_sent: Schema.Boolean,
+    needs_onboarding: Schema.Boolean
+  }
 ) {}
 
 const SendSignInOtpEndpoint = HttpApiEndpoint.post(

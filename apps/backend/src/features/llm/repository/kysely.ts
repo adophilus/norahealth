@@ -15,18 +15,19 @@ export const KyselyAgentConversationRepositoryLive = Layer.effect(
     return AgentConversationRepository.of({
       create: (payload) =>
         Effect.gen(function* () {
-          const id = ulid()
           const conversation = yield* Effect.tryPromise({
             try: () =>
               db
                 .insertInto('agent_conversations')
                 .values({
+                  id: ulid(),
                   user_id: payload.user_id,
                   agent_type: payload.agent_type as any,
                   messages: payload.messages,
                   context: payload.context,
-                  created_at: Date.now()
-                })
+                  created_at: Date.now(),
+                  updated_at: null
+                } as any)
                 .returningAll()
                 .executeTakeFirstOrThrow(),
             catch: (error) =>
@@ -36,7 +37,7 @@ export const KyselyAgentConversationRepositoryLive = Layer.effect(
               })
           })
 
-          return { ...conversation, id }
+          return conversation
         }),
 
       findById: (id) =>
@@ -65,7 +66,7 @@ export const KyselyAgentConversationRepositoryLive = Layer.effect(
             .where('user_id', '=', userId)
 
           if (agentType) {
-            query = query.where('agent_type', '=', agentType)
+            query = query.where('agent_type', '=', agentType as any)
           }
 
           const conversations = yield* Effect.tryPromise({

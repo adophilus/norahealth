@@ -1,15 +1,35 @@
 import type { Kysely } from 'kysely'
 
-// `any` is required here since migrations should be frozen in time. alternatively, keep a "snapshot" db interface.
 export async function up(db: Kysely<any>): Promise<void> {
-	// up migration code goes here...
-	// note: up migrations are mandatory. you must implement this function.
-	// For more info, see: https://kysely.dev/docs/migrations
+  await db.schema
+    .createTable('health_profiles')
+    .addColumn('id', 'text', (col) => col.primaryKey())
+    .addColumn('user_id', 'text', (col) => col.notNull())
+    .addColumn('name', 'text', (col) => col.notNull())
+    .addColumn('email', 'text', (col) => col.notNull())
+    .addColumn('age_group', 'text', (col) => col.notNull())
+    .addColumn('gender', 'text', (col) => col.notNull())
+    .addColumn('weight_class', 'text', (col) => col.notNull())
+    .addColumn('injuries', 'text', (col) => col.notNull()) // JSON string
+    .addColumn('medical_conditions', 'text', (col) => col.notNull()) // JSON string
+    .addColumn('fitness_goals', 'text', (col) => col.notNull()) // JSON string
+    .addColumn('weekly_workout_time', 'integer', (col) => col.notNull())
+    .addColumn('allergies', 'text', (col) => col.notNull()) // JSON string
+    .addColumn('location', 'text', (col) => col.notNull()) // JSON string
+    .addColumn('onboarding_completed', 'integer', (col) => col.defaultTo(0))
+    .addColumn('onboarding_completed_at', 'bigint')
+    .addColumn('created_at', 'bigint', (col) => col.notNull())
+    .addColumn('updated_at', 'bigint', (col) => col.defaultTo(null))
+    .addForeignKeyConstraint(
+      'health_profiles_user_id_fk',
+      ['user_id'],
+      'users',
+      ['id'],
+      (fk) => fk.onDelete('cascade')
+    )
+    .execute()
 }
 
-// `any` is required here since migrations should be frozen in time. alternatively, keep a "snapshot" db interface.
 export async function down(db: Kysely<any>): Promise<void> {
-	// down migration code goes here...
-	// note: down migrations are optional. you can safely delete this function.
-	// For more info, see: https://kysely.dev/docs/migrations
+  await db.schema.dropTable('health_profiles').ifExists().execute()
 }

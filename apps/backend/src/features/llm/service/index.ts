@@ -3,11 +3,9 @@ export {
   type DietaryExclusion,
   type IngredientInfo,
   IngredientService,
-  type LLMServiceOperationError,
+  type IngredientServiceOperationError,
   type ValidationResult
 } from './ingredient'
 export * from './ingredient-live'
 export * from './interface'
-export * from './interface'
-export * from './live'
 export * from './live'

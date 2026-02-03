@@ -1,4 +1,4 @@
-import type { AgentType } from '@nora-health/domain'
+import type { AgentConversation, AgentType } from '@nora-health/domain'
 import { Context, type Effect } from 'effect'
 import type {
   LLMServiceError,
@@ -46,7 +46,11 @@ export class LLMService extends Context.Tag('LLMService')<
     >
 
     generateConversationResponse: (
-      agentType: AgentType,
+      agentType:
+        | 'INTAKE_SAFETY'
+        | 'MEAL_PLANNER'
+        | 'EXERCISE_COACH'
+        | 'LOGISTICS',
       conversationHistory: ConversationMessage[],
       userMessage: string,
       context?: Record<string, unknown>
