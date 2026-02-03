@@ -4,6 +4,7 @@ import { StatusCodes } from 'http-status-codes'
 import {
   BadRequestError,
   Email,
+  EmptyMessage,
   TokenNotExpiredError,
   UnexpectedError
 } from '../common'
@@ -14,20 +15,12 @@ export class SendSignInOtpRequestBody extends Schema.Class<SendSignInOtpRequestB
   email: Email
 }) {}
 
-export class SendSignInOtpSuccessResponse extends Schema.TaggedClass<SendSignInOtpSuccessResponse>()(
-  'SendSignInOtpResponse',
-  {
-    otp_sent: Schema.Boolean,
-    needs_onboarding: Schema.Boolean
-  }
-) {}
-
 const SendSignInOtpEndpoint = HttpApiEndpoint.post(
   'sendSignInOtp',
   '/auth/sign-in/strategy/email'
 )
   .setPayload(SendSignInOtpRequestBody)
-  .addSuccess(SendSignInOtpSuccessResponse, { status: StatusCodes.OK })
+  .addSuccess(EmptyMessage, { status: StatusCodes.NO_CONTENT })
   .addError(TokenNotExpiredError, {
     status: StatusCodes.BAD_REQUEST
   })

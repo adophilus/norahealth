@@ -1,35 +1,35 @@
-import { Effect, Layer, Option } from 'effect'
-import { UserService } from './interface'
+import { Effect, Layer, Option } from "effect";
+import { UserService } from "./interface";
 import {
   UserServiceEmailAlreadyInUseError,
   UserServiceError,
-  UserServiceNotFoundError
-} from './error'
-import { UserRepository } from '../repository'
-import { ulid } from 'ulidx'
-import { User } from '@nora-health/domain'
-import { getUnixTime } from 'date-fns'
+  UserServiceNotFoundError,
+} from "./error";
+import { UserRepository } from "../repository";
+import { ulid } from "ulidx";
+import { User } from "@nora-health/domain";
+import { getUnixTime } from "date-fns";
 
 export const UserServiceLive = Layer.effect(
   UserService,
   Effect.gen(function* () {
-    const userRepository = yield* UserRepository
+    const userRepository = yield* UserRepository;
 
     return UserService.of({
       create: (payload) =>
         Effect.gen(function* () {
           const userSelectable = yield* userRepository.create({
+            id: ulid(),
             ...payload,
-            id: ulid()
-          })
-          return User.make(userSelectable)
+          });
+          return User.make(userSelectable);
         }).pipe(
           Effect.catchTags({
             UserRepositoryEmailAlreadyInUseError: (error) =>
               new UserServiceEmailAlreadyInUseError({ message: error.message }),
             UserRepositoryError: (error) =>
-              new UserServiceError({ message: error.message })
-          })
+              new UserServiceError({ message: error.message }),
+          }),
         ),
 
       findById: (id) =>
@@ -38,13 +38,13 @@ export const UserServiceLive = Layer.effect(
             Option.match({
               onSome: (userSelectable) =>
                 Effect.succeed(User.make(userSelectable)),
-              onNone: () => Effect.fail(new UserServiceNotFoundError({}))
-            })
+              onNone: () => Effect.fail(new UserServiceNotFoundError({})),
+            }),
           ),
           Effect.catchTags({
             UserRepositoryError: (error) =>
-              new UserServiceError({ message: error.message })
-          })
+              new UserServiceError({ message: error.message }),
+          }),
         ),
 
       findByEmail: (email) =>
@@ -53,27 +53,27 @@ export const UserServiceLive = Layer.effect(
             Option.match({
               onSome: (userSelectable) =>
                 Effect.succeed(User.make(userSelectable)),
-              onNone: () => Effect.fail(new UserServiceNotFoundError({}))
-            })
+              onNone: () => Effect.fail(new UserServiceNotFoundError({})),
+            }),
           ),
           Effect.catchTags({
             UserRepositoryError: (error) =>
-              new UserServiceError({ message: error.message })
-          })
+              new UserServiceError({ message: error.message }),
+          }),
         ),
 
       verifyById: (id) =>
         userRepository
           .updateById(id, {
-            status: 'VERIFIED',
-            verified_at: getUnixTime(new Date())
+            status: "VERIFIED",
+            verified_at: getUnixTime(new Date()),
           })
           .pipe(
             Effect.map((userSelectable) => User.make(userSelectable)),
             Effect.catchTags({
               UserRepositoryError: (error) =>
-                new UserServiceError({ message: error.message })
-            })
+                new UserServiceError({ message: error.message }),
+            }),
           ),
 
       updateById: (id, payload) =>
@@ -81,8 +81,8 @@ export const UserServiceLive = Layer.effect(
           Effect.map((userSelectable) => User.make(userSelectable)),
           Effect.catchTags({
             UserRepositoryError: (error) =>
-              new UserServiceError({ message: error.message })
-          })
+              new UserServiceError({ message: error.message }),
+          }),
         ),
 
       deleteById: (id) =>
@@ -91,9 +91,9 @@ export const UserServiceLive = Layer.effect(
             UserRepositoryNotFoundError: (error) =>
               new UserServiceNotFoundError({ cause: error }),
             UserRepositoryError: (error) =>
-              new UserServiceError({ message: error.message })
-          })
-        )
-    })
-  })
-)
+              new UserServiceError({ message: error.message }),
+          }),
+        ),
+    });
+  }),
+);

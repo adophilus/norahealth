@@ -1,7 +1,7 @@
 import { HttpApiBuilder } from '@effect/platform'
 import { Api } from '@nora-health/api'
-import { SendSignInOtpSuccessResponse } from '@nora-health/api/Auth/SendSignInOtpEndpoint'
 import {
+  EmptyMessage,
   TokenNotExpiredError,
   UnexpectedError
 } from '@nora-health/api/common/index'
@@ -13,13 +13,10 @@ export const SendSignInOtpEndpointLive = HttpApiBuilder.handler(
   'Auth',
   'sendSignInOtp',
   ({ payload }) =>
-    Effect.gen(function* () {
-      const { isNewUser } = yield* sendSignInOtpUseCase(payload)
+    Effect.gen(function*() {
+      yield* sendSignInOtpUseCase(payload)
 
-      return new SendSignInOtpSuccessResponse({
-        otp_sent: true,
-        needs_onboarding: isNewUser
-      })
+      return new EmptyMessage({})
     }).pipe(
       Effect.mapError((error) => {
         if (error._tag !== 'AuthTokenServiceTokenNotExpiredError') {
