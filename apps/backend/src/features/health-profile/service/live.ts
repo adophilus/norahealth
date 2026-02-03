@@ -1,4 +1,4 @@
-import { Effect, Layer, Schema } from 'effect'
+import { Effect, Layer, Schema, Option } from 'effect'
 import { HealthProfileRepository } from '../repository'
 import { HealthProfileService } from './interface'
 import type { HealthProfile as THealthProfile } from '@/types'
@@ -10,6 +10,11 @@ import {
   Location,
   Injury
 } from '@nora-health/domain'
+import {
+  HealthProfileServiceError,
+  HealthProfileServiceNotFoundError
+} from './error'
+import { getUnixTime } from 'date-fns'
 
 export const HealthProfileServiceLive = Layer.effect(
   HealthProfileService,
@@ -49,7 +54,7 @@ export const HealthProfileServiceLive = Layer.effect(
       }).pipe(
         Effect.mapError(
           (error) =>
-            new HealthProfileRepositoryError({
+            new HealthProfileServiceError({
               message: 'Failed to decode health profile',
               cause: error
             })
@@ -57,27 +62,38 @@ export const HealthProfileServiceLive = Layer.effect(
       )
 
     return HealthProfileService.of({
-      create: (healthProfile) =>
-        Effect.gen(function* () {
-          const now = Date.now()
-          const createdHealthProfile = yield* healthProfileRepository.create({
-            ...healthProfile,
-            created_at: now,
-            updated_at: now
+      create: (payload) =>
+        healthProfileRepository
+          .create({
+            ...payload,
+            injuries: JSON.stringify(payload.injuries),
+            medical_conditions: JSON.stringify(payload.medical_conditions),
+            fitness_goals: JSON.stringify(payload.fitness_goals),
+            allergies: JSON.stringify(payload.allergies),
+            location: JSON.stringify(payload.location)
           })
-          return createdHealthProfile
-        }).pipe(
-          Effect.catchTags({
-            HealthProfileRepositoryError: (error) =>
-              new HealthProfileServiceError({ message: error.message })
-          })
-        ),
+          .pipe(
+            Effect.flatMap(toDomain),
+            Effect.catchTags({
+              HealthProfileRepositoryError: (error) =>
+                new HealthProfileServiceError({
+                  message: error.message,
+                  cause: error
+                })
+            })
+          ),
 
       findById: (id) =>
         healthProfileRepository.findById(id).pipe(
+          Effect.flatMap(
+            Option.match({
+              onSome: Effect.succeed,
+              onNone: () =>
+                Effect.fail(new HealthProfileServiceNotFoundError({}))
+            })
+          ),
+          Effect.flatMap(toDomain),
           Effect.catchTags({
-            HealthProfileRepositoryNotFoundError: (error) =>
-              new HealthProfileServiceNotFoundError({ id: error.id }),
             HealthProfileRepositoryError: (error) =>
               new HealthProfileServiceError({ message: error.message })
           })
@@ -85,38 +101,67 @@ export const HealthProfileServiceLive = Layer.effect(
 
       findByUserId: (userId) =>
         healthProfileRepository.findByUserId(userId).pipe(
+          Effect.flatMap(
+            Option.match({
+              onSome: Effect.succeed,
+              onNone: () =>
+                Effect.fail(new HealthProfileServiceNotFoundError({}))
+            })
+          ),
+          Effect.flatMap(toDomain),
           Effect.catchTags({
-            HealthProfileRepositoryNotFoundError: (error) =>
-              new HealthProfileServiceNotFoundError({ id: error.id }),
             HealthProfileRepositoryError: (error) =>
               new HealthProfileServiceError({ message: error.message })
           })
         ),
 
-      update: (id, healthProfile) =>
-        Effect.gen(function* () {
-          const updatedHealthProfile = yield* healthProfileRepository.update(
-            id,
-            {
-              ...healthProfile,
-              updated_at: Date.now()
-            }
-          )
-          return updatedHealthProfile
-        }).pipe(
-          Effect.catchTags({
-            HealthProfileRepositoryNotFoundError: (error) =>
-              new HealthProfileServiceNotFoundError({ id: error.id }),
-            HealthProfileRepositoryError: (error) =>
-              new HealthProfileServiceError({ message: error.message })
+      update: (id, payload) =>
+        healthProfileRepository
+          .update(id, {
+            ...payload,
+            injuries: payload.injuries
+              ? JSON.stringify(payload.injuries)
+              : undefined,
+            medical_conditions: payload.medical_conditions
+              ? JSON.stringify(payload.medical_conditions)
+              : undefined,
+            fitness_goals: payload.fitness_goals
+              ? JSON.stringify(payload.fitness_goals)
+              : undefined,
+            allergies: payload.allergies
+              ? JSON.stringify(payload.allergies)
+              : undefined,
+            location: payload.location
+              ? JSON.stringify(payload.location)
+              : undefined,
+            updated_at: getUnixTime(new Date())
           })
-        ),
+          .pipe(
+            Effect.flatMap(
+              Option.match({
+                onSome: Effect.succeed,
+                onNone: () =>
+                  Effect.fail(new HealthProfileServiceNotFoundError({}))
+              })
+            ),
+            Effect.flatMap(toDomain),
+            Effect.catchTags({
+              HealthProfileRepositoryError: (error) =>
+                new HealthProfileServiceError({ message: error.message })
+            })
+          ),
 
       delete: (id) =>
         healthProfileRepository.delete(id).pipe(
+          Effect.flatMap(
+            Option.match({
+              onSome: Effect.succeed,
+              onNone: () =>
+                Effect.fail(new HealthProfileServiceNotFoundError({}))
+            })
+          ),
+          Effect.flatMap(toDomain),
           Effect.catchTags({
-            HealthProfileRepositoryNotFoundError: (error) =>
-              new HealthProfileServiceNotFoundError({ id: error.id }),
             HealthProfileRepositoryError: (error) =>
               new HealthProfileServiceError({ message: error.message })
           })

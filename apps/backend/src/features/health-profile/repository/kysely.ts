@@ -14,14 +14,7 @@ export const KyselyHealthProfileRepositoryLive = Layer.effect(
           try: () =>
             db
               .insertInto('health_profiles')
-              .values({
-                ...payload,
-                injuries: JSON.stringify(payload.injuries),
-                medical_conditions: JSON.stringify(payload.medical_conditions),
-                fitness_goals: JSON.stringify(payload.fitness_goals),
-                allergies: JSON.stringify(payload.allergies),
-                location: JSON.stringify(payload.location)
-              })
+              .values(payload)
               .returningAll()
               .executeTakeFirstOrThrow(),
           catch: (error) =>
@@ -68,24 +61,7 @@ export const KyselyHealthProfileRepositoryLive = Layer.effect(
           try: () =>
             db
               .updateTable('health_profiles')
-              .set({
-                ...payload,
-                injuries: payload.injuries
-                  ? JSON.stringify(payload.injuries)
-                  : undefined,
-                medical_conditions: payload.medical_conditions
-                  ? JSON.stringify(payload.medical_conditions)
-                  : undefined,
-                fitness_goals: payload.fitness_goals
-                  ? JSON.stringify(payload.fitness_goals)
-                  : undefined,
-                allergies: payload.allergies
-                  ? JSON.stringify(payload.allergies)
-                  : undefined,
-                location: payload.location
-                  ? JSON.stringify(payload.location)
-                  : undefined
-              })
+              .set(payload)
               .where('id', '=', id)
               .returningAll()
               .executeTakeFirst()

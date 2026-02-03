@@ -9,7 +9,7 @@ export class HealthProfileRepository extends Context.Tag(
   {
     create(
       payload: Omit<
-        HealthProfile.Selectable,
+        HealthProfile.Insertable,
         'id' | 'created_at' | 'updated_at'
       >
     ): Effect.Effect<
