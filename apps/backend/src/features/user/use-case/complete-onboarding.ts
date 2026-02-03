@@ -7,7 +7,7 @@ export const completeOnboardingUseCase = (
   payload: CompleteOnboardingRequestBody,
   user: User,
 ) =>
-  Effect.gen(function*() {
+  Effect.gen(function* () {
     const healthProfileService = yield* HealthProfileService
 
     yield* healthProfileService.create({
