@@ -1,51 +1,64 @@
 import type { HealthProfile } from '@nora-health/domain'
-import { Context, Data, type Effect } from 'effect'
+import type { HealthProfile as THealthProfile } from '@/types'
+import { Context, type Effect } from 'effect'
+import type {
+  HealthProfileServiceError,
+  HealthProfileServiceNotFoundError
+} from './error'
 
-export interface HealthProfileService {
-  create(
-    healthProfile: Omit<HealthProfile, 'id' | 'created_at' | 'updated_at'>
-  ): Effect.Effect<HealthProfile, HealthProfileServiceError, never>
+type ComplexKeys =
+  | 'injuries'
+  | 'medical_conditions'
+  | 'fitness_goals'
+  | 'allergies'
+  | 'location'
 
-  findById(
-    id: string
-  ): Effect.Effect<
-    HealthProfile,
-    HealthProfileServiceError | HealthProfileServiceNotFoundError,
-    never
-  >
-
-  findByUserId(
-    userId: string
-  ): Effect.Effect<
-    HealthProfile,
-    HealthProfileServiceError | HealthProfileServiceNotFoundError,
-    never
-  >
-  update(
-    id: string,
-    healthProfile: Partial<HealthProfile>
-  ): Effect.Effect<
-    HealthProfile,
-    HealthProfileServiceError | HealthProfileServiceNotFoundError,
-    never
-  >
-  delete(
-    id: string
-  ): Effect.Effect<
-    void,
-    HealthProfileServiceError | HealthProfileServiceNotFoundError,
-    never
-  >
+type ComplexFields = {
+  injuries: HealthProfile['injuries']
+  medical_conditions: HealthProfile['medical_conditions']
+  fitness_goals: HealthProfile['fitness_goals']
+  allergies: HealthProfile['allergies']
+  location: HealthProfile['location']
 }
 
-export class HealthProfileServiceError extends Data.TaggedError(
-  'HealthProfileServiceError'
-)<{ readonly message: string; readonly cause?: unknown }> {}
+export class HealthProfileService extends Context.Tag('HealthProfileService')<
+  HealthProfileService,
+  {
+    create(
+      payload: Omit<THealthProfile.Insertable, 'id' | ComplexKeys> &
+        ComplexFields
+    ): Effect.Effect<HealthProfile, HealthProfileServiceError, never>
 
-export class HealthProfileServiceNotFoundError extends Data.TaggedError(
-  'HealthProfileServiceNotFoundError'
-)<{ readonly id: string; readonly cause?: unknown }> {}
+    findById(
+      id: string
+    ): Effect.Effect<
+      HealthProfile,
+      HealthProfileServiceError | HealthProfileServiceNotFoundError,
+      never
+    >
 
-export const HealthProfileService = Context.GenericTag<HealthProfileService>(
-  'HealthProfileService'
-)
+    findByUserId(
+      userId: string
+    ): Effect.Effect<
+      HealthProfile,
+      HealthProfileServiceError | HealthProfileServiceNotFoundError,
+      never
+    >
+    update(
+      id: string,
+      payload: Omit<THealthProfile.Updateable, ComplexKeys> &
+        Partial<ComplexFields>
+    ): Effect.Effect<
+      HealthProfile,
+      HealthProfileServiceError | HealthProfileServiceNotFoundError,
+      never
+    >
+    delete(
+      id: string
+    ): Effect.Effect<
+      HealthProfile,
+      HealthProfileServiceError | HealthProfileServiceNotFoundError,
+      never
+    >
+  }
+>() {}

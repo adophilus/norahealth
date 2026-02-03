@@ -48,7 +48,7 @@ export const Location = Schema.Struct({
   city: Schema.String
 })
 
-export const InjuryType = Schema.Literal(
+export const Injury = Schema.Literal(
   'KNEE',
   'SHOULDER',
   'BACK',
@@ -60,6 +60,11 @@ export const InjuryType = Schema.Literal(
   'FOOT'
 )
 
+export const MedicalConditions = Schema.Record({
+  key: Schema.String,
+  value: Schema.Any
+})
+
 export class HealthProfile extends Schema.Class<HealthProfile>('HealthProfile')(
   {
     id: Id,
@@ -69,11 +74,8 @@ export class HealthProfile extends Schema.Class<HealthProfile>('HealthProfile')(
     age_group: AgeGroup,
     gender: Schema.Literal('MALE', 'FEMALE', 'RATHER_NOT_SAY'),
     weight_class: WeightClass,
-    injuries: Schema.Array(InjuryType),
-    medical_conditions: Schema.Record({
-      key: Schema.String,
-      value: Schema.Any
-    }),
+    injuries: Schema.Array(Injury),
+    medical_conditions: MedicalConditions,
     fitness_goals: Schema.Array(FitnessGoal),
     weekly_workout_time: Schema.Number,
     allergies: Schema.Array(Allergen),
