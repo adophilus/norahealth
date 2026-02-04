@@ -1,6 +1,5 @@
 import type {
   AgentConversation,
-  AuthProfile,
   AuthSession,
   AuthToken,
   DailyMealPlan,

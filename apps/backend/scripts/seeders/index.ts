@@ -19,15 +19,9 @@ const cli = Command.make(
 
       yield* Effect.logDebug('🌱 Starting meal database seeding...')
 
-      const result = yield* seedMeals(config)
+      yield* seedMeals(config)
 
-      if (result.dryRun) {
-        yield* Effect.logDebug('🧪 Dry run completed successfully')
-      } else {
-        yield* Effect.logDebug(
-          '✅ Meal database seeding completed successfully!'
-        )
-      }
+      yield* Effect.logDebug('✅ Meal database seeding completed successfully!')
     })
 )
 
