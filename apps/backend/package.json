@@ -12,7 +12,10 @@
     "start": "node ./build/server.mjs",
     "typecheck": "tsc",
     "lint": "biome lint",
-    "test": "vitest run"
+    "test": "vitest run",
+    "seed:meals": "tsx ./scripts/seeders/index.ts",
+    "seed:meals:clear": "tsx ./scripts/seeders/index.ts --clear",
+    "seed:meals:dry": "tsx ./scripts/seeders/index.ts --dry-run"
   },
   "dependencies": {
     "@effect/ai": "^0.33.2",

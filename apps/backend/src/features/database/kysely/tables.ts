@@ -3,8 +3,10 @@ import type {
   AuthProfile,
   AuthSession,
   AuthToken,
+  DailyMealPlan,
   DailyTarget,
   HealthProfile,
+  Meal,
   MealPlan,
   PantryItem,
   ProgressMetric,
@@ -54,9 +56,19 @@ type HealthProfilesTable = WithImmutableId<
   >
 >
 
-type RecipesTable = WithImmutableId<WithTimestamp<Recipe>>
+type MealsTable = WithImmutableId<
+  WithTimestamp<
+    Omit<Meal, 'food_classes' | 'allergens' | 'fitness_goals'> & {
+      food_classes: string
+      allergens: string
+      fitness_goals: string
+    }
+  >
+>
 
 type MealPlansTable = WithImmutableId<WithTimestamp<MealPlan>>
+
+type DailyMealPlansTable = WithImmutableId<WithTimestamp<DailyMealPlan>>
 
 type WorkoutsTable = WithImmutableId<WithTimestamp<Workout>>
 
@@ -79,7 +91,9 @@ export type KyselyDatabaseTables = {
   storage_files: StorageFilesTable
   health_profiles: HealthProfilesTable
   recipes: RecipesTable
+  meals: MealsTable
   meal_plans: MealPlansTable
+  daily_meal_plans: DailyMealPlansTable
   workouts: WorkoutsTable
   workout_sessions: WorkoutSessionsTable
   pantry_inventory: PantryInventoryTable

@@ -54,9 +54,7 @@ Sign Up → Health Profile Form → Safety Validation → Dashboard
 ### API Endpoints
 
 ```
-POST /onboarding/health-profile  - Create health profile
-GET  /onboarding/health-profile/:id - Get health profile
-PUT  /onboarding/health-profile/:id - Update health profile
+PUT /user/onboarding - Complete onboarding with health profile data
 ```
 
 ### Agent Involvement

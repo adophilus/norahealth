@@ -1,15 +1,49 @@
 import type { Kysely } from 'kysely'
 
-// `any` is required here since migrations should be frozen in time. alternatively, keep a "snapshot" db interface.
 export async function up(db: Kysely<any>): Promise<void> {
-	// up migration code goes here...
-	// note: up migrations are mandatory. you must implement this function.
-	// For more info, see: https://kysely.dev/docs/migrations
+  await db.schema
+    .createTable('daily_meal_plans')
+    .addColumn('id', 'text', (col) => col.primaryKey())
+    .addColumn('user_id', 'text', (col) =>
+      col.notNull().references('users(id)').onDelete('cascade')
+    )
+    .addColumn('date', 'text', (col) => col.notNull())
+    .addColumn('breakfast', 'text', (col) =>
+      col.references('meals(id)').onDelete('set null')
+    )
+    .addColumn('lunch', 'text', (col) =>
+      col.references('meals(id)').onDelete('set null')
+    )
+    .addColumn('dinner', 'text', (col) =>
+      col.references('meals(id)').onDelete('set null')
+    )
+    .addColumn('snacks', 'text', (col) => col.notNull().defaultTo('[]'))
+    .addColumn('notes', 'text', (col) => col.notNull().defaultTo(''))
+    .addColumn('created_at', 'integer', (col) => col.notNull())
+    .addColumn('updated_at', 'integer')
+    .addColumn('deleted_at', 'integer')
+    .execute()
+
+  await db.schema
+    .createIndex('idx_daily_meal_plans_user_date')
+    .on('daily_meal_plans')
+    .columns(['user_id', 'date'])
+    .execute()
+
+  await db.schema
+    .createIndex('idx_daily_meal_plans_date')
+    .on('daily_meal_plans')
+    .columns(['date'])
+    .execute()
+
+  await db.schema
+    .createIndex('idx_daily_meal_plans_deleted')
+    .on('daily_meal_plans')
+    .column('deleted_at')
+    .where('deleted_at', 'is not', null)
+    .execute()
 }
 
-// `any` is required here since migrations should be frozen in time. alternatively, keep a "snapshot" db interface.
 export async function down(db: Kysely<any>): Promise<void> {
-	// down migration code goes here...
-	// note: down migrations are optional. you can safely delete this function.
-	// For more info, see: https://kysely.dev/docs/migrations
+  await db.schema.dropTable('daily_meal_plans').execute()
 }

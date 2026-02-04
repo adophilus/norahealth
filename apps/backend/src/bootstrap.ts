@@ -20,6 +20,14 @@ import {
   KyselyAuthTokenRepositoryLive
 } from './features/auth'
 import { AppConfig } from './features/config'
+import {
+  DailyMealPlanRepository,
+  DailyMealPlanRepositoryLive
+} from './features/daily-meal-plan/repository'
+import {
+  DailyMealPlanService,
+  DailyMealPlanServiceLive
+} from './features/daily-meal-plan/service'
 import { KyselyClient } from './features/database/kysely'
 import { SqliteKyselyClientLive } from './features/database/kysely/db/sqlite'
 import { createKyselyMigrator } from './features/database/kysely/migrator'
@@ -33,6 +41,7 @@ import {
 } from './features/llm'
 import { AgentApiLive } from './features/llm/AgentApiLive'
 import { NodemailerMailerLive } from './features/mailer/service/nodemailer'
+import { MealRepository, MealRepositoryLive } from './features/meal/repository'
 import {
   KyselyStorageRepositoryLive,
   StorageApiLive,
@@ -87,6 +96,11 @@ export const HealthProfileDepLayer = HealthProfileServiceLive.pipe(
   Layer.provideMerge(KyselyHealthProfileRepositoryLive)
 )
 
+export const DailyMealPlanDepLayer = DailyMealPlanServiceLive.pipe(
+  Layer.provideMerge(DailyMealPlanRepositoryLive),
+  Layer.provideMerge(MealRepositoryLive)
+)
+
 export const LLMDepLayer = LLMServiceLive.pipe(
   Layer.provideMerge(KyselyAgentConversationRepositoryLive)
 )
@@ -103,6 +117,7 @@ export const DepLayer = AuthDepLayer.pipe(
   Layer.provideMerge(DatabaseLayer),
   Layer.provideMerge(UserDepLayer),
   Layer.provideMerge(HealthProfileDepLayer),
+  Layer.provideMerge(DailyMealPlanDepLayer),
   Layer.provideMerge(StorageDepLayer),
   Layer.provideMerge(MailerLayer),
   Layer.provideMerge(LLMDepLayer)

@@ -1,8 +1,5 @@
 import { HttpApiGroup } from '@effect/platform'
-import CreateHealthProfileEndpoint from './CreateHealthProfileEndpoint'
 
-const OnboardingApi = HttpApiGroup.make('Onboarding').add(
-  CreateHealthProfileEndpoint
-)
+const OnboardingApi = HttpApiGroup.make('Onboarding')
 
 export default OnboardingApi

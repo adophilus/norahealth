@@ -335,13 +335,12 @@ const AppLive = SomeLayer.pipe(
       ├→ AuthSessionService: Create session
       └→ Return JWT token
 
-3. Frontend → POST /onboarding/health-profile
-   └→ Route handler (CreateHealthProfileEndpointLive)
-   └→ Service layer (createHealthProfileUseCase)
-      ├→ IntakeSafetyService: Validate health constraints
-      ├→ LLMService: Analyze goals for safety
+3. Frontend → PUT /user/onboarding
+   └→ Route handler (CompleteOnboardingEndpointLive)
+   └→ Service layer (completeOnboardingUseCase)
+      ├→ UserRepository: Update user status
       ├→ HealthProfileRepository: Create health profile
-      └→ Return created profile
+      └→ Return completed profile
 ```
 
 ### Fridge-to-Table Flow
