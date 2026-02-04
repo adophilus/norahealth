@@ -6,7 +6,6 @@ import type {
   DailyTarget,
   HealthProfile,
   Meal,
-  MealPlan,
   PantryItem,
   ProgressMetric,
   Recipe,
@@ -65,8 +64,6 @@ type MealsTable = WithImmutableId<
   >
 >
 
-type MealPlansTable = WithImmutableId<WithTimestamp<MealPlan>>
-
 type DailyMealPlansTable = WithImmutableId<WithTimestamp<DailyMealPlan>>
 
 type WorkoutsTable = WithImmutableId<WithTimestamp<Workout>>
@@ -89,9 +86,7 @@ export type KyselyDatabaseTables = {
   auth_sessions: AuthSessionsTable
   storage_files: StorageFilesTable
   health_profiles: HealthProfilesTable
-  recipes: RecipesTable
   meals: MealsTable
-  meal_plans: MealPlansTable
   daily_meal_plans: DailyMealPlansTable
   workouts: WorkoutsTable
   workout_sessions: WorkoutSessionsTable

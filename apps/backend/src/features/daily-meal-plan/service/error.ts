@@ -5,10 +5,10 @@ export class DailyMealPlanServiceError extends Data.TaggedError(
 )<{
   message: string
   cause?: unknown
-}>()
+}> {}
 
 export class DailyMealPlanServiceNoMealsFoundError extends Data.TaggedError(
   'DailyMealPlanServiceNoMealsFoundError'
 )<{
   cause?: unknown
-}>()
+}> {}

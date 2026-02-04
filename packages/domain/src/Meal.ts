@@ -16,7 +16,7 @@ export const FoodClass = Schema.Literal(
   'SEED'
 )
 
-export class Meal extends Schema.Class<Meal>('Meal')({
+export default class Meal extends Schema.Class<Meal>('Meal')({
   id: Id,
   name: Schema.String,
   description: Schema.NullOr(Schema.String),

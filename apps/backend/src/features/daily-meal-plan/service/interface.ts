@@ -16,9 +16,7 @@ export type DayPlanUpdate = {
   notes: string
 }
 
-export class DailyMealPlanService extends Context.Tag(
-  'DailyMealPlanService'
-)<
+export class DailyMealPlanService extends Context.Tag('DailyMealPlanService')<
   DailyMealPlanService,
   {
     generateWeeklyPlan(
@@ -35,4 +33,4 @@ export class DailyMealPlanService extends Context.Tag(
       updates: DayPlanUpdate
     ): Effect.Effect<DailyMealPlan, DailyMealPlanServiceError>
   }
->()
+> {}

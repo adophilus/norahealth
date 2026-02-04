@@ -1,4 +1,9 @@
-import type { DailyMealPlan, HealthProfile } from '@nora-health/domain'
+import type {
+  DailyMealPlan,
+  FitnessGoal,
+  HealthProfile,
+  Meal
+} from '@nora-health/domain'
 import { Effect } from 'effect'
 import { MealRepository } from '../../meal/repository'
 import { DailyMealPlanRepository } from '../repository'
@@ -107,8 +112,8 @@ const generateWeekDays = (): Array<{ date: string; dayOfWeek: number }> => {
 }
 
 const selectMealsForDay = (
-  availableMeals: DailyMealPlan[],
-  fitnessGoals: string[]
+  availableMeals: Meal[],
+  fitnessGoals: FitnessGoal[]
 ) => {
   const goalMatchingMeals = availableMeals.filter((meal) =>
     meal.fitness_goals.some((goal) => fitnessGoals.includes(goal))

@@ -3,30 +3,46 @@ import type { DailyMealPlan } from '@nora-health/domain'
 import { Schema } from 'effect'
 import { StatusCodes } from 'http-status-codes'
 import _ from 'lodash'
-import {
-  BadRequestError,
-  HealthProfile, 
-  UnexpectedError
-} from '../common'
+import { BadRequestError, HealthProfile, UnexpectedError } from '../common'
 
 export class CompleteOnboardingRequestBody extends Schema.Class<CompleteOnboardingRequestBody>(
   'CompleteOnboardingRequestBody'
-)(
-  _.omit(HealthProfile.fields, [
-    'id',
-    'user_id',
-    'email',
-    'created_at',
-    'updated_at'
-  ])
-)
+)({
+  name: HealthProfile.fields.name,
+  email: HealthProfile.fields.email,
+  age_group: HealthProfile.fields.age_group,
+  gender: HealthProfile.fields.gender,
+  weight_class: HealthProfile.fields.weight_class,
+  injuries: HealthProfile.fields.injuries,
+  medical_conditions: HealthProfile.fields.medical_conditions,
+  fitness_goals: HealthProfile.fields.fitness_goals,
+  weekly_workout_time: HealthProfile.fields.weekly_workout_time,
+  allergies: HealthProfile.fields.allergies,
+  location: HealthProfile.fields.location
+}) {}
 
-export type OnboardingCompletionResponse = {
-  success: boolean
-  healthProfile: HealthProfile
-  weeklyMealPlan: Array<DailyMealPlan>
-  message: string
-}
+const DailyMealPlanResponse = Schema.Struct({
+  id: Schema.String,
+  user_id: Schema.String,
+  date: Schema.String,
+  breakfast: Schema.NullOr(Schema.String),
+  lunch: Schema.NullOr(Schema.String),
+  dinner: Schema.NullOr(Schema.String),
+  snacks: Schema.Array(Schema.String),
+  notes: Schema.String,
+  created_at: Schema.Number,
+  updated_at: Schema.NullOr(Schema.Number),
+  deleted_at: Schema.NullOr(Schema.Number)
+})
+
+export class OnboardingCompletionResponse extends Schema.Class<OnboardingCompletionResponse>(
+  'OnboardingCompletionResponse'
+)({
+  success: Schema.Boolean,
+  healthProfile: HealthProfile,
+  weeklyMealPlan: Schema.Array(DailyMealPlanResponse),
+  message: Schema.String
+}) {}
 
 const CompleteOnboardingEndpoint = HttpApiEndpoint.put(
   'completeOnboarding',
@@ -42,4 +58,3 @@ const CompleteOnboardingEndpoint = HttpApiEndpoint.put(
   )
 
 export default CompleteOnboardingEndpoint
-
