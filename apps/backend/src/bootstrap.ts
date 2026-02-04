@@ -118,18 +118,15 @@ export const DepLayer = AuthDepLayer.pipe(
   Layer.provideMerge(UserDepLayer),
   Layer.provideMerge(HealthProfileDepLayer),
   Layer.provideMerge(DailyMealPlanDepLayer),
+  // Layer.provideMerge(LLMDepLayer),
   Layer.provideMerge(StorageDepLayer),
-  Layer.provideMerge(MailerLayer),
-  Layer.provideMerge(LLMDepLayer)
+  Layer.provideMerge(MailerLayer)
 )
-
-// Removed: PostDepLayer, IntegrationsDepLayer, FarcasterDepLayer, WaitlistDepLayer
 
 export const ApiEndpointLayer = AuthApiLive.pipe(
   Layer.provideMerge(UserApiLive),
-  Layer.provideMerge(StorageApiLive),
-  Layer.provideMerge(AgentApiLive)
-  // Removed: WaitlistApiLive, PostApiLive, IntegrationsApiLive, NeynarApiLive
+  Layer.provideMerge(StorageApiLive)
+  // Layer.provideMerge(AgentApiLive)
 )
 
 export const ApiLive = HttpApiBuilder.api(Api).pipe(
