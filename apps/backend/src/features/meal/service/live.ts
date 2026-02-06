@@ -1,6 +1,7 @@
-import type { Meal } from '@nora-health/domain'
-import { Layer, Effect } from 'effect'
-import { MealRepository } from '../../meal/repository'
+import { Allergen, FitnessGoal, FoodClass, Meal } from '@nora-health/domain'
+import type { Meal as TMeal } from '@/types'
+import { Layer, Effect, Schema } from 'effect'
+import { MealRepository } from '../repository'
 import { MealServiceError, MealServiceNotFoundError } from './error'
 import { MealService, type NutritionSummary } from './interface'
 import { ulid } from 'ulidx'
@@ -10,15 +11,56 @@ export const MealServiceLive = Layer.effect(
   Effect.gen(function* () {
     const repository = yield* MealRepository
 
+    const toDomain = (row: TMeal.Selectable) =>
+      Effect.gen(function* () {
+        const foodClasses = yield* Effect.try(() =>
+          JSON.parse(row.food_classes)
+        ).pipe(Effect.flatMap(Schema.decodeUnknown(Schema.Array(FoodClass))))
+
+        const allergens = yield* Effect.try(() =>
+          JSON.parse(row.allergens)
+        ).pipe(Effect.flatMap(Schema.decodeUnknown(Schema.Array(Allergen))))
+
+        const fitnessGoals = yield* Effect.try(() =>
+          JSON.parse(row.fitness_goals)
+        ).pipe(Effect.flatMap(Schema.decodeUnknown(Schema.Array(FitnessGoal))))
+
+        return Meal.make({
+          ...row,
+          food_classes: foodClasses,
+          allergens,
+          fitness_goals: fitnessGoals
+        })
+      }).pipe(
+        Effect.mapError(
+          (error) =>
+            new MealServiceError({
+              message: 'Failed to decode meal',
+              cause: error
+            })
+        )
+      )
+
     return MealService.of({
       create: (payload) =>
-        repository.create({
-          ...payload,
-          id: ulid(),
-          food_classes: JSON.stringify(payload.food_classes),
-          allergens: JSON.stringify(payload.allergens),
-          fitness_goals: JSON.stringify(payload.fitness_goals)
-        }),
+        repository
+          .create({
+            ...payload,
+            id: ulid(),
+            food_classes: JSON.stringify(payload.food_classes),
+            allergens: JSON.stringify(payload.allergens),
+            fitness_goals: JSON.stringify(payload.fitness_goals)
+          })
+          .pipe(
+            Effect.flatMap(toDomain),
+            Effect.catchTags({
+              MealRepositoryError: (error) =>
+                new MealServiceError({
+                  message: error.message,
+                  cause: error
+                })
+            })
+          ),
 
       findById: (id) =>
         MealRepository.pipe(Effect.flatMap((repo) => repo.findById(id))),
