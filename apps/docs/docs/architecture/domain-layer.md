@@ -185,7 +185,7 @@ Represents a media file stored in system.
 
 ```typescript
 import { Schema } from 'effect'
-import Id from './Id'
+import { Id } from './Id'
 
 class Recipe extends Schema.Class<Recipe>('Recipe')({
   id: Id,

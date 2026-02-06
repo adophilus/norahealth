@@ -1,5 +1,4 @@
 import { HttpApiGroup } from '@effect/platform'
-import ResendVerificationOtpEndpoint from './ResendVerificationOtpEndpoint'
 import SendSignInOtpEndpoint from './SendSignInOtpEndpoint'
 import VerifyOtpEndpoint from './VerifyOtpEndpoint'
 

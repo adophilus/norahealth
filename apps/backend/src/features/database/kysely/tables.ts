@@ -1,14 +1,13 @@
 import type {
   AgentConversation,
+  Meal,
   AuthSession,
   AuthToken,
   DailyMealPlan,
   DailyTarget,
   HealthProfile,
-  Meal,
   PantryItem,
   ProgressMetric,
-  Recipe,
   StorageFile,
   User,
   Workout,
@@ -16,7 +15,7 @@ import type {
 } from '@nora-health/domain'
 import type { ColumnType } from 'kysely'
 
-type Id = ColumnType<string, never, never>
+type Id = ColumnType<string, string, never>
 
 type TimestampModel = {
   created_at: ColumnType<number, never, never>
@@ -25,7 +24,9 @@ type TimestampModel = {
 
 type WithTimestamp<T> = Omit<T, 'created_at' | 'updated_at'> & TimestampModel
 
-type WithImmutableId<T> = Omit<T, 'id'> & { id: Id }
+type WithImmutableId<T> = Omit<T, 'id'> & {
+  id: Id
+}
 
 type AuthTokensTable = WithImmutableId<
   WithTimestamp<Omit<AuthToken, 'provider'> & { provider: string }>

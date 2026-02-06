@@ -1,6 +1,6 @@
 import { HttpApiBuilder } from '@effect/platform'
 import { Api } from '@nora-health/api'
-import { CompleteOnboardingEndpointLive } from './complete-onboarding'
+import { CompleteOnboardingEndpointLive } from './CompleteOnboardingEndpoint'
 import { DeleteUserProfileEndpointLive } from './DeleteUserProfileEndpoint'
 import { FetchUserProfileByIdEndpointLive } from './FetchUserProfileByIdEndpoint'
 import { GetProfileEndpointLive } from './GetProfileEndpoint'

@@ -1,5 +1,5 @@
 import { Schema } from 'effect'
-import Id from './Id'
+import { Id } from './Id'
 import Timestamp from './Timestamp'
 
 export default class Recipe extends Schema.Class<Recipe>('Recipe')({

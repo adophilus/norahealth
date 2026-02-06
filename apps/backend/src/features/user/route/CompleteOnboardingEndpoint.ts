@@ -6,8 +6,7 @@ import {
   UnexpectedError
 } from '@nora-health/api/common/index'
 import { Effect } from 'effect'
-import { StatusCodes } from 'http-status-codes'
-import { completeOnboardingUseCase } from '../use-case/complete-onboarding'
+import { completeOnboardingUseCase } from '../use-case'
 
 export const CompleteOnboardingEndpointLive = HttpApiBuilder.handler(
   Api,
@@ -19,7 +18,7 @@ export const CompleteOnboardingEndpointLive = HttpApiBuilder.handler(
 
       yield* completeOnboardingUseCase(payload, currentUser)
 
-      return new EmptyMessage()
+      return new EmptyMessage({})
     }).pipe(
       Effect.mapError(() => {
         return new UnexpectedError({
@@ -28,5 +27,3 @@ export const CompleteOnboardingEndpointLive = HttpApiBuilder.handler(
       })
     )
 )
-
-CompleteOnboardingEndpointLive.setSuccessStatus(StatusCodes.NO_CONTENT)

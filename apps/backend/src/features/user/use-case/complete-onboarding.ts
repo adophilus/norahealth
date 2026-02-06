@@ -12,18 +12,11 @@ export const completeOnboardingUseCase = (
     const healthProfileService = yield* HealthProfileService
     const dailyMealPlanService = yield* DailyMealPlanService
 
-    yield* healthProfileService.create({
+    const healthProfile = yield* healthProfileService.create({
       ...payload,
       user_id: user.id,
       email: user.email
     })
 
-    yield* dailyMealPlanService.generateWeeklyPlan(
-      user.id,
-      {
-        ...payload,
-        user_id: user.id,
-        email: user.email
-      }
-    )
+    yield* dailyMealPlanService.generateWeeklyPlan(user.id, healthProfile)
   })

@@ -11,7 +11,7 @@ export class UserService extends Context.Tag('UserService')<
   UserService,
   {
     create: (
-      payload: TUser.Insertable
+      payload: Omit<TUser.Insertable, 'id'> & { id?: string }
     ) => Effect.Effect<
       User,
       UserServiceEmailAlreadyInUseError | UserServiceError
@@ -23,10 +23,6 @@ export class UserService extends Context.Tag('UserService')<
 
     findByEmail: (
       email: string
-    ) => Effect.Effect<User, UserServiceNotFoundError | UserServiceError>
-
-    verifyById: (
-      id: string
     ) => Effect.Effect<User, UserServiceNotFoundError | UserServiceError>
 
     updateById: (

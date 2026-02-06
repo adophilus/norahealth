@@ -1,5 +1,5 @@
 import { Schema } from 'effect'
-import Id from './Id'
+import { Id } from './Id'
 import PostStatus from './PostStatus'
 import { PlatformName } from './PlatformName'
 

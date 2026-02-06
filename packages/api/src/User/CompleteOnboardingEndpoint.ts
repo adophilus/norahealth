@@ -1,9 +1,12 @@
 import { HttpApiEndpoint, OpenApi } from '@effect/platform'
-import type { DailyMealPlan } from '@nora-health/domain'
 import { Schema } from 'effect'
 import { StatusCodes } from 'http-status-codes'
-import _ from 'lodash'
-import { BadRequestError, HealthProfile, UnexpectedError } from '../common'
+import {
+  BadRequestError,
+  EmptyMessage,
+  HealthProfile,
+  UnexpectedError
+} from '../common'
 
 export class CompleteOnboardingRequestBody extends Schema.Class<CompleteOnboardingRequestBody>(
   'CompleteOnboardingRequestBody'
@@ -49,7 +52,7 @@ const CompleteOnboardingEndpoint = HttpApiEndpoint.put(
   '/user/onboarding'
 )
   .setPayload(CompleteOnboardingRequestBody)
-  .addSuccess(OnboardingCompletionResponse, { status: StatusCodes.OK })
+  .addSuccess(EmptyMessage, { status: StatusCodes.NO_CONTENT })
   .addError(BadRequestError, { status: StatusCodes.BAD_REQUEST })
   .addError(UnexpectedError, { status: StatusCodes.INTERNAL_SERVER_ERROR })
   .annotate(

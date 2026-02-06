@@ -1,11 +1,11 @@
 import { Schema } from 'effect'
 import NeynarSigner from './NeynarSigner'
-import lodash from 'lodash'
+import omit from 'lodash/omit'
 import NeynarSignerApproval from './NeynarSignerApproval'
 
 export default class NeynarSignerWithApproval extends Schema.Class<NeynarSignerWithApproval>(
   'NeynarSignerWithApproval'
 )({
-  ...lodash.omit(NeynarSigner.fields, ['approval']),
+  ...omit(NeynarSigner.fields, ['approval']),
   approval: NeynarSignerApproval
 }) {}

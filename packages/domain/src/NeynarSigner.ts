@@ -1,7 +1,7 @@
 import { Schema } from 'effect'
 import { NeynarSignerStatus } from './NeynarSignerStatus'
 import Timestamp from './Timestamp'
-import Id from './Id'
+import { Id } from './Id'
 import NeynarSignerApproval from './NeynarSignerApproval'
 
 export default class NeynarSigner extends Schema.Class<NeynarSigner>(

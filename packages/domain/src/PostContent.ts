@@ -1,5 +1,5 @@
 import { Schema } from 'effect'
-import Id from './Id'
+import { Id } from './Id'
 
 class PostContent extends Schema.Class<PostContent>('PostContent')({
   message: Schema.String,

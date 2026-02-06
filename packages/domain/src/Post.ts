@@ -1,5 +1,5 @@
 import { Schema } from 'effect'
-import Id from './Id'
+import { Id } from './Id'
 import PostStatus from './PostStatus'
 
 class Post extends Schema.Class<Post>('Post')({

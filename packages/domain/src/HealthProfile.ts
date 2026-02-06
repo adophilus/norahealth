@@ -1,6 +1,6 @@
 import { Schema } from 'effect'
 import Email from './Email'
-import Id from './Id'
+import { Id } from './Id'
 import Timestamp from './Timestamp'
 
 export const AgeGroup = Schema.Literal(
