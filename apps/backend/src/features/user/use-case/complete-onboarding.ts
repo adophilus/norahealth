@@ -10,23 +10,20 @@ export const completeOnboardingUseCase = (
 ) =>
   Effect.gen(function* () {
     const healthProfileService = yield* HealthProfileService
+    const dailyMealPlanService = yield* DailyMealPlanService
 
-    const healthProfile = yield* healthProfileService.create({
+    yield* healthProfileService.create({
       ...payload,
       user_id: user.id,
       email: user.email
     })
 
-    const dailyMealPlanService = yield* DailyMealPlanService
-
-    const mealPlanResult = yield* dailyMealPlanService.generateWeeklyPlan(
+    yield* dailyMealPlanService.generateWeeklyPlan(
       user.id,
-      healthProfile
+      {
+        ...payload,
+        user_id: user.id,
+        email: user.email
+      }
     )
-
-    return {
-      healthProfile,
-      weeklyMealPlan: mealPlanResult.dailyPlans,
-      mealPlanMessage: mealPlanResult.message
-    }
   })

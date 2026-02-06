@@ -1,6 +1,7 @@
 export { default as BadRequestError } from './BadRequestError'
 export { default as EmailAlreadyInUseError } from './EmailAlreadyInUseError'
 export { default as FileNotFoundError } from './FileNotFoundError'
+export { default as OnboardingIncompleteError } from './OnboardingIncompleteError'
 
 export { default as ImageFile } from './ImageFile'
 export { default as ImageFiles } from './ImageFiles'

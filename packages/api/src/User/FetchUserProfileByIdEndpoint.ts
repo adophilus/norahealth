@@ -1,7 +1,7 @@
 import { HttpApiEndpoint } from '@effect/platform'
 import { Schema } from 'effect'
 import { StatusCodes } from 'http-status-codes'
-import { UnexpectedError, Id, User, NotFoundError } from '../common'
+import { UnexpectedError, Id, NotFoundError, FullUser } from '../common'
 
 export class FetchUserProfileByIdRequestPath extends Schema.Class<FetchUserProfileByIdRequestPath>(
   'FetchUserProfileByIdRequestPath'
@@ -14,7 +14,7 @@ const FetchUserProfileByIdEndpoint = HttpApiEndpoint.get(
   '/users/:userId'
 )
   .setPath(FetchUserProfileByIdRequestPath)
-  .addSuccess(User)
+  .addSuccess(FullUser)
   .addError(NotFoundError, { status: StatusCodes.NOT_FOUND })
   .addError(UnexpectedError, { status: StatusCodes.INTERNAL_SERVER_ERROR })
 

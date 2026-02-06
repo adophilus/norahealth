@@ -33,4 +33,4 @@ export class DailyMealPlanService extends Context.Tag('DailyMealPlanService')<
       updates: DayPlanUpdate
     ): Effect.Effect<DailyMealPlan, DailyMealPlanServiceError>
   }
-> {}
+>() {}

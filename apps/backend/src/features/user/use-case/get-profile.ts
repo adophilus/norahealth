@@ -1,28 +1,35 @@
 import { Effect, Option } from 'effect'
 import { UserService } from '../service/interface'
-import { UserWithProfile } from '@nora-health/api/common'
 import { StorageService } from '@/features/storage'
-import type { MediaDescription } from '@nora-health/domain'
+import { HealthProfileService } from '@/features/health-profile'
+import { FullUser } from '@nora-health/domain'
 
 export const getProfileUseCase = (userId: string) =>
-  Effect.gen(function*() {
+  Effect.gen(function* () {
     const userService = yield* UserService
     const storageService = yield* StorageService
+    const healthProfileService = yield* HealthProfileService
 
     const user = yield* userService.findById(userId)
+    const healthProfile = yield* healthProfileService.findByUserId(userId)
 
-    let profilePicture: MediaDescription | null = null
-    if (user.profile_picture_id) {
-      profilePicture = yield* storageService.get(user.profile_picture_id).pipe(
-        Effect.map(storageService.convertToMediaDescription),
-        Effect.catchTag('StorageServiceNotFoundError', () =>
-          Effect.succeed(null)
+    const profilePicture = yield* Effect.succeed(
+      Option.fromNullable(user.profile_picture_id)
+    ).pipe(
+      Effect.map(
+        Option.map((id) =>
+          storageService
+            .get(id)
+            .pipe(Effect.map(storageService.convertToMediaDescription))
         )
-      )
-    }
+      ),
+      Effect.flatMap(Option.getOrElse(() => Effect.succeed(null))),
+      Effect.catchTag('StorageServiceNotFoundError', () => Effect.succeed(null))
+    )
 
-    return UserWithProfile.make({
+    return FullUser.make({
       ...user,
-      profile_picture: profilePicture
+      profile_picture: profilePicture,
+      health_profile: healthProfile
     })
   })
