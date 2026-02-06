@@ -530,3 +530,65 @@ catch: (error) => {
 - **Data Model**: Structured agents with specialized business logic
 - **Persistence**: Type-safe Kysely repository pattern
 - **API Contract**: Clear separation between definitions (`@nora-health/api`) and implementation (`@nora-health/backend`)
+
+## 10. Service & Repository Patterns
+
+### Repository Pattern
+- Repository methods return domain model types (not wrapped in Option or custom objects)
+- Find operations that may not find a value return `Option.Option<T>`
+- Update/delete operations return `Effect.Effect<void>`
+- This is by design: repositories interface to the database persistence layer
+- Services consume repository methods directly via Effect.flatMap or Effect.pipe
+
+### Service Pattern  
+- Services orchestrate business logic and call repository methods
+- Services should handle the Option types from repositories appropriately
+- Services transform repository errors into service errors
+- Services return domain model objects or domain-specific response types
+
+### Why Repository Returns Option<T>
+
+Repositories find/update/delete operations return `Option.Option<T>` to signal:
+- **Value not found**: Service can map this to a not-found error or handle gracefully
+- **Value found**: Service can unwrap the value and use it
+
+This design allows services to easily distinguish between:
+- "This record doesn't exist" (Option.None) vs.
+- "Something went wrong during operation" (ServiceError)
+
+### Why Services Use Type Helpers in Method Signatures
+
+When service methods need to work with complex fields (arrays, objects):
+- Use `ComplexKeys` union type to identify fields that need special treatment
+- Use `ComplexFields` type to define the proper structure for those fields
+- In method signatures, exclude from Insertable/Updateable but FORCE inclusion via `& ComplexFields`
+
+Example from HealthProfileService:
+```typescript
+create(
+  payload: Omit<THealthProfile.Insertable, 'id' | ComplexKeys> & ComplexFields
+): Effect.Effect<HealthProfile, HealthProfileServiceError>
+```
+
+This elegantly:
+- Excludes timestamp fields from insert/update operations
+- Ensures complex array/object fields are included in their proper types
+- Avoids manual field repetition
+- Makes the intent of "force-include" explicit
+
+### Using DomainModel.make() in Service Methods
+
+When a service needs to return a domain model object (not just repository result):
+- Use `DomainModel.make()` static method if available
+- This ensures all required fields are present
+- Returns a properly typed domain model instance
+
+Example pattern:
+```typescript
+return FullUser.make({
+  ...user,
+  health_profile: healthProfile
+})
+```
+
+This is especially important when aggregating data from multiple sources.

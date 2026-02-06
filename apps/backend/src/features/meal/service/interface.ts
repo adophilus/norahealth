@@ -4,8 +4,8 @@ import type {
   FoodClass,
   Meal
 } from '@nora-health/domain'
-import { Context, type Effect, type Option } from 'effect'
-import type { MealServiceError } from './error'
+import { Context, type Effect } from 'effect'
+import type { MealServiceError, MealServiceNotFoundError } from './error'
 import type { Meal as TMeal } from '@/types'
 
 type ComplexKeys = 'food_classes' | 'allergens' | 'fitness_goals'
@@ -27,18 +27,28 @@ export type NutritionSummary = {
 export class MealService extends Context.Tag('MealService')<
   MealService,
   {
-    create(meal: Omit<
-      TMeal.Insertable,
-      'id' | 'created_at' | 'updated_at' | 'deleted_at' | ComplexKeys
-    > & ComplexFields
+    create(
+      payload: Omit<
+        TMeal.Insertable,
+        'id' | 'created_at' | 'updated_at' | 'deleted_at' | ComplexKeys
+      > &
+        ComplexFields
     ): Effect.Effect<Meal, MealServiceError>
-    findById(id: string): Effect.Effect<Option.Option<Meal>, MealServiceError>
+    findById(
+      id: string
+    ): Effect.Effect<Meal, MealServiceNotFoundError | MealServiceError>
     findAll(): Effect.Effect<Array<Meal>, MealServiceError>
     update(
       id: string,
-      updates: MealUpdateable
+      payload: Omit<
+        TMeal.Updateable,
+        'id' | 'created_at' | 'updated_at' | 'deleted_at' | ComplexKeys
+      > &
+        Partial<ComplexFields>
     ): Effect.Effect<Meal, MealServiceError>
-    delete(id: string): Effect.Effect<void, MealServiceError>
+    delete(
+      id: string
+    ): Effect.Effect<void, MealServiceNotFoundError | MealServiceError>
 
     findByFitnessGoals(
       goals: FitnessGoal[]
@@ -61,4 +71,4 @@ export class MealService extends Context.Tag('MealService')<
       mealIds: string[]
     ): Effect.Effect<NutritionSummary, MealServiceError>
   }
->() { }
+>() {}
