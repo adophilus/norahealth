@@ -68,9 +68,18 @@ The backend is organized by features, with a layered architecture within each fe
     -   **`repository/`**: Handles data access logic, interacting with the database.
     -   **`middleware/`**: Contains Express.js or similar middleware (e.g., `AuthenticationMiddleware.ts`).
     -   **`cron.ts`**: For scheduled tasks.
--   **`types.ts`**: Global or shared type definitions.
--   **`bootstrap.ts`**: Application startup and initialization logic.
--   **`app.ts`**: Main application entry point.
+    -   **`types.ts`**: Global or shared type definitions.
+    -   **`bootstrap.ts`**: Application startup and initialization logic.
+    -   **`app.ts`**: Main application entry point.
+
+### Feature-Specific Structure
+
+Each feature directory should contain:
+-   `route/` - API endpoints (definitions in `packages/api/` package)
+-   `use-case/` - Business logic use cases
+-   `service/` - Service layer orchestration
+-   `repository/` - Data access layer
+-   `middleware/` - Feature-specific middleware (if applicable)
 
 ## 4. Naming Conventions and Style Patterns
 
@@ -98,173 +107,347 @@ The backend is organized by features, with a layered architecture within each fe
 -   **Database Interactions**: The backend uses `Kysely` for type-safe SQL query building and database migrations, as indicated by `kysely.config.ts` and `features/database/kysely/` files. Database schema and migration management are handled through this.
 -   **Environment Variables**: Configuration relies on `.env.*.example` files, which should be replicated as `.env` files for local development. Configuration is likely loaded via `features/config/`.
 
-## 7. Error Handling Patterns
+## 7. API Endpoint Architecture
 
-### **Core Principles**
+### Separation of Concerns
 
-#### **Error Class Structure**
+**API Definitions (`@nora-health/api` package)**:
+- Contains only endpoint definitions (schemas, request/response types)
+- Uses `HttpApiEndpoint` from `@effect/platform`
+- Defines the contract/interface between client and backend
+- Should NOT import from backend features
+
+**Backend Implementation (`@nora-health/backend` package)**:
+- Contains route handlers that implement the API contracts
+- Import endpoint definitions from `@nora-health/api`
+- Call services/use-cases to fulfill requests
+- Use `HttpApiBuilder.handler()` to create handlers
+
+### Creating New Endpoints
+
+When adding new endpoints:
+
+1. **Define in `@nora-health/api`**:
+   - Create endpoint file: `packages/api/src/<feature>/<EndpointName>Endpoint.ts`
+   - Define request body schema using Schema.Class
+   - Define response schema using Schema.Class or Schema.Struct
+   - Configure HTTP method, path, status codes, error types
+
+2. **Implement in `@nora-health/backend`**:
+   - Create route file: `apps/backend/src/features/<feature>/route/<EndpointName>Endpoint.ts`
+   - Import endpoint definition from `@nora-health/api`
+   - Import required services from `@nora-health/api/common` (errors) and feature services
+   - Use `HttpApiBuilder.handler(Api, 'Feature', 'endpointName')` to create handler
+   - Call services/use-cases within Effect.gen to implement business logic
+   - Return appropriate response types matching API definition
+
+### Example Pattern
+
+**API Definition** (`packages/api/src/User/CompleteOnboardingEndpoint.ts`):
+```typescript
+import { HttpApiEndpoint, OpenApi } from '@effect/platform'
+import { Schema } from 'effect'
+import { StatusCodes } from 'http-status-codes'
+import { EmptyMessage, HealthProfile } from '../common'
+import _ from 'lodash'
+
+export class CompleteOnboardingRequestBody extends Schema.Class<CompleteOnboardingRequestBody>(
+  'CompleteOnboardingRequestBody'
+)(
+  _.omit(HealthProfile.fields, [
+    'id',
+    'user_id',
+    'email',
+    'created_at',
+    'updated_at'
+  ])
+) {}
+
+const CompleteOnboardingEndpoint = HttpApiEndpoint.put(
+  'completeOnboarding',
+  '/user/onboarding'
+)
+  .setPayload(CompleteOnboardingRequestBody)
+  .addSuccess(EmptyMessage, { status: StatusCodes.NO_CONTENT })
+  .addError(BadRequestError, { status: StatusCodes.BAD_REQUEST })
+  .addError(UnexpectedError, { status: StatusCodes.INTERNAL_SERVER_ERROR })
+  .annotate(
+    OpenApi.Description,
+    'Complete user onboarding and generate initial meal plan'
+  )
+
+export default CompleteOnboardingEndpoint
+```
+
+**Backend Implementation** (`apps/backend/src/features/user/route/CompleteOnboardingEndpoint.ts`):
+```typescript
+import { HttpApiBuilder } from '@effect/platform'
+import { Api } from '@nora-health/api'
+import { EmptyMessage, UnexpectedError } from '@nora-health/api/common/index'
+import { Effect } from 'effect'
+import { completeOnboardingUseCase } from '../use-case/complete-onboarding'
+
+export const CompleteOnboardingEndpointLive = HttpApiBuilder.handler(
+  Api,
+  'User',
+  'completeOnboarding',
+  ({ payload }) =>
+    Effect.gen(function* () {
+      const currentUser = yield* CurrentUser
+
+      yield* completeOnboardingUseCase(payload, currentUser)
+
+      return new EmptyMessage({})
+    }).pipe(
+      Effect.mapError(() => {
+        return new UnexpectedError({
+          message: "Failed to complete user's onboarding"
+        })
+      })
+    )
+)
+```
+
+### Endpoint Response Patterns
+
+- **Use EmptyMessage** for endpoints that return 204 NO_CONTENT
+- **Use Schema.Struct** for response bodies with multiple fields
+- **Use Schema.Class** for request/response objects
+- **Use lodash's omit helper** to efficiently exclude fields from domain schemas
+- **Status codes** should be defined in the API endpoint definition, not set dynamically in backend
+
+## 8. Use-Case Structure
+
+Each feature should have a `use-case/` directory that contains business logic orchestration.
+
+### Use-Case File Pattern
+
+```typescript
+import type { RequestType } from '@nora-health/api'
+import type { DomainType } from '@nora-health/domain'
+import { Effect } from 'effect'
+import { ServiceA, ServiceB } from '../service'
+
+export const useCaseName = (
+  request: RequestType,
+  context: ContextType
+) =>
+  Effect.gen(function* () {
+    const serviceA = yield* ServiceA
+    const serviceB = yield* ServiceB
+
+    // Business logic here
+
+    return result
+  })
+```
+
+### Use-Case Index
+
+Each use-case directory MUST have an `index.ts` file that exports all use-cases:
+
+```typescript
+export * from './use-case-1'
+export * from './use-case-2'
+export * from './use-case-3'
+```
+
+This ensures:
+- Discoverability - Easy to find all use-cases in a feature
+- Clean imports - Can import from `feature/use-case` instead of individual files
+- Consistency - All use-cases follow the same export pattern
+
+## 9. Domain Model Export Patterns
+
+### Multiple Exports in One File
+
+When a domain model file exports multiple items (schemas, types, etc.), use **named exports**:
+
+**❌ AVOID:**
+```typescript
+export default class Meal extends Schema.Class<Meal>('Meal')({...})
+export type FoodClass = typeof FoodClass
+```
+
+**✅ USE:**
+```typescript
+export class Meal extends Schema.Class<Meal>('Meal')({...})
+export type FoodClass = typeof FoodClass
+export type Allergen = typeof Allergen
+```
+
+**DO NOT use default export** when a file exports multiple things.
+
+### Domain Index Re-exports
+
+In `packages/domain/src/index.ts`, re-export using wildcard imports:
+
+```typescript
+export * from './Meal'           // Exports Meal class, FoodClass, Allergen, etc. types
+export * from './HealthProfile'    // Exports HealthProfile class and all type exports
+export { default as User } from './User'  // Re-exports default as default
+```
+
+### Schema Type Exports
+
+For schemas that are both types AND values (like `FoodClass`, `Allergen`, `FitnessGoal`), create type exports:
+
+```typescript
+export type FoodClass = typeof FoodClass
+export type Allergen = typeof Allergen
+export type FitnessGoal = typeof FitnessGoal
+```
+
+This allows consumers to use these as types in type annotations.
+
+## 10. Complex Type Handling in Services
+
+### Pattern for Complex Domain Fields
+
+When dealing with domain models that have complex fields (arrays, objects) that need special handling:
+
+1. **Define complex field types**:
+```typescript
+type ComplexKeys =
+  | 'injuries'
+  | 'medical_conditions'
+  | 'fitness_goals'
+  | 'allergies'
+  | 'location'
+
+type ComplexFields = {
+  injuries: HealthProfile['injuries']
+  medical_conditions: HealthProfile['medical_conditions']
+  fitness_goals: HealthProfile['fitness_goals']
+  allergies: HealthProfile['allergies']
+  location: HealthProfile['location']
+}
+```
+
+2. **Use in service interface signatures**:
+```typescript
+create(
+  payload: Omit<THealthProfile.Insertable, 'id' | ComplexKeys> & ComplexFields
+): Effect.Effect<HealthProfile, ErrorType>
+```
+
+This elegantly:
+- Excludes certain fields from Insertable/Updateable types
+- But FORCES inclusion of complex fields in their proper forms
+- Avoids manual field repetition
+
+### Lodash Helper for Request Body Schemas
+
+When creating request body schemas in API package that need to omit fields:
+
+```typescript
+import _ from 'lodash'
+
+export class CompleteOnboardingRequestBody extends Schema.Class<CompleteOnboardingRequestBody>(
+  'CompleteOnboardingRequestBody'
+)(
+  _.omit(HealthProfile.fields, [
+    'id',
+    'user_id',
+    'email',
+    'created_at',
+    'updated_at'
+  ])
+) {}
+```
+
+This is cleaner and less error-prone than manual field listing.
+
+## 11. Error Handling Patterns
+
+### Core Principles
+
+#### Error Class Structure
 - **Always extend `Data.TaggedError`** for type safety
 - **Include `cause?: unknown`** to preserve error chains
 - **Message field is conditional** based on error type
 
-#### **When to Include Message Fields**
+#### When to Include Message Fields
 **Include `message: string` when:**
 - Repository errors (e.g., `'Failed to create health profile'`)
 - Generic operation errors
 - Errors that require additional context beyond the type name
 - Errors that might be handled programmatically by consumers
 
-#### **When to Omit Message Fields**
+#### When to Omit Message Fields
 **Omit `message: string` when:**
 - Error name is self-explanatory (e.g., `NotFoundError`)
 - Domain-level not found errors (except in domain/api package)
 - Errors where the type alone conveys all necessary information
 - Specialized business logic errors
 
-### **Error Class Patterns**
+### Error Class Patterns
 
-#### **Repository Layer**
+#### Repository Layer
 ```typescript
-// apps/backend/src/features/health-profile/repository/error.ts
 export class HealthProfileRepositoryError extends Data.TaggedError(
   'HealthProfileRepositoryError'
-)<{ message: string; cause?: unknown }> {}
+)<{
+  message: string
+  cause?: unknown
+}> {}
 
-// Self-explanatory errors don't need messages
 export class HealthProfileRepositoryNotFoundError extends Data.TaggedError(
   'HealthProfileRepositoryNotFoundError'
-)<{ cause?: unknown }> {}
+)<{
+  cause?: unknown
+}> {}
 ```
 
-#### **Service Layer**
+#### Service Layer
 ```typescript
-// apps/backend/src/features/health-profile/service/error.ts
 export class HealthProfileServiceError extends Data.TaggedError(
   'HealthProfileServiceError'
-)<{ message: string; cause?: unknown }> {}
+)<{
+  message: string
+  cause?: unknown
+}> {}
 
-// Self-explanatory errors remain minimal
 export class HealthProfileServiceNotFoundError extends Data.TaggedError(
   'HealthProfileServiceNotFoundError'
-)<{ cause?: unknown }> {}
+)<{
+  cause?: unknown
+}> {}
 ```
 
-### **Layer-Specific Error Handling**
+### Layer-Specific Error Handling
 
-#### **Repository Layer Responsibilities**
+#### Repository Layer Responsibilities
 - Wrap database operation failures with appropriate errors
 - Include concise messages for generic database failures
 - Preserve original database errors in `cause` field
 - Use self-explanatory error types for common scenarios (not found)
 
-**Example from HealthProfile Repository:**
-```typescript
-// apps/backend/src/features/health-profile/repository/kysely.ts
-create: (healthProfile) =>
-  Effect.tryPromise({
-    try: () =>
-      db
-        .insertInto('health_profiles')
-        .values({
-          user_id: healthProfile.user_id,
-          name: healthProfile.name,
-          // ... other fields
-        })
-        .executeTakeFirstOrThrow(),
-    catch: (error) =>
-      new HealthProfileRepositoryError({
-        message: 'Failed to create health profile',
-        cause: error
-      })
-  })
-
-findById: (id) =>
-  Effect.tryPromise({
-    try: () =>
-      db
-        .selectFrom('health_profiles')
-        .selectAll()
-        .where('id', '=', id)
-        .executeTakeFirst(),
-    catch: (error) =>
-      new HealthProfileRepositoryError({
-        message: `Failed to find health profile by id: ${id}`,
-        cause: error
-      })
-  }).pipe(
-    Effect.flatMap((healthProfile) =>
-      healthProfile
-        ? Effect.succeed(healthProfile)
-        : Effect.fail(new HealthProfileRepositoryNotFoundError({}))
-    )
-  )
-```
-
-#### **Service Layer Responsibilities**  
+#### Service Layer Responsibilities  
 - Transform repository errors to service errors
 - Add business logic validation errors
 - Maintain error chains through `cause` field
 - Create domain-specific error types as needed
 
-**Example from HealthProfile Service:**
-```typescript
-// apps/backend/src/features/health-profile/service/live.ts
-findById: (id) =>
-  healthProfileRepository.findById(id).pipe(
-    Effect.catchTags({
-      HealthProfileRepositoryNotFoundError: (error) =>
-        new HealthProfileServiceNotFoundError({
-          cause: error
-        }),
-      HealthProfileRepositoryError: (error) =>
-        new HealthProfileServiceError({
-          message: error.message,
-          cause: error
-        })
-    })
-  ),
+#### Transforming Errors
 
-create: (healthProfile) =>
-  Effect.gen(function* () {
-    const createdHealthProfile = yield* healthProfileRepository.create(healthProfile)
-    return createdHealthProfile
-  }).pipe(
-    Effect.catchTags({
-      HealthProfileRepositoryError: (error) =>
-        new HealthProfileServiceError({
-          message: error.message,
-          cause: error
-        })
-    })
-  )
-```
-
-### **Error Transformation Patterns**
-
-#### **Preserving Error Chains**
 ```typescript
 Effect.catchTags({
+  HealthProfileRepositoryNotFoundError: (error) =>
+    new HealthProfileServiceNotFoundError({
+      cause: error
+    }),
   HealthProfileRepositoryError: (error) =>
     new HealthProfileServiceError({
       message: error.message,
-      cause: error  // Always preserve the original error
-    }),
-  HealthProfileRepositoryNotFoundError: (error) =>
-    new HealthProfileServiceNotFoundError({
-      cause: error  // Preserve chain even for self-explanatory errors
+      cause: error
     })
 })
 ```
 
-#### **Message Crafting Guidelines**
-- **Repository messages**: Concise, operation-specific (e.g., `'Failed to create health profile'`)
-- **Include context**: Add identifiers when helpful (e.g., `'Failed to find health profile by id: ${id}'`)
-- **Avoid verbosity**: Never include stack traces or detailed error info in messages
-- **Use cause field**: Store detailed error information in the `cause` field
+### Advanced Patterns
 
-### **Advanced Patterns**
-
-#### **Union Error Types**
+#### Union Error Types
 ```typescript
 export type HealthProfileServiceOperationError =
   | HealthProfileServiceError
@@ -272,9 +455,8 @@ export type HealthProfileServiceOperationError =
   | HealthProfileServiceValidationError
 ```
 
-#### **Error Detection and Specialization**
+#### Error Detection and Specialization
 ```typescript
-// apps/backend/src/features/user/repository/kysely.ts - Example of constraint detection
 catch: (error) => {
   const matches = [...(error as Error).message.matchAll(
     /^SqliteError: UNIQUE constraint failed: index '(.*?)'$/g
@@ -293,7 +475,13 @@ catch: (error) => {
 }
 ```
 
-### **Design Rationale**
+### Message Crafting Guidelines
+- **Repository messages**: Concise, operation-specific (e.g., `'Failed to create health profile'`)
+- **Include context**: Add identifiers when helpful (e.g., `'Failed to find health profile by id: ${id}'`)
+- **Avoid verbosity**: Never include stack traces or detailed error info in messages
+- **Use cause field**: Store detailed error information in the `cause` field
+
+### Design Rationale
 
 1. **Type Safety**: Using `Data.TaggedError` provides compile-time type safety for error handling
 2. **Debuggability**: The `cause` field maintains full error chains for debugging
@@ -301,7 +489,7 @@ catch: (error) => {
 4. **Testability**: Well-structured errors are easier to test and mock
 5. **Observability**: Structured errors work well with logging and monitoring systems
 
-### **When to Choose Which Pattern**
+### When to Choose Which Pattern
 
 **For Repository Errors:**
 - Always include `message: string` for database operation failures
@@ -316,3 +504,29 @@ catch: (error) => {
 **For Domain-Level Errors:**
 - Follow the same patterns but consider the specific domain context
 - Some domain errors may benefit from additional contextual data fields
+
+## 12. Implementation Decisions Made
+
+### Removed from Scope
+- ❌ Recipe entity - Too complex for current needs
+- ❌ Ingredient entity - Not needed for meal planning
+- ❌ Weekly meal plan entity - 7 daily records sufficient
+- ❌ Meal plan templates - Future enhancement
+- ❌ Shopping list generation - Future enhancement
+
+### Kept in Scope
+- ✅ Simple meals with full nutrition data
+- ✅ Daily meal plans with 4 meal slots
+- ✅ Weekly generation (7 days)
+- ✅ Allergen filtering
+- ✅ Fitness goal matching
+- ✅ Proper layered architecture
+- ✅ Type-safe operations
+- ✅ Comprehensive error handling
+
+### Technical Decisions Made
+- **LLM Provider**: Zhipu AI with Vercel AI SDK for reliability
+- **Architecture**: Clean layered separation with proper error handling
+- **Data Model**: Structured agents with specialized business logic
+- **Persistence**: Type-safe Kysely repository pattern
+- **API Contract**: Clear separation between definitions (`@nora-health/api`) and implementation (`@nora-health/backend`)
