@@ -29,6 +29,7 @@ export const FitnessGoal = Schema.Literal(
   'SLEEP_IMPROVEMENT',
   'HEART_HEALTH'
 )
+export type FitnessGoal = typeof FitnessGoal.Type
 
 export const Allergen = Schema.Literal(
   'GLUTEN',
@@ -42,6 +43,7 @@ export const Allergen = Schema.Literal(
   'WHEAT',
   'SESAME'
 )
+export type Allergen = typeof Allergen.Type
 
 export const Location = Schema.Struct({
   country: Schema.String,
