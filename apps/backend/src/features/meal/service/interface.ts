@@ -7,6 +7,14 @@ import type {
 import { Context, type Effect, type Option } from 'effect'
 import type { MealServiceError } from './error'
 
+type MealComplexKeys = 'food_classes' | 'allergens' | 'fitness_goals'
+
+type MealComplexFields = {
+  food_classes: Meal['food_classes']
+  allergens: Meal['allergens']
+  fitness_goals: Meal['fitness_goals']
+}
+
 export type MealInsertable = Omit<
   Meal,
   'id' | 'created_at' | 'updated_at' | 'deleted_at'
