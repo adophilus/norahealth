@@ -1,6 +1,6 @@
 import { Schema } from 'effect'
 import { Allergen, FitnessGoal } from './HealthProfile'
-import Id from './Id'
+import { Id } from './Id'
 import Timestamp from './Timestamp'
 
 export const FoodClass = Schema.Literal(
@@ -17,10 +17,8 @@ export const FoodClass = Schema.Literal(
 )
 
 export type FoodClass = typeof FoodClass
-export type Allergen = typeof Allergen
-export type FitnessGoal = typeof FitnessGoal
 
-export default class Meal extends Schema.Class<Meal>('Meal')({
+export class Meal extends Schema.Class<Meal>('Meal')({
   id: Id,
   name: Schema.String,
   description: Schema.NullOr(Schema.String),
