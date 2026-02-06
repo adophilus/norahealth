@@ -8,7 +8,6 @@ import {
 import { UserRepository } from '../repository'
 import { ulid } from 'ulidx'
 import { User } from '@nora-health/domain'
-import { getUnixTime } from 'date-fns'
 
 export const UserServiceLive = Layer.effect(
   UserService,
@@ -66,7 +65,7 @@ export const UserServiceLive = Layer.effect(
 
       updateById: (id, payload) =>
         userRepository.updateById(id, payload).pipe(
-          Effect.map((userSelectable) => User.make(userSelectable)),
+          Effect.map(User.make),
           Effect.catchTags({
             UserRepositoryError: (error) =>
               new UserServiceError({ message: error.message })

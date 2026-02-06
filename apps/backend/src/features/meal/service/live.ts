@@ -1,198 +1,115 @@
 import type { Meal } from '@nora-health/domain'
-import { Effect, Option } from 'effect'
+import { Layer, Effect } from 'effect'
 import { MealRepository } from '../../meal/repository'
-import {
-  MealServiceError,
-  MealServiceNotFoundError,
-  MealServiceValidationError
-} from './error'
-import {
-  type MealInsertable,
+import { MealServiceError, MealServiceNotFoundError } from './error'
+import { MealService, type NutritionSummary } from './interface'
+
+export const MealServiceLive = Layer.effect(
   MealService,
-  type MealUpdateable,
-  type NutritionSummary
-} from './interface'
+  Effect.gen(function* () {
+    const repository = yield* MealRepository
 
-export const MealServiceLive = Effect.sync(() => {
-  return MealService.of({
-    create: (meal) =>
-      Effect.gen(function* () {
-        yield* validateMealInsertable(meal)
+    return MealService.of({
+      create: (payload) =>
+        repository.create({
+          ...payload,
+          food_classes: JSON.stringify(payload.food_classes),
+          allergens: JSON.stringify(payload.allergens),
+          fitness_goals: JSON.stringify(payload.fitness_goals)
+        }),
 
-        return yield* MealRepository.pipe(
-          Effect.flatMap((repo) => repo.create(meal))
-        )
-      }),
+      findById: (id) =>
+        MealRepository.pipe(Effect.flatMap((repo) => repo.findById(id))),
 
-    findById: (id) =>
-      MealRepository.pipe(Effect.flatMap((repo) => repo.findById(id))),
+      findAll: () =>
+        MealRepository.pipe(Effect.flatMap((repo) => repo.findAll())),
 
-    findAll: () =>
-      MealRepository.pipe(Effect.flatMap((repo) => repo.findAll())),
+      update: (id, updates) =>
+        Effect.gen(function* () {
+          return yield* MealRepository.pipe(
+            Effect.flatMap((repo) => repo.update(id, updates))
+          )
+        }),
 
-    update: (id, updates) =>
-      Effect.gen(function* () {
-        yield* validateMealUpdateable(updates)
+      delete: (id) =>
+        Effect.gen(function* () {
+          const existingMeal = yield* MealRepository.pipe(
+            Effect.flatMap((repo) => repo.findById(id))
+          )
 
-        return yield* MealRepository.pipe(
-          Effect.flatMap((repo) => repo.update(id, updates))
-        )
-      }),
+          if (existingMeal._tag === 'None') {
+            return yield* new MealServiceNotFoundError({})
+          }
 
-    delete: (id) =>
-      Effect.gen(function* () {
-        const existingMeal = yield* MealRepository.pipe(
-          Effect.flatMap((repo) => repo.findById(id))
-        )
+          return yield* MealRepository.pipe(
+            Effect.flatMap((repo) => repo.delete(id))
+          )
+        }),
 
-        if (existingMeal._tag === 'None') {
-          return yield* new MealServiceNotFoundError({})
-        }
+      findByFitnessGoals: (goals) =>
+        MealRepository.pipe(
+          Effect.flatMap((repo) => repo.findByFitnessGoals(goals))
+        ),
 
-        return yield* MealRepository.pipe(
-          Effect.flatMap((repo) => repo.delete(id))
-        )
-      }),
+      findByAllergensExcluded: (excludedAllergens) =>
+        MealRepository.pipe(
+          Effect.flatMap((repo) =>
+            repo.findByAllergensExcluded(excludedAllergens)
+          )
+        ),
 
-    findByFitnessGoals: (goals) =>
-      MealRepository.pipe(
-        Effect.flatMap((repo) => repo.findByFitnessGoals(goals))
-      ),
+      findByFoodClasses: (foodClasses) =>
+        MealRepository.pipe(
+          Effect.flatMap((repo) => repo.findByFoodClasses(foodClasses))
+        ),
 
-    findByAllergensExcluded: (excludedAllergens) =>
-      MealRepository.pipe(
-        Effect.flatMap((repo) =>
-          repo.findByAllergensExcluded(excludedAllergens)
-        )
-      ),
+      findByGoalAndAllergens: (goals, excludedAllergens) =>
+        MealRepository.pipe(
+          Effect.flatMap((repo) =>
+            repo.findByGoalAndAllergens(goals, excludedAllergens)
+          )
+        ),
 
-    findByFoodClasses: (foodClasses) =>
-      MealRepository.pipe(
-        Effect.flatMap((repo) => repo.findByFoodClasses(foodClasses))
-      ),
+      getMealNutritionSummary: (mealIds) =>
+        Effect.gen(function* () {
+          const repo = yield* MealRepository
 
-    findByGoalAndAllergens: (goals, excludedAllergens) =>
-      MealRepository.pipe(
-        Effect.flatMap((repo) =>
-          repo.findByGoalAndAllergens(goals, excludedAllergens)
-        )
-      ),
+          const mealsWithNutrition = []
 
-    getMealNutritionSummary: (mealIds) =>
-      Effect.gen(function* () {
-        const repo = yield* MealRepository
+          for (const id of mealIds) {
+            const mealResult = yield* repo.findById(id)
 
-        const mealsWithNutrition = []
+            if (mealResult._tag === 'Some') {
+              const meal = mealResult.value
 
-        for (const id of mealIds) {
-          const mealResult = yield* repo.findById(id)
-
-          if (mealResult._tag === 'Some') {
-            const meal = mealResult.value
-
-            if (meal.calories && meal.protein && meal.carbs && meal.fat) {
-              mealsWithNutrition.push(meal)
+              if (meal.calories && meal.protein && meal.carbs && meal.fat) {
+                mealsWithNutrition.push(meal)
+              }
             }
           }
-        }
 
-        const summary: NutritionSummary = {
-          totalCalories: mealsWithNutrition.reduce(
-            (sum, meal) => sum + meal.calories!,
-            0
-          ),
-          totalProtein: mealsWithNutrition.reduce(
-            (sum, meal) => sum + meal.protein!,
-            0
-          ),
-          totalCarbs: mealsWithNutrition.reduce(
-            (sum, meal) => sum + meal.carbs!,
-            0
-          ),
-          totalFat: mealsWithNutrition.reduce(
-            (sum, meal) => sum + meal.fat!,
-            0
-          ),
-          mealCount: mealsWithNutrition.length
-        }
+          const summary: NutritionSummary = {
+            totalCalories: mealsWithNutrition.reduce(
+              (sum, meal) => sum + meal.calories!,
+              0
+            ),
+            totalProtein: mealsWithNutrition.reduce(
+              (sum, meal) => sum + meal.protein!,
+              0
+            ),
+            totalCarbs: mealsWithNutrition.reduce(
+              (sum, meal) => sum + meal.carbs!,
+              0
+            ),
+            totalFat: mealsWithNutrition.reduce(
+              (sum, meal) => sum + meal.fat!,
+              0
+            ),
+            mealCount: mealsWithNutrition.length
+          }
 
-        return summary
-      })
-  })
-})
-
-const validateMealInsertable = (meal: MealInsertable) =>
-  Effect.gen(function* () {
-    if (!meal.name || meal.name.trim().length === 0) {
-      return yield* new MealServiceValidationError({
-        message: 'Meal name is required',
-        field: 'name'
-      })
-    }
-
-    if (meal.name.length > 200) {
-      return yield* new MealServiceValidationError({
-        message: 'Meal name must be less than 200 characters',
-        field: 'name'
-      })
-    }
-
-    if (meal.calories && meal.calories < 0) {
-      return yield* new MealServiceValidationError({
-        message: 'Calories must be positive',
-        field: 'calories'
-      })
-    }
-
-    if (
-      (meal.protein && meal.protein < 0) ||
-      (meal.carbs && meal.carbs < 0) ||
-      (meal.fat && meal.fat < 0)
-    ) {
-      return yield* new MealServiceValidationError({
-        message: 'Nutrition values must be positive',
-        field: 'nutrition'
-      })
-    }
-
-    return void 0
-  })
-
-const validateMealUpdateable = (updates: MealUpdateable) =>
-  Effect.gen(function* () {
-    if (updates.name !== undefined) {
-      if (updates.name.trim().length === 0) {
-        return yield* new MealServiceValidationError({
-          message: 'Meal name cannot be empty',
-          field: 'name'
+          return summary
         })
-      }
-
-      if (updates.name.length > 200) {
-        return yield* new MealServiceValidationError({
-          message: 'Meal name must be less than 200 characters',
-          field: 'name'
-        })
-      }
-    }
-
-    if (updates.calories !== undefined && updates.calories < 0) {
-      return yield* new MealServiceValidationError({
-        message: 'Calories must be positive',
-        field: 'calories'
-      })
-    }
-
-    if (
-      (updates.protein !== undefined && updates.protein < 0) ||
-      (updates.carbs !== undefined && updates.carbs < 0) ||
-      (updates.fat !== undefined && updates.fat < 0)
-    ) {
-      return yield* new MealServiceValidationError({
-        message: 'Nutrition values must be positive',
-        field: 'nutrition'
-      })
-    }
-
-    return void 0
+    })
   })
+)
