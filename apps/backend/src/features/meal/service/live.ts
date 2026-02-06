@@ -3,6 +3,7 @@ import { Layer, Effect } from 'effect'
 import { MealRepository } from '../../meal/repository'
 import { MealServiceError, MealServiceNotFoundError } from './error'
 import { MealService, type NutritionSummary } from './interface'
+import { ulid } from 'ulidx'
 
 export const MealServiceLive = Layer.effect(
   MealService,
@@ -13,6 +14,7 @@ export const MealServiceLive = Layer.effect(
       create: (payload) =>
         repository.create({
           ...payload,
+          id: ulid(),
           food_classes: JSON.stringify(payload.food_classes),
           allergens: JSON.stringify(payload.allergens),
           fitness_goals: JSON.stringify(payload.fitness_goals)

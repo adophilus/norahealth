@@ -30,7 +30,7 @@ export class MealService extends Context.Tag('MealService')<
     create(
       payload: Omit<
         TMeal.Insertable,
-        'id' | 'created_at' | 'updated_at' | 'deleted_at' | ComplexKeys
+        'id' | 'updated_at' | 'deleted_at' | ComplexKeys
       > &
         ComplexFields
     ): Effect.Effect<Meal, MealServiceError>
@@ -42,7 +42,7 @@ export class MealService extends Context.Tag('MealService')<
       id: string,
       payload: Omit<
         TMeal.Updateable,
-        'id' | 'created_at' | 'updated_at' | 'deleted_at' | ComplexKeys
+        'id' | 'updated_at' | 'deleted_at' | ComplexKeys
       > &
         Partial<ComplexFields>
     ): Effect.Effect<Meal, MealServiceError>
