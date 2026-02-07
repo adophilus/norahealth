@@ -2,6 +2,7 @@ import type { CompleteOnboardingRequestBody } from '@nora-health/api/User/Comple
 import type { User } from '@nora-health/domain'
 import { Effect } from 'effect'
 import { DailyMealPlanService } from '@/features/daily-meal-plan/service'
+import { DailyWorkoutPlanService } from '@/features/daily-workout-plan/service'
 import { HealthProfileService } from '@/features/health-profile/service'
 
 export const completeOnboardingUseCase = (
@@ -11,6 +12,7 @@ export const completeOnboardingUseCase = (
   Effect.gen(function* () {
     const healthProfileService = yield* HealthProfileService
     const dailyMealPlanService = yield* DailyMealPlanService
+    const dailyWorkoutPlanService = yield* DailyWorkoutPlanService
 
     const healthProfile = yield* healthProfileService.create({
       ...payload,
@@ -19,4 +21,5 @@ export const completeOnboardingUseCase = (
     })
 
     yield* dailyMealPlanService.generateWeeklyPlan(user.id, healthProfile)
+    yield* dailyWorkoutPlanService.generateWeeklyPlan(user.id, healthProfile)
   })

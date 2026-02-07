@@ -2,6 +2,7 @@ import { Schema } from 'effect'
 import Email from './Email'
 import { Id } from './Id'
 import Timestamp from './Timestamp'
+import { BodyTarget } from './Workout'
 
 export const AgeGroup = Schema.Literal(
   '18_25',
@@ -81,6 +82,7 @@ export class HealthProfile extends Schema.Class<HealthProfile>('HealthProfile')(
     injuries: Schema.Array(Injury),
     medical_conditions: MedicalConditions,
     fitness_goals: Schema.Array(FitnessGoal),
+    body_targets: Schema.Array(BodyTarget),
     weekly_workout_time: Schema.Number,
     allergies: Schema.Array(Allergen),
     location: Location,

@@ -5,6 +5,7 @@ import DailyMealPlanApi from './DailyMealPlan'
 import NotificationsApi from './Notification'
 import StorageApi from './Storage'
 import UserApi from './User'
+import WorkoutPlanApi from './WorkoutPlan'
 
 const Api = HttpApi.make('API')
   .annotate(OpenApi.Title, 'API Documentation')
@@ -20,6 +21,7 @@ const Api = HttpApi.make('API')
   .add(StorageApi)
   .add(UserApi)
   .add(DailyMealPlanApi)
+  .add(WorkoutPlanApi)
   // .add(AgentsApi)
   .add(NotificationsApi)
 

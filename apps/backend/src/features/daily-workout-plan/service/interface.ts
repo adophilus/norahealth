@@ -1,6 +1,6 @@
 import type { BodyTarget, FitnessGoal, Injury } from '@nora-health/domain'
 import { Context, type Effect } from 'effect'
-import type { DailyWorkoutPlan } from '@/types'
+import type { DailyWorkoutPlan, Workout } from '@/types'
 import type {
   DailyWorkoutPlanServiceError,
   DailyWorkoutPlanServiceNotFoundError,
@@ -52,22 +52,22 @@ export class DailyWorkoutPlanService extends Context.Tag(
     generateWeeklyPlan(
       userId: string,
       healthProfile: {
-        fitness_goals: FitnessGoal[]
-        injuries: Injury[]
-        body_targets: BodyTarget[]
+        fitness_goals: readonly FitnessGoal[]
+        injuries: readonly Injury[]
+        body_targets: readonly BodyTarget[]
       }
     ): Effect.Effect<
       DailyWorkoutPlan.Selectable[],
       DailyWorkoutPlanServiceError | DailyWorkoutPlanServiceValidationError
     >
     selectWorkoutsForDay(
-      availableWorkouts: DailyWorkoutPlan.Selectable[],
+      availableWorkouts: Workout.Selectable[],
       fitnessGoals: FitnessGoal[]
     ): Effect.Effect<
       {
-        morning_workout: DailyWorkoutPlan.Selectable | null
-        afternoon_workout: DailyWorkoutPlan.Selectable | null
-        evening_workout: DailyWorkoutPlan.Selectable | null
+        morning_workout: Workout.Selectable | null
+        afternoon_workout: Workout.Selectable | null
+        evening_workout: Workout.Selectable | null
       },
       DailyWorkoutPlanServiceError
     >

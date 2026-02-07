@@ -14,6 +14,16 @@ import {
   KyselyAuthTokenRepositoryLive
 } from './features/auth'
 import { AppConfig } from './features/config'
+import {
+  DailyMealPlanApiLive,
+  DailyMealPlanServiceLive,
+  KyselyDailyMealPlanRepositoryLive
+} from './features/daily-meal-plan'
+import {
+  DailyWorkoutPlanApiLive,
+  DailyWorkoutPlanServiceLive,
+  KyselyDailyWorkoutPlanRepositoryLive
+} from './features/daily-workout-plan'
 import { KyselyClient } from './features/database/kysely'
 import { SqliteKyselyClientLive } from './features/database/kysely/db/sqlite'
 import { createKyselyMigrator } from './features/database/kysely/migrator'
@@ -27,9 +37,10 @@ import {
 } from './features/llm'
 import { AgentApiLive } from './features/llm/AgentApiLive'
 import { NodemailerMailerLive } from './features/mailer/service/nodemailer'
+import { MealServiceLive } from './features/meal'
 import {
-  MealRepository,
-  KyselyMealRepositoryLive
+  KyselyMealRepositoryLive,
+  MealRepository
 } from './features/meal/repository'
 import {
   KyselyStorageRepositoryLive,
@@ -42,15 +53,13 @@ import {
   UserServiceLive
 } from './features/user'
 import {
-  DailyMealPlanApiLive,
-  DailyMealPlanServiceLive,
-  KyselyDailyMealPlanRepositoryLive
-} from './features/daily-meal-plan'
-import { MealServiceLive } from './features/meal'
+  KyselyWorkoutRepositoryLive,
+  WorkoutServiceLive
+} from './features/workout'
 
 export class DatabaseMigrationFailedError extends Data.TaggedError(
   'DatabaseMigrationFailedError'
-)<{ cause: unknown }> { }
+)<{ cause: unknown }> {}
 
 export const DatabaseClientLayer = SqliteKyselyClientLive
 
@@ -58,7 +67,7 @@ const checkMigrationResultSet = (rs: MigrationResultSet) =>
   rs.error ? Effect.fail(rs.error) : Effect.void
 
 export const DatabaseMigrationLayer = Layer.effectDiscard(
-  Effect.gen(function*() {
+  Effect.gen(function* () {
     const client = yield* KyselyClient
     const config = yield* AppConfig
 
@@ -98,6 +107,13 @@ export const DailyMealPlanDepLayer = Layer.empty.pipe(
   Layer.provideMerge(KyselyMealRepositoryLive)
 )
 
+export const DailyWorkoutPlanDepLayer = Layer.empty.pipe(
+  Layer.provideMerge(DailyWorkoutPlanServiceLive),
+  Layer.provideMerge(WorkoutServiceLive),
+  Layer.provideMerge(KyselyDailyWorkoutPlanRepositoryLive),
+  Layer.provideMerge(KyselyWorkoutRepositoryLive)
+)
+
 export const LLMDepLayer = Layer.empty.pipe(
   Layer.provideMerge(LLMServiceLive),
   Layer.provideMerge(KyselyAgentConversationRepositoryLive)
@@ -115,6 +131,7 @@ export const DepLayer = Layer.empty.pipe(
   Layer.provideMerge(UserDepLayer),
   Layer.provideMerge(HealthProfileDepLayer),
   Layer.provideMerge(DailyMealPlanDepLayer),
+  Layer.provideMerge(DailyWorkoutPlanDepLayer),
   // Layer.provideMerge(LLMDepLayer),
   Layer.provideMerge(StorageDepLayer),
   Layer.provideMerge(MailerLayer),
@@ -125,7 +142,8 @@ export const ApiEndpointLayer = Layer.empty.pipe(
   Layer.provideMerge(AuthApiLive),
   Layer.provideMerge(UserApiLive),
   Layer.provideMerge(DailyMealPlanApiLive),
-  Layer.provideMerge(StorageApiLive),
+  Layer.provideMerge(DailyWorkoutPlanApiLive),
+  Layer.provideMerge(StorageApiLive)
   // Layer.provideMerge(AgentApiLive)
 )
 
@@ -140,7 +158,7 @@ export const HttpLive = HttpApiBuilder.serve(HttpMiddleware.logger).pipe(
   HttpServer.withLogAddress,
   Layer.provide(
     Layer.unwrapEffect(
-      Effect.gen(function*() {
+      Effect.gen(function* () {
         const config = yield* AppConfig
         return NodeHttpServer.layer(createServer, { port: config.server.port })
       })

@@ -1,8 +1,9 @@
 import { addDays, format, parseISO, startOfWeek } from 'date-fns'
 import { Effect, Layer, Option } from 'effect'
+import { ulid } from 'ulidx'
 import { WorkoutService } from '@/features/workout/service'
 import type { DailyWorkoutPlan } from '@/types'
-import { DailyWorkoutPlanRepository } from '../repository'
+import { DailyWorkoutPlanRepository } from '../repository/interface'
 import {
   DailyWorkoutPlanServiceError,
   DailyWorkoutPlanServiceNotFoundError,
@@ -22,6 +23,18 @@ export const DailyWorkoutPlanServiceLive = Layer.effect(
         cause: error
       })
 
+    const asRepositoryError = <A>(
+      effect: Effect.Effect<A, unknown>
+    ): Effect.Effect<A, DailyWorkoutPlanServiceError> =>
+      effect.pipe(Effect.mapError(mapRepositoryError))
+
+    const asRepositoryErrorWithNotFound = <A>(
+      effect: Effect.Effect<A, unknown>
+    ): Effect.Effect<
+      A,
+      DailyWorkoutPlanServiceError | DailyWorkoutPlanServiceNotFoundError
+    > => effect.pipe(Effect.mapError(mapRepositoryError))
+
     const handleNotFound = () =>
       Effect.fail(new DailyWorkoutPlanServiceNotFoundError({}))
 
@@ -33,19 +46,13 @@ export const DailyWorkoutPlanServiceLive = Layer.effect(
     }
 
     return DailyWorkoutPlanService.of({
-      create: (payload) =>
-        Effect.gen(function* () {
-          const result = yield* repository
-            .create(payload)
-            .pipe(Effect.mapError(mapRepositoryError))
-          return result
-        }),
+      create: (payload) => asRepositoryError(repository.create(payload)),
 
       findById: (id) =>
         Effect.gen(function* () {
-          const result = yield* repository
-            .findById(id)
-            .pipe(Effect.mapError(mapRepositoryError))
+          const result = yield* asRepositoryErrorWithNotFound(
+            repository.findById(id)
+          )
           return yield* Option.match(result, {
             onSome: (plan) => Effect.succeed(plan),
             onNone: () => handleNotFound()
@@ -54,9 +61,9 @@ export const DailyWorkoutPlanServiceLive = Layer.effect(
 
       findByUserIdAndDate: (userId, date) =>
         Effect.gen(function* () {
-          const result = yield* repository
-            .findByUserIdAndDate(userId, date)
-            .pipe(Effect.mapError(mapRepositoryError))
+          const result = yield* asRepositoryErrorWithNotFound(
+            repository.findByUserIdAndDate(userId, date)
+          )
           return yield* Option.match(result, {
             onSome: (plan) => Effect.succeed(plan),
             onNone: () => handleNotFound()
@@ -64,39 +71,42 @@ export const DailyWorkoutPlanServiceLive = Layer.effect(
         }),
 
       findByUserIdAndDateRange: (userId, startDate, endDate) =>
-        Effect.gen(function* () {
-          const result = yield* repository
-            .findByUserIdAndDateRange(userId, startDate, endDate)
-            .pipe(Effect.mapError(mapRepositoryError))
-          return result
-        }),
+        asRepositoryError(
+          repository.findByUserIdAndDateRange(userId, startDate, endDate)
+        ),
 
       update: (id, payload) =>
         Effect.gen(function* () {
-          const result = yield* repository
-            .update(id, payload)
-            .pipe(Effect.mapError(mapRepositoryError))
+          const result = yield* asRepositoryErrorWithNotFound(
+            repository.update(id, payload)
+          )
           return yield* Option.match(result, {
             onSome: (plan) => Effect.succeed(plan),
             onNone: () => handleNotFound()
           })
         }),
 
-      delete: (id) =>
-        Effect.gen(function* () {
-          yield* repository.delete(id).pipe(Effect.mapError(mapRepositoryError))
-        }),
+      delete: (id) => asRepositoryErrorWithNotFound(repository.delete(id)),
 
       generateWeeklyPlan: (userId, healthProfile) =>
         Effect.gen(function* () {
           const dates = generateDateRange(startOfWeek(new Date()).toISOString())
 
-          // Get workouts suitable for user's health profile
+          // Get suitable workouts for user's health profile
           const suitableWorkouts = yield* workoutService
             .getWorkoutsForUserProfile(
-              healthProfile.fitness_goals,
-              healthProfile.injuries,
-              healthProfile.body_targets
+              [...healthProfile.fitness_goals],
+              [...healthProfile.injuries],
+              [...healthProfile.body_targets]
+            )
+            .pipe(
+              Effect.mapError(
+                (error) =>
+                  new DailyWorkoutPlanServiceValidationError({
+                    message: 'Failed to get suitable workouts',
+                    cause: error
+                  })
+              )
             )
             .pipe(
               Effect.mapError(
@@ -108,27 +118,23 @@ export const DailyWorkoutPlanServiceLive = Layer.effect(
               )
             )
 
-          // Generate workout assignments for each day
-          const workoutAssignments = dates.map((date) => ({
-            date,
-            // For now, assign undefined to all slots - we can enhance this later
-            morning_workout_id: suitableWorkouts[0]?.id,
-            afternoon_workout_id: suitableWorkouts[1]?.id,
-            evening_workout_id: suitableWorkouts[2]?.id
-          }))
+          // Create daily workout plans for each day
+          const weeklyPlan: DailyWorkoutPlan.Selectable[] = []
+          for (const date of dates) {
+            // Select workouts for this day (simple rotation for now)
+            const dayWorkouts = suitableWorkouts.slice(0, 3) // Take first 3 workouts
 
-          // Create the weekly plan
-          const weeklyPlan = yield* repository
-            .generateWeeklyPlan(userId, dates[0], workoutAssignments)
-            .pipe(
-              Effect.mapError(
-                (error) =>
-                  new DailyWorkoutPlanServiceValidationError({
-                    message: 'Failed to generate weekly plan',
-                    cause: error
-                  })
-              )
-            )
+            const dailyPlan = yield* repository
+              .create({
+                id: ulid(),
+                user_id: userId,
+                date,
+                notes: ''
+              })
+              .pipe(Effect.mapError(mapRepositoryError))
+
+            weeklyPlan.push(dailyPlan)
+          }
 
           return weeklyPlan
         }),
