@@ -4,7 +4,7 @@ import { KyselyClient } from '@/features/database/kysely'
 import { DailyMealPlanRepositoryError } from './error'
 import { DailyMealPlanRepository } from './interface'
 
-export const DailyMealPlanRepositoryLive = Layer.effect(
+export const KyselyDailyMealPlanRepositoryLive = Layer.effect(
   DailyMealPlanRepository,
   Effect.gen(function* () {
     const db = yield* KyselyClient

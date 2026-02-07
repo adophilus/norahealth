@@ -12,22 +12,12 @@ import type { MigrationResultSet } from 'kysely'
 import {
   AuthApiLive,
   AuthenticationMiddlewareLive,
-  AuthProfileServiceLive,
   AuthSessionServiceLive,
   EmailAuthTokenServiceLive,
-  KyselyAuthProfileRepositoryLive,
   KyselyAuthSessionRepositoryLive,
   KyselyAuthTokenRepositoryLive
 } from './features/auth'
 import { AppConfig } from './features/config'
-import {
-  DailyMealPlanRepository,
-  DailyMealPlanRepositoryLive
-} from './features/daily-meal-plan/repository'
-import {
-  DailyMealPlanService,
-  DailyMealPlanServiceLive
-} from './features/daily-meal-plan/service'
 import { KyselyClient } from './features/database/kysely'
 import { SqliteKyselyClientLive } from './features/database/kysely/db/sqlite'
 import { createKyselyMigrator } from './features/database/kysely/migrator'
@@ -41,7 +31,10 @@ import {
 } from './features/llm'
 import { AgentApiLive } from './features/llm/AgentApiLive'
 import { NodemailerMailerLive } from './features/mailer/service/nodemailer'
-import { MealRepository, MealRepositoryLive } from './features/meal/repository'
+import {
+  MealRepository,
+  KyselyMealRepositoryLive
+} from './features/meal/repository'
 import {
   KyselyStorageRepositoryLive,
   StorageApiLive,
@@ -52,6 +45,12 @@ import {
   UserApiLive,
   UserServiceLive
 } from './features/user'
+import {
+  DailyMealPlanApiLive,
+  DailyMealPlanServiceLive,
+  KyselyDailyMealPlanRepositoryLive
+} from './features/daily-meal-plan'
+import { MealServiceLive } from './features/meal'
 
 export class DatabaseMigrationFailedError extends Data.TaggedError(
   'DatabaseMigrationFailedError'
@@ -96,35 +95,40 @@ export const HealthProfileDepLayer = HealthProfileServiceLive.pipe(
   Layer.provideMerge(KyselyHealthProfileRepositoryLive)
 )
 
-export const DailyMealPlanDepLayer = DailyMealPlanServiceLive.pipe(
-  Layer.provideMerge(DailyMealPlanRepositoryLive),
-  Layer.provideMerge(MealRepositoryLive)
+export const DailyMealPlanDepLayer = Layer.empty.pipe(
+  Layer.provideMerge(DailyMealPlanServiceLive),
+  Layer.provideMerge(MealServiceLive),
+  Layer.provideMerge(KyselyDailyMealPlanRepositoryLive),
+  Layer.provideMerge(KyselyMealRepositoryLive)
 )
 
-export const LLMDepLayer = LLMServiceLive.pipe(
+export const LLMDepLayer = Layer.empty.pipe(
+  Layer.provideMerge(LLMServiceLive),
   Layer.provideMerge(KyselyAgentConversationRepositoryLive)
 )
 
-export const AuthDepLayer = AuthSessionServiceLive.pipe(
+export const AuthDepLayer = Layer.empty.pipe(
+  Layer.provideMerge(AuthSessionServiceLive),
   Layer.provideMerge(EmailAuthTokenServiceLive),
-  Layer.provideMerge(AuthProfileServiceLive),
   Layer.provideMerge(KyselyAuthTokenRepositoryLive),
-  Layer.provideMerge(KyselyAuthSessionRepositoryLive),
-  Layer.provideMerge(KyselyAuthProfileRepositoryLive)
+  Layer.provideMerge(KyselyAuthSessionRepositoryLive)
 )
 
-export const DepLayer = AuthDepLayer.pipe(
-  Layer.provideMerge(DatabaseLayer),
+export const DepLayer = Layer.empty.pipe(
+  Layer.provideMerge(AuthDepLayer),
   Layer.provideMerge(UserDepLayer),
   Layer.provideMerge(HealthProfileDepLayer),
   Layer.provideMerge(DailyMealPlanDepLayer),
   // Layer.provideMerge(LLMDepLayer),
   Layer.provideMerge(StorageDepLayer),
-  Layer.provideMerge(MailerLayer)
+  Layer.provideMerge(MailerLayer),
+  Layer.provideMerge(DatabaseLayer)
 )
 
-export const ApiEndpointLayer = AuthApiLive.pipe(
+export const ApiEndpointLayer = Layer.empty.pipe(
+  Layer.provideMerge(AuthApiLive),
   Layer.provideMerge(UserApiLive),
+  Layer.provideMerge(DailyMealPlanApiLive),
   Layer.provideMerge(StorageApiLive)
   // Layer.provideMerge(AgentApiLive)
 )
