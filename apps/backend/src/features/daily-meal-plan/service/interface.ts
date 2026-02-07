@@ -25,9 +25,10 @@ export class DailyMealPlanService extends Context.Tag('DailyMealPlanService')<
       DailyMealPlanServiceError | DailyMealPlanServiceNoMealsFoundError,
       never
     >
-    getWeeklyPlan(
+    getPlansWithin(
       userId: string,
-      weekStartDate: string
+      startDate: string,
+      endDate: string
     ): Effect.Effect<Array<DailyMealPlan>, DailyMealPlanServiceError, never>
     updateDayPlan(
       userId: string,
@@ -38,4 +39,4 @@ export class DailyMealPlanService extends Context.Tag('DailyMealPlanService')<
       > & { snacks: string[] }
     ): Effect.Effect<DailyMealPlan, DailyMealPlanServiceError, never>
   }
->() {}
+>() { }

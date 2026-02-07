@@ -4,17 +4,17 @@ import {
   type HealthProfile,
   type Meal
 } from '@nora-health/domain'
-import { getUnixTime } from 'date-fns'
+import { addDays, formatISO, getDay, getUnixTime } from 'date-fns'
 import { Effect, Layer, Option, Schema } from 'effect'
 import { ulid } from 'ulidx'
+import { MealService } from '@/features/meal'
+import type { DailyMealPlan as TDailyMealPlan } from '@/types'
 import { DailyMealPlanRepository } from '../repository'
 import {
   DailyMealPlanServiceError,
   DailyMealPlanServiceNoMealsFoundError
 } from './error'
 import { DailyMealPlanService } from './interface'
-import type { DailyMealPlan as TDailyMealPlan } from '@/types'
-import { MealService } from '@/features/meal'
 
 export const DailyMealPlanServiceLive = Layer.effect(
   DailyMealPlanService,
@@ -107,22 +107,15 @@ export const DailyMealPlanServiceLive = Layer.effect(
           return dailyPlans
         }),
 
-      getWeeklyPlan: (userId, weekStartDate) =>
+      getPlansWithin: (userId, startDate, endDate) =>
         Effect.gen(function* () {
-          const endDate = new Date(weekStartDate)
-          endDate.setDate(endDate.getDate() + 6)
-
           const dbRecords = yield* dailyMealPlanRepository
-            .findByUserIdAndDateRange(
-              userId,
-              weekStartDate,
-              endDate.toISOString().split('T')[0]
-            )
+            .findByUserIdAndDateRange(userId, startDate, endDate)
             .pipe(
               Effect.catchTags({
                 DailyMealPlanRepositoryError: (error) =>
                   new DailyMealPlanServiceError({
-                    message: `Failed to get weekly plan for user ${userId}`,
+                    message: `Failed to get daily plans for user ${userId}`,
                     cause: error
                   })
               })
@@ -205,11 +198,10 @@ const generateWeekDays = (): Array<{ date: string; dayOfWeek: number }> => {
   const today = new Date()
 
   for (let i = 0; i < 7; i++) {
-    const date = new Date(today)
-    date.setDate(today.getDate() + i)
+    const date = addDays(today, i)
     days.push({
-      date: date.toISOString().split('T')[0],
-      dayOfWeek: date.getDay()
+      date: formatISO(date, { representation: 'date' }),
+      dayOfWeek: getDay(date)
     })
   }
 

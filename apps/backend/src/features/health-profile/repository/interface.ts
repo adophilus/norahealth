@@ -8,10 +8,7 @@ export class HealthProfileRepository extends Context.Tag(
   HealthProfileRepository,
   {
     create(
-      payload: Omit<
-        HealthProfile.Insertable,
-        'id' | 'created_at' | 'updated_at'
-      >
+      payload: HealthProfile.Insertable
     ): Effect.Effect<
       HealthProfile.Selectable,
       HealthProfileRepositoryError,

@@ -1,32 +1,25 @@
 import { HttpApiBuilder } from '@effect/platform'
-import {
-  Api,
-  GenerateWeeklyPlanRequestBody,
-  WeeklyPlanResponse
-} from '@nora-health/api'
+import { Api } from '@nora-health/api'
 import { CurrentUser, UnexpectedError } from '@nora-health/api/common/index'
 import { Effect } from 'effect'
 import { DailyMealPlanService } from '../service'
 
-export const GenerateWeeklyPlanEndpointLive = HttpApiBuilder.handler(
+export const GetDailyMealPlanEndpointLive = HttpApiBuilder.handler(
   Api,
   'DailyMealPlan',
-  'generateWeeklyPlan',
-  ({ payload }) =>
+  'getDailyMealPlan',
+  ({ path }) =>
     Effect.gen(function* () {
       const currentUser = yield* CurrentUser
       const dailyMealPlanService = yield* DailyMealPlanService
 
-      const weeklyPlanResult = yield* dailyMealPlanService.generateWeeklyPlan(
-        payload.start_date,
-        currentUser.id
+      const plans = yield* dailyMealPlanService.getPlansWithin(
+        currentUser.id,
+        path.start_date,
+        path.end_date
       )
 
-      return new WeeklyPlanResponse({
-        daily_plans: weeklyPlanResult.dailyPlans,
-        start_date: payload.start_date,
-        end_date: weeklyPlanResult.endDate
-      })
+      return plans
     }).pipe(
       Effect.mapError(() => {
         return new UnexpectedError({

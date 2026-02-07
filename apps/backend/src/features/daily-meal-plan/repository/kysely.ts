@@ -1,10 +1,10 @@
+import { getUnixTime } from 'date-fns'
 import { Effect, Layer, Option } from 'effect'
 import { KyselyClient } from '@/features/database/kysely'
 import { DailyMealPlanRepositoryError } from './error'
 import { DailyMealPlanRepository } from './interface'
-import { getUnixTime } from 'date-fns'
 
-export const KyselyDailyMealPlanRepositoryLive = Layer.effect(
+export const DailyMealPlanRepositoryLive = Layer.effect(
   DailyMealPlanRepository,
   Effect.gen(function* () {
     const db = yield* KyselyClient

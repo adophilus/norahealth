@@ -15,6 +15,7 @@ import {
   HealthProfileServiceNotFoundError
 } from './error'
 import { getUnixTime } from 'date-fns'
+import { ulid } from 'ulidx'
 
 export const HealthProfileServiceLive = Layer.effect(
   HealthProfileService,
@@ -66,6 +67,7 @@ export const HealthProfileServiceLive = Layer.effect(
         healthProfileRepository
           .create({
             ...payload,
+            id: ulid(),
             injuries: JSON.stringify(payload.injuries),
             medical_conditions: JSON.stringify(payload.medical_conditions),
             fitness_goals: JSON.stringify(payload.fitness_goals),
