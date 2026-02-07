@@ -25,7 +25,9 @@ export const EnvLive = Layer.effect(
       GEMINI_API_KEY: yield* Config.string('GEMINI_API_KEY'),
       ZHIPU_API_KEY: yield* Config.string('ZHIPU_API_KEY'),
       OPENWEATHER_API_KEY: yield* Config.string('OPENWEATHER_API_KEY'),
-      GOOGLE_MAPS_API_KEY: yield* Config.string('GOOGLE_MAPS_API_KEY')
+      GOOGLE_MAPS_API_KEY: yield* Config.string('GOOGLE_MAPS_API_KEY'),
+      VAPID_PUBLIC_KEY: yield* Config.string('VAPID_PUBLIC_KEY'),
+      VAPID_PRIVATE_KEY: yield* Config.string('VAPID_PUBLIC_KEY')
     }
 
     const decoder = Schema.decodeUnknown(EnvSchema)

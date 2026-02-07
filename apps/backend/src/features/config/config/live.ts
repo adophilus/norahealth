@@ -53,6 +53,10 @@ export const AppConfigLive = Layer.effect(
         googleMaps: {
           apiKey: env.GOOGLE_MAPS_API_KEY
         }
+      },
+      vapid: {
+        publicKey: env.VAPID_PUBLIC_KEY,
+        privateKey: env.VAPID_PRIVATE_KEY
       }
     }
 

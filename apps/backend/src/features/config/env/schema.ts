@@ -16,5 +16,7 @@ export class EnvSchema extends Schema.Class<EnvSchema>('EnvSchema')({
   GEMINI_API_KEY: Schema.String,
   ZHIPU_API_KEY: Schema.String,
   OPENWEATHER_API_KEY: Schema.String,
-  GOOGLE_MAPS_API_KEY: Schema.String
+  GOOGLE_MAPS_API_KEY: Schema.String,
+  VAPID_PUBLIC_KEY: Schema.String,
+  VAPID_PRIVATE_KEY: Schema.String
 }) {}

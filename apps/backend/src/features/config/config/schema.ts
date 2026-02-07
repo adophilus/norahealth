@@ -56,6 +56,12 @@ export const ExternalApiConfigSchema = Schema.Struct({
   })
 })
 
+// Vapid Config Schema
+export const VapidConfigSchema = Schema.Struct({
+  publicKey: Schema.String,
+  privateKey: Schema.String
+})
+
 export class AppConfigSchema extends Schema.Class<AppConfigSchema>(
   'AppConfigSchema'
 )({
@@ -64,5 +70,6 @@ export class AppConfigSchema extends Schema.Class<AppConfigSchema>(
   mail: MailConfigSchema,
   server: ServerConfigSchema,
   llm: LLMConfigSchema,
-  externalApis: ExternalApiConfigSchema
+  externalApis: ExternalApiConfigSchema,
+  vapid: VapidConfigSchema
 }) {}
