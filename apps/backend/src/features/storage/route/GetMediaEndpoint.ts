@@ -18,7 +18,8 @@ export const GetMediaEndpointLive = HttpApiBuilder.handler(
     }).pipe(
       Effect.catchTags({
         StorageServiceNotFoundError: () => Effect.fail(new FileNotFoundError()),
-        StorageServiceError: () => Effect.fail(new UnexpectedError())
+        StorageServiceError: (error) =>
+          Effect.fail(new UnexpectedError({ message: error.message }))
       })
     )
 )

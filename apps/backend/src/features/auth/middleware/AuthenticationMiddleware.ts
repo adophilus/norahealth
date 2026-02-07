@@ -26,10 +26,12 @@ export const AuthenticationMiddlewareLive = Layer.effect(
         }).pipe(
           Effect.catchTags({
             InvalidSessionError: () => Effect.fail(new UnauthorizedError()),
-            AuthSessionServiceError: () => Effect.fail(new UnexpectedError()),
+            AuthSessionServiceError: (error) =>
+              Effect.fail(new UnexpectedError({ message: error.message })),
             UserServiceNotFoundError: () =>
               Effect.fail(new UnauthorizedError()),
-            UserServiceError: () => Effect.fail(new UnexpectedError())
+            UserServiceError: (error) =>
+              Effect.fail(new UnexpectedError({ message: error.message }))
           })
         )
     })
