@@ -1,5 +1,13 @@
-import { ApiLive, DatabaseLayer } from '@/bootstrap'
-import { KyselyAuthTokenRepositoryLive } from '@/features/auth'
+import {
+  ApiLive,
+  DatabaseLayer,
+  StorageDepLayer,
+  UserDepLayer,
+  HealthProfileDepLayer,
+  DailyMealPlanDepLayer,
+  DailyWorkoutPlanDepLayer
+} from '@/bootstrap'
+import { AuthSessionServiceLive, KyselyAuthSessionRepositoryLive, KyselyAuthTokenRepositoryLive } from '@/features/auth'
 import { DefaultAuthTokenServiceLive } from '@/features/auth/service/token/default'
 import { AppConfigLive, EnvLive } from '@/features/config'
 import { MockMailerLive } from '@/features/mailer'
@@ -30,12 +38,28 @@ export const makeApiClient = (accessToken?: string) =>
 
 export type ApiClient = ReturnType<typeof makeApiClient>
 
-export const ServerLive = HttpApiBuilder.serve().pipe(
-  Layer.provideMerge(ApiLive),
+export const AuthDepLayer = Layer.empty.pipe(
+  Layer.provideMerge(AuthSessionServiceLive),
   Layer.provideMerge(DefaultAuthTokenServiceLive),
   Layer.provideMerge(KyselyAuthTokenRepositoryLive),
-  Layer.provideMerge(DatabaseLayer),
+  Layer.provideMerge(KyselyAuthSessionRepositoryLive)
+)
+
+export const DepLayer = Layer.empty.pipe(
+  Layer.provideMerge(AuthDepLayer),
+  Layer.provideMerge(UserDepLayer),
+  Layer.provideMerge(HealthProfileDepLayer),
+  Layer.provideMerge(DailyMealPlanDepLayer),
+  Layer.provideMerge(DailyWorkoutPlanDepLayer),
+  // Layer.provideMerge(LLMDepLayer),
+  Layer.provideMerge(StorageDepLayer),
   Layer.provideMerge(MockMailerLive),
+  Layer.provideMerge(DatabaseLayer)
+)
+
+export const ServerLive = HttpApiBuilder.serve().pipe(
+  Layer.provideMerge(ApiLive),
+  Layer.provideMerge(DepLayer),
   Layer.provide(AppConfigLive),
   Layer.provide(EnvLive),
   Layer.provideMerge(NodeHttpServer.layerTest)
