@@ -2,27 +2,8 @@ import { Schema } from 'effect'
 import { FitnessGoal, Injury } from './HealthProfile'
 import { Id } from './Id'
 import Timestamp from './Timestamp'
-
-export const WorkoutType = Schema.Literal(
-  'CARDIO',
-  'STRENGTH',
-  'FLEXIBILITY',
-  'HIIT',
-  'COMPOUND'
-)
-
-export const BodyTarget = Schema.Literal(
-  'FULL_BODY',
-  'UPPER_BODY',
-  'LOWER_BODY',
-  'CORE',
-  'BACK',
-  'CHEST',
-  'SHOULDERS',
-  'ARMS',
-  'LEGS',
-  'CARDIO'
-)
+import { WorkoutType } from './WorkoutType'
+import { BodyTarget } from './BodyTarget'
 
 export default class Workout extends Schema.Class<Workout>('Workout')({
   id: Id,
@@ -40,5 +21,3 @@ export default class Workout extends Schema.Class<Workout>('Workout')({
   created_at: Timestamp,
   updated_at: Schema.NullOr(Timestamp)
 }) {}
-
-export type BodyTarget = typeof BodyTarget.Type

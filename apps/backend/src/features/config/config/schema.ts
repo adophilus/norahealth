@@ -1,24 +1,5 @@
 import { Schema } from 'effect'
 
-// Auth Config Schema
-export const AuthConfigSchema = Schema.Struct({
-  token: Schema.Struct({
-    secret: Schema.String,
-    access: Schema.Struct({
-      expiry: Schema.Number
-    }),
-    refresh: Schema.Struct({
-      expiry: Schema.Number
-    }),
-    signup: Schema.Struct({
-      expiry: Schema.Number
-    }),
-    signin: Schema.Struct({
-      expiry: Schema.Number
-    })
-  })
-})
-
 // Database Config Schema
 export const DatabaseConfigSchema = Schema.Struct({
   url: Schema.String,
@@ -54,12 +35,12 @@ export const ServerConfigSchema = Schema.Struct({
 
 // LLM Config Schema
 export const LLMConfigSchema = Schema.Struct({
-  provider: Schema.Literal('gemini', 'glm'),
+  provider: Schema.Literal('gemini', 'zai'),
   gemini: Schema.Struct({
     apiKey: Schema.String,
     model: Schema.String
   }),
-  glm: Schema.Struct({
+  zai: Schema.Struct({
     apiKey: Schema.String,
     model: Schema.String
   })
@@ -72,18 +53,12 @@ export const ExternalApiConfigSchema = Schema.Struct({
   }),
   googleMaps: Schema.Struct({
     apiKey: Schema.String
-  }),
-  firebase: Schema.Struct({
-    projectId: Schema.String,
-    privateKey: Schema.String,
-    clientEmail: Schema.String
   })
 })
 
 export class AppConfigSchema extends Schema.Class<AppConfigSchema>(
   'AppConfigSchema'
 )({
-  auth: AuthConfigSchema,
   db: DatabaseConfigSchema,
   environment: EnvironmentConfigSchema,
   mail: MailConfigSchema,

@@ -8,33 +8,7 @@ export const AppConfigLive = Layer.effect(
   Effect.gen(function* () {
     const env = yield* Env
 
-    const expiry =
-      env.NODE_ENV === 'production'
-        ? 3600
-        : env.NODE_ENV === 'staging'
-          ? 3600
-          : env.NODE_ENV === 'development'
-            ? 3600
-            : 1
-
     const config = {
-      auth: {
-        token: {
-          secret: env.AUTH_TOKEN_SECRET,
-          access: {
-            expiry: 60
-          },
-          refresh: {
-            expiry: 60 * 24 * 30
-          },
-          signup: {
-            expiry: expiry
-          },
-          signin: {
-            expiry: expiry
-          }
-        }
-      },
       db: {
         url: env.DATABASE_URL,
         prefix: env.DATABASE_PREFIX,
@@ -67,8 +41,8 @@ export const AppConfigLive = Layer.effect(
           apiKey: env.GEMINI_API_KEY,
           model: 'gemini-2.5-flash-vision'
         },
-        glm: {
-          apiKey: env.GLM_API_KEY,
+        zai: {
+          apiKey: env.ZHIPU_API_KEY,
           model: 'glm-4-flash'
         }
       },
@@ -78,11 +52,6 @@ export const AppConfigLive = Layer.effect(
         },
         googleMaps: {
           apiKey: env.GOOGLE_MAPS_API_KEY
-        },
-        firebase: {
-          projectId: env.FIREBASE_PROJECT_ID,
-          privateKey: env.FIREBASE_PRIVATE_KEY,
-          clientEmail: env.FIREBASE_CLIENT_EMAIL
         }
       }
     }

@@ -2,7 +2,6 @@ import { Schema } from 'effect'
 
 export class EnvSchema extends Schema.Class<EnvSchema>('EnvSchema')({
   NODE_ENV: Schema.Literal('production', 'staging', 'development', 'test'),
-  AUTH_TOKEN_SECRET: Schema.String,
   DATABASE_URL: Schema.String,
   DATABASE_PREFIX: Schema.NullOr(Schema.String),
   DATABASE_MIGRATIONS_FOLDER: Schema.String,
@@ -15,10 +14,7 @@ export class EnvSchema extends Schema.Class<EnvSchema>('EnvSchema')({
   SERVER_URL: Schema.String,
   LLM_PROVIDER: Schema.Literal('gemini', 'glm'),
   GEMINI_API_KEY: Schema.String,
-  GLM_API_KEY: Schema.String,
+  ZHIPU_API_KEY: Schema.String,
   OPENWEATHER_API_KEY: Schema.String,
-  GOOGLE_MAPS_API_KEY: Schema.String,
-  FIREBASE_PROJECT_ID: Schema.String,
-  FIREBASE_PRIVATE_KEY: Schema.String,
-  FIREBASE_CLIENT_EMAIL: Schema.String
+  GOOGLE_MAPS_API_KEY: Schema.String
 }) {}

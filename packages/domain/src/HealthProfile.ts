@@ -2,7 +2,7 @@ import { Schema } from 'effect'
 import Email from './Email'
 import { Id } from './Id'
 import Timestamp from './Timestamp'
-import { BodyTarget } from './Workout'
+import { BodyTarget } from './BodyTarget'
 
 export const AgeGroup = Schema.Literal(
   '18_25',

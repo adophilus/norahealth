@@ -7,7 +7,6 @@ export const EnvLive = Layer.effect(
   Effect.gen(function* () {
     const rawConfig = {
       NODE_ENV: yield* Config.string('NODE_ENV'),
-      AUTH_TOKEN_SECRET: yield* Config.string('AUTH_TOKEN_SECRET'),
       DATABASE_URL: yield* Config.string('DATABASE_URL'),
       DATABASE_PREFIX: yield* Config.option(
         Config.string('DATABASE_PREFIX')
@@ -24,12 +23,9 @@ export const EnvLive = Layer.effect(
       SERVER_URL: yield* Config.string('SERVER_URL'),
       LLM_PROVIDER: yield* Config.string('LLM_PROVIDER'),
       GEMINI_API_KEY: yield* Config.string('GEMINI_API_KEY'),
-      GLM_API_KEY: yield* Config.string('GLM_API_KEY'),
+      ZHIPU_API_KEY: yield* Config.string('ZHIPU_API_KEY'),
       OPENWEATHER_API_KEY: yield* Config.string('OPENWEATHER_API_KEY'),
-      GOOGLE_MAPS_API_KEY: yield* Config.string('GOOGLE_MAPS_API_KEY'),
-      FIREBASE_PROJECT_ID: yield* Config.string('FIREBASE_PROJECT_ID'),
-      FIREBASE_PRIVATE_KEY: yield* Config.string('FIREBASE_PRIVATE_KEY'),
-      FIREBASE_CLIENT_EMAIL: yield* Config.string('FIREBASE_CLIENT_EMAIL')
+      GOOGLE_MAPS_API_KEY: yield* Config.string('GOOGLE_MAPS_API_KEY')
     }
 
     const decoder = Schema.decodeUnknown(EnvSchema)
