@@ -1,17 +1,10 @@
 import type { DailyMealPlan, HealthProfile } from '@nora-health/domain'
 import { Context, type Effect } from 'effect'
-import type { MealRepository } from '../../meal/repository/interface'
-import type { DailyMealPlanRepository } from '../repository/interface'
 import type {
   DailyMealPlanServiceError,
   DailyMealPlanServiceNoMealsFoundError
 } from './error'
-
-export type WeeklyPlanResult = {
-  success: boolean
-  dailyPlans: Array<DailyMealPlan>
-  message: string
-}
+import type { DailyMealPlan as TDailyMealPlan } from '@/types'
 
 export type DayPlanUpdate = {
   breakfast: string | null
@@ -28,26 +21,21 @@ export class DailyMealPlanService extends Context.Tag('DailyMealPlanService')<
       userId: string,
       healthProfile: HealthProfile
     ): Effect.Effect<
-      WeeklyPlanResult,
+      DailyMealPlan[],
       DailyMealPlanServiceError | DailyMealPlanServiceNoMealsFoundError,
-      DailyMealPlanRepository | MealRepository
+      never
     >
     getWeeklyPlan(
       userId: string,
       weekStartDate: string
-    ): Effect.Effect<
-      Array<DailyMealPlan>,
-      DailyMealPlanServiceError,
-      DailyMealPlanRepository
-    >
+    ): Effect.Effect<Array<DailyMealPlan>, DailyMealPlanServiceError, never>
     updateDayPlan(
       userId: string,
       date: string,
-      updates: DayPlanUpdate
-    ): Effect.Effect<
-      DailyMealPlan,
-      DailyMealPlanServiceError,
-      DailyMealPlanRepository
-    >
+      updates: Omit<
+        TDailyMealPlan.Updateable,
+        'user_id' | 'updated_at' | 'deleted_at' | 'date' | 'snacks'
+      > & { snacks: string[] }
+    ): Effect.Effect<DailyMealPlan, DailyMealPlanServiceError, never>
   }
 >() {}
