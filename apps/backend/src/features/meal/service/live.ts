@@ -115,7 +115,17 @@ export const MealServiceLive = Layer.effect(
             ...serializeComplexFields(updates)
           })
           .pipe(
-            Effect.flatMap(toDomain),
+            Effect.flatMap(
+              Option.match({
+                onSome: toDomain,
+                onNone: () =>
+                  Effect.fail(
+                    new MealServiceError({
+                      message: `Meal with id ${id} not found for update`
+                    })
+                  )
+              })
+            ),
             Effect.catchTags({
               MealRepositoryError: (error) =>
                 new MealServiceError({

@@ -31,6 +31,7 @@ export const MealRepositoryLive = Layer.effect(
               .selectFrom('meals')
               .selectAll()
               .where('deleted_at', 'is', null)
+              .where('fitness_goals', 'like', `%${goals.join(',')}%`)
               .execute(),
           catch: (error) =>
             new MealRepositoryError({
@@ -46,6 +47,13 @@ export const MealRepositoryLive = Layer.effect(
               .selectFrom('meals')
               .selectAll()
               .where('deleted_at', 'is', null)
+              .where((eb) =>
+                eb.or(
+                  excludedAllergens.map((allergen) =>
+                    eb('allergens', 'not like', `%${allergen}%`)
+                  )
+                )
+              )
               .execute(),
           catch: (error) =>
             new MealRepositoryError({
@@ -61,6 +69,13 @@ export const MealRepositoryLive = Layer.effect(
               .selectFrom('meals')
               .selectAll()
               .where('deleted_at', 'is', null)
+              .where((eb) =>
+                eb.or(
+                  foodClasses.map((foodClass) =>
+                    eb('food_classes', 'like', `%${foodClass}%`)
+                  )
+                )
+              )
               .execute(),
           catch: (error) =>
             new MealRepositoryError({
@@ -76,6 +91,14 @@ export const MealRepositoryLive = Layer.effect(
               .selectFrom('meals')
               .selectAll()
               .where('deleted_at', 'is', null)
+              .where('fitness_goals', 'like', `%${goals.join(',')}%`)
+              .where((eb) =>
+                eb.or(
+                  excludedAllergens.map((allergen) =>
+                    eb('allergens', 'not like', `%${allergen}%`)
+                  )
+                )
+              )
               .execute(),
           catch: (error) =>
             new MealRepositoryError({
@@ -118,15 +141,35 @@ export const MealRepositoryLive = Layer.effect(
 
       update: (id, payload) =>
         Effect.tryPromise({
-          try: () =>
-            db
+          try: () => {
+            const serializedPayload = { ...payload }
+
+            // Serialize complex fields to JSON strings
+            if (payload.food_classes && Array.isArray(payload.food_classes)) {
+              serializedPayload.food_classes = JSON.stringify(
+                payload.food_classes
+              )
+            }
+
+            if (payload.allergens && Array.isArray(payload.allergens)) {
+              serializedPayload.allergens = JSON.stringify(payload.allergens)
+            }
+
+            if (payload.fitness_goals && Array.isArray(payload.fitness_goals)) {
+              serializedPayload.fitness_goals = JSON.stringify(
+                payload.fitness_goals
+              )
+            }
+
+            return db
               .updateTable('meals')
-              .set(payload)
+              .set(serializedPayload)
               .where('id', '=', id)
               .where('deleted_at', 'is', null)
               .returningAll()
               .executeTakeFirst()
-              .then(Option.fromNullable),
+              .then(Option.fromNullable)
+          },
           catch: (error) =>
             new MealRepositoryError({
               message: `Failed to update meal with id ${id}`,

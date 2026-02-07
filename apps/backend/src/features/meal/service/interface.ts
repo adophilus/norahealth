@@ -45,7 +45,7 @@ export class MealService extends Context.Tag('MealService')<
         'id' | 'updated_at' | 'deleted_at' | ComplexKeys
       > &
         Partial<ComplexFields>
-    ): Effect.Effect<Meal, MealServiceError>
+    ): Effect.Effect<Meal, MealServiceNotFoundError | MealServiceError>
     delete(
       id: string
     ): Effect.Effect<void, MealServiceNotFoundError | MealServiceError>
