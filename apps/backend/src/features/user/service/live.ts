@@ -1,4 +1,4 @@
-import { Effect, Layer, Option } from 'effect'
+import { Effect, Layer, Console, Option } from 'effect'
 import { UserService } from './interface'
 import {
   UserServiceEmailAlreadyInUseError,
@@ -26,10 +26,11 @@ export const UserServiceLive = Layer.effect(
             Effect.catchTags({
               UserRepositoryEmailAlreadyInUseError: (error) =>
                 new UserServiceEmailAlreadyInUseError({
-                  message: error.message
+                  message: error.message,
+                  cause: error
                 }),
               UserRepositoryError: (error) =>
-                new UserServiceError({ message: error.message })
+                new UserServiceError({ message: error.message, cause: error })
             })
           ),
 
@@ -44,7 +45,7 @@ export const UserServiceLive = Layer.effect(
           ),
           Effect.catchTags({
             UserRepositoryError: (error) =>
-              new UserServiceError({ message: error.message })
+              new UserServiceError({ message: error.message, cause: error })
           })
         ),
 
@@ -59,7 +60,7 @@ export const UserServiceLive = Layer.effect(
           ),
           Effect.catchTags({
             UserRepositoryError: (error) =>
-              new UserServiceError({ message: error.message })
+              new UserServiceError({ message: error.message, cause: error })
           })
         ),
 
@@ -78,7 +79,7 @@ export const UserServiceLive = Layer.effect(
             UserRepositoryNotFoundError: (error) =>
               new UserServiceNotFoundError({ cause: error }),
             UserRepositoryError: (error) =>
-              new UserServiceError({ message: error.message })
+              new UserServiceError({ message: error.message, cause: error })
           })
         )
     })
