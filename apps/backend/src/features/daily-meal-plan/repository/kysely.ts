@@ -1,25 +1,26 @@
 import type { DailyMealPlan } from '@nora-health/domain'
-import { generateId } from '@nora-health/domain/Id'
-import { Effect, Option } from 'effect'
-import { KyselyClient } from '../../../database/kysely'
+import { Effect, Layer, Option } from 'effect'
+import { ulid } from 'ulidx'
+import { KyselyClient } from '@/features/database/kysely'
 import {
-  DailyMealPlanRepository,
   DailyMealPlanRepositoryError,
   DailyMealPlanRepositoryNotFoundError
-} from './interface'
+} from './error'
+import { DailyMealPlanRepository } from './interface'
 
-export const DailyMealPlanRepositoryLive = Effect.sync(() => {
-  return DailyMealPlanRepository.of({
-    create: (payload) =>
-      Effect.gen(function* () {
-        const db = yield* KyselyClient
+export const KyselyDailyMealPlanRepositoryLive = Layer.effect(
+  DailyMealPlanRepository,
+  Effect.gen(function* () {
+    const db = yield* KyselyClient
 
-        return yield* Effect.tryPromise({
+    return DailyMealPlanRepository.of({
+      create: (payload) =>
+        Effect.tryPromise({
           try: () =>
             db
               .insertInto('daily_meal_plans')
               .values({
-                id: generateId(),
+                id: ulid(),
                 ...payload,
                 snacks: JSON.stringify(payload.snacks || []),
                 created_at: Date.now()
@@ -31,14 +32,10 @@ export const DailyMealPlanRepositoryLive = Effect.sync(() => {
               message: 'Failed to create daily meal plan',
               cause: error
             })
-        }).pipe(Effect.map(parseDailyMealPlan))
-      }),
+        }).pipe(Effect.map(parseDailyMealPlan)),
 
-    findByUserIdAndDateRange: (userId, startDate, endDate) =>
-      Effect.gen(function* () {
-        const db = yield* KyselyClient
-
-        return yield* Effect.tryPromise({
+      findByUserIdAndDateRange: (userId, startDate, endDate) =>
+        Effect.tryPromise({
           try: () =>
             db
               .selectFrom('daily_meal_plans')
@@ -54,46 +51,38 @@ export const DailyMealPlanRepositoryLive = Effect.sync(() => {
               message: `Failed to find daily meal plans for user ${userId} between ${startDate} and ${endDate}`,
               cause: error
             })
-        })
-          .pipe(Effect.map(Array.from))
-          .pipe(Effect.map(Effect.map(parseDailyMealPlan)))
-      }),
+        }).pipe(Effect.map((records) => records.map(parseDailyMealPlan))),
 
-    update: (id, payload) =>
-      Effect.gen(function* () {
-        const db = yield* KyselyClient
+      updateById: (id, payload) =>
+        Effect.gen(function* () {
+          const updateData: Record<string, any> = {
+            ...payload,
+            updated_at: Date.now()
+          }
 
-        const updateData: Record<string, any> = {
-          ...payload,
-          updated_at: Date.now()
-        }
+          if (updateData.snacks) {
+            updateData.snacks = JSON.stringify(updateData.snacks)
+          }
 
-        if (updateData.snacks) {
-          updateData.snacks = JSON.stringify(updateData.snacks)
-        }
+          return yield* Effect.tryPromise({
+            try: () =>
+              db
+                .updateTable('daily_meal_plans')
+                .set(updateData)
+                .where('id', '=', id)
+                .where('deleted_at', 'is', null)
+                .returningAll()
+                .executeTakeFirstOrThrow(),
+            catch: (error) =>
+              new DailyMealPlanRepositoryError({
+                message: `Failed to update daily meal plan with id ${id}`,
+                cause: error
+              })
+          }).pipe(Effect.map(parseDailyMealPlan))
+        }),
 
-        return yield* Effect.tryPromise({
-          try: () =>
-            db
-              .updateTable('daily_meal_plans')
-              .set(updateData)
-              .where('id', '=', id)
-              .where('deleted_at', 'is', null)
-              .returningAll()
-              .executeTakeFirstOrThrow(),
-          catch: (error) =>
-            new DailyMealPlanRepositoryError({
-              message: `Failed to update daily meal plan with id ${id}`,
-              cause: error
-            })
-        }).pipe(Effect.map(parseDailyMealPlan))
-      }),
-
-    findByUserId: (userId) =>
-      Effect.gen(function* () {
-        const db = yield* KyselyClient
-
-        return yield* Effect.tryPromise({
+      findByUserId: (userId) =>
+        Effect.tryPromise({
           try: () =>
             db
               .selectFrom('daily_meal_plans')
@@ -107,16 +96,10 @@ export const DailyMealPlanRepositoryLive = Effect.sync(() => {
               message: `Failed to find daily meal plans for user ${userId}`,
               cause: error
             })
-        })
-          .pipe(Effect.map(Array.from))
-          .pipe(Effect.map(Effect.map(parseDailyMealPlan)))
-      }),
+        }).pipe(Effect.map((records) => records.map(parseDailyMealPlan))),
 
-    delete: (id) =>
-      Effect.gen(function* () {
-        const db = yield* KyselyClient
-
-        return yield* Effect.tryPromise({
+      deleteById: (id) =>
+        Effect.tryPromise({
           try: () =>
             db
               .updateTable('daily_meal_plans')
@@ -128,14 +111,10 @@ export const DailyMealPlanRepositoryLive = Effect.sync(() => {
               message: `Failed to delete daily meal plan with id ${id}`,
               cause: error
             })
-        })
-      }),
+        }),
 
-    findByUserIdAndDate: (userId, date) =>
-      Effect.gen(function* () {
-        const db = yield* KyselyClient
-
-        return yield* Effect.tryPromise({
+      findByUserIdAndDate: (userId, date) =>
+        Effect.tryPromise({
           try: () =>
             db
               .selectFrom('daily_meal_plans')
@@ -143,20 +122,14 @@ export const DailyMealPlanRepositoryLive = Effect.sync(() => {
               .where('user_id', '=', userId)
               .where('date', '=', date)
               .where('deleted_at', 'is', null)
-              .executeTakeFirst(),
+              .executeTakeFirst()
+              .then(Option.fromNullable),
           catch: (error) =>
             new DailyMealPlanRepositoryError({
               message: `Failed to find daily meal plan for user ${userId} on ${date}`,
               cause: error
             })
         })
-          .pipe(Effect.map(Option.fromNullable))
-          .pipe(Effect.map(Option.map(parseDailyMealPlan)))
-      })
+    })
   })
-})
-
-const parseDailyMealPlan = (record: any): DailyMealPlan => ({
-  ...record,
-  snacks: JSON.parse(record.snacks || '[]')
-})
+)

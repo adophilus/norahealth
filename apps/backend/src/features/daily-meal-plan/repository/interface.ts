@@ -1,4 +1,4 @@
-import type { DailyMealPlan } from '@nora-health/domain'
+import type { DailyMealPlan } from '@/types'
 import { Context, type Effect, type Option } from 'effect'
 import type { DailyMealPlanRepositoryError } from './error'
 
@@ -8,21 +8,23 @@ export class DailyMealPlanRepository extends Context.Tag(
   DailyMealPlanRepository,
   {
     create: (
-      payload: DailyMealPlanInsertable
+      payload: DailyMealPlan.Insertable
     ) => Effect.Effect<DailyMealPlan, DailyMealPlanRepositoryError>
     findByUserIdAndDateRange: (
       userId: string,
       startDate: string,
       endDate: string
     ) => Effect.Effect<Array<DailyMealPlan>, DailyMealPlanRepositoryError>
-    update: (
+    updateById: (
       id: string,
       payload: DailyMealPlanUpdatable
     ) => Effect.Effect<DailyMealPlan, DailyMealPlanRepositoryError>
     findByUserId: (
       userId: string
     ) => Effect.Effect<Array<DailyMealPlan>, DailyMealPlanRepositoryError>
-    delete: (id: string) => Effect.Effect<void, DailyMealPlanRepositoryError>
+    deleteById: (
+      id: string
+    ) => Effect.Effect<void, DailyMealPlanRepositoryError>
     findByUserIdAndDate: (
       userId: string,
       date: string
@@ -32,15 +34,3 @@ export class DailyMealPlanRepository extends Context.Tag(
     >
   }
 >() {}
-
-export type DailyMealPlanInsertable = Omit<
-  DailyMealPlan,
-  'id' | 'created_at' | 'updated_at' | 'deleted_at'
->
-
-export type DailyMealPlanUpdatable = Partial<
-  Pick<
-    DailyMealPlan,
-    'date' | 'breakfast' | 'lunch' | 'dinner' | 'snacks' | 'notes'
-  >
->

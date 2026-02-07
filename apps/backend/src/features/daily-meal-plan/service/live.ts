@@ -4,14 +4,14 @@ import type {
   HealthProfile,
   Meal
 } from '@nora-health/domain'
-import { Effect } from 'effect'
+import { Effect, Option } from 'effect'
 import { MealRepository } from '../../meal/repository'
 import { DailyMealPlanRepository } from '../repository'
 import {
-  DailyMealPlanService,
   DailyMealPlanServiceError,
   DailyMealPlanServiceNoMealsFoundError
-} from './interface'
+} from './error'
+import { DailyMealPlanService } from './interface'
 
 export const DailyMealPlanServiceLive = Effect.sync(() => {
   return DailyMealPlanService.of({
@@ -20,33 +20,59 @@ export const DailyMealPlanServiceLive = Effect.sync(() => {
         const dailyMealPlanRepository = yield* DailyMealPlanRepository
         const mealRepository = yield* MealRepository
 
-        const suitableMeals = yield* mealRepository.findByGoalAndAllergens(
-          healthProfile.fitness_goals,
-          healthProfile.allergies
-        )
+        const suitableMeals = yield* mealRepository
+          .findByGoalAndAllergens(
+            [...healthProfile.fitness_goals],
+            [...healthProfile.allergies]
+          )
+          .pipe(
+            Effect.catchTags({
+              MealRepositoryNotFoundError: (error) =>
+                new DailyMealPlanServiceError({
+                  message: 'No meals found matching criteria',
+                  cause: error
+                }),
+              MealRepositoryError: (error) =>
+                new DailyMealPlanServiceError({
+                  message: 'Failed to find suitable meals',
+                  cause: error
+                })
+            })
+          )
 
         if (suitableMeals.length === 0) {
-          return yield* new DailyMealPlanServiceNoMealsFoundError({})
+          return yield* Effect.fail(
+            new DailyMealPlanServiceNoMealsFoundError({})
+          )
         }
 
         const weekDays = generateWeekDays()
         const dailyPlans: DailyMealPlan[] = []
 
         for (const day of weekDays) {
-          const dayMeals = selectMealsForDay(
-            suitableMeals,
-            healthProfile.fitness_goals
-          )
+          const dayMeals = selectMealsForDay(suitableMeals, [
+            ...healthProfile.fitness_goals
+          ])
 
-          const dailyPlan = yield* dailyMealPlanRepository.create({
-            user_id: userId,
-            date: day.date,
-            breakfast: dayMeals.breakfast?.id || null,
-            lunch: dayMeals.lunch?.id || null,
-            dinner: dayMeals.dinner?.id || null,
-            snacks: dayMeals.snacks.map((snack) => snack.id),
-            notes: generateDayNotes(day, healthProfile)
-          })
+          const dailyPlan = yield* dailyMealPlanRepository
+            .create({
+              user_id: userId,
+              date: day.date,
+              breakfast: dayMeals.breakfast?.id || null,
+              lunch: dayMeals.lunch?.id || null,
+              dinner: dayMeals.dinner?.id || null,
+              snacks: dayMeals.snacks.map((snack) => snack.id),
+              notes: generateDayNotes(day, healthProfile)
+            })
+            .pipe(
+              Effect.catchTags({
+                DailyMealPlanRepositoryError: (error) =>
+                  new DailyMealPlanServiceError({
+                    message: `Failed to create daily meal plan for ${day.date}`,
+                    cause: error
+                  })
+              })
+            )
 
           dailyPlans.push(dailyPlan)
         }
@@ -65,11 +91,21 @@ export const DailyMealPlanServiceLive = Effect.sync(() => {
         const endDate = new Date(weekStartDate)
         endDate.setDate(endDate.getDate() + 6)
 
-        return yield* dailyMealPlanRepository.findByUserIdAndDateRange(
-          userId,
-          weekStartDate,
-          endDate.toISOString().split('T')[0]
-        )
+        return yield* dailyMealPlanRepository
+          .findByUserIdAndDateRange(
+            userId,
+            weekStartDate,
+            endDate.toISOString().split('T')[0]
+          )
+          .pipe(
+            Effect.catchTags({
+              DailyMealPlanRepositoryError: (error) =>
+                new DailyMealPlanServiceError({
+                  message: `Failed to get weekly plan for user ${userId}`,
+                  cause: error
+                })
+            })
+          )
       }),
 
     updateDayPlan: (userId, date, updates) =>
@@ -81,15 +117,24 @@ export const DailyMealPlanServiceLive = Effect.sync(() => {
           date
         )
 
-        if (existingPlan._tag === 'None') {
-          return yield* new DailyMealPlanServiceError({
-            message: `No daily meal plan found for user ${userId} on ${date}`
-          })
-        }
+        const plan = yield* Option.match(existingPlan, {
+          onSome: (plan) => Effect.succeed(plan),
+          onNone: () =>
+            Effect.fail(
+              new DailyMealPlanServiceError({
+                message: `No daily meal plan found for user ${userId} on ${date}`
+              })
+            )
+        })
 
-        return yield* dailyMealPlanRepository.update(
-          existingPlan.value.id,
-          updates
+        return yield* dailyMealPlanRepository.updateById(plan.id, updates).pipe(
+          Effect.catchTags({
+            DailyMealPlanRepositoryError: (error) =>
+              new DailyMealPlanServiceError({
+                message: `Failed to update daily meal plan for ${date}`,
+                cause: error
+              })
+          })
         )
       })
   })

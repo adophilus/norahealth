@@ -1,6 +1,7 @@
 import { HttpApi, OpenApi } from '@effect/platform'
 import AgentsApi from './Agents'
 import AuthApi from './Auth'
+import DailyMealPlanApi from './DailyMealPlan'
 import MarketplaceApi from './Marketplace'
 import NotificationsApi from './Notification'
 import OnboardingApi from './Onboarding'
@@ -22,6 +23,7 @@ const Api = HttpApi.make('API')
   .add(AuthApi)
   .add(StorageApi)
   .add(UserApi)
+  .add(DailyMealPlanApi)
   .add(OnboardingApi)
   .add(WorkoutsApi)
   .add(MarketplaceApi)
