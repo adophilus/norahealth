@@ -1,7 +1,7 @@
-import { Layer, Effect, Option } from 'effect'
+import { Effect, Layer, Option } from 'effect'
 import { KyselyClient } from '@/features/database/kysely'
-import { MealRepository } from './interface'
 import { MealRepositoryError } from './error'
+import { MealRepository } from './interface'
 
 export const MealRepositoryLive = Layer.effect(
   MealRepository,
@@ -112,6 +112,42 @@ export const MealRepositoryLive = Layer.effect(
           catch: (error) =>
             new MealRepositoryError({
               message: `Failed to find meal with id ${id}`,
+              cause: error
+            })
+        }),
+
+      update: (id, payload) =>
+        Effect.tryPromise({
+          try: () =>
+            db
+              .updateTable('meals')
+              .set(payload)
+              .where('id', '=', id)
+              .where('deleted_at', 'is', null)
+              .returningAll()
+              .executeTakeFirst()
+              .then(Option.fromNullable),
+          catch: (error) =>
+            new MealRepositoryError({
+              message: `Failed to update meal with id ${id}`,
+              cause: error
+            })
+        }),
+
+      delete: (id) =>
+        Effect.tryPromise({
+          try: () =>
+            db
+              .updateTable('meals')
+              .set({ deleted_at: Date.now() })
+              .where('id', '=', id)
+              .where('deleted_at', 'is', null)
+              .returningAll()
+              .executeTakeFirst()
+              .then(Option.fromNullable),
+          catch: (error) =>
+            new MealRepositoryError({
+              message: `Failed to delete meal with id ${id}`,
               cause: error
             })
         })

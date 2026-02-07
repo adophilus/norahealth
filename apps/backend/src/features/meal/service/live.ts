@@ -1,10 +1,10 @@
 import { Allergen, FitnessGoal, FoodClass, Meal } from '@nora-health/domain'
+import { Effect, Layer, Option, Schema } from 'effect'
+import { ulid } from 'ulidx'
 import type { Meal as TMeal } from '@/types'
-import { Layer, Effect, Schema } from 'effect'
 import { MealRepository } from '../repository'
 import { MealServiceError, MealServiceNotFoundError } from './error'
 import { MealService, type NutritionSummary } from './interface'
-import { ulid } from 'ulidx'
 
 export const MealServiceLive = Layer.effect(
   MealService,
@@ -12,34 +12,52 @@ export const MealServiceLive = Layer.effect(
     const repository = yield* MealRepository
 
     const toDomain = (row: TMeal.Selectable) =>
-      Effect.gen(function* () {
-        const foodClasses = yield* Effect.try(() =>
-          JSON.parse(row.food_classes)
-        ).pipe(Effect.flatMap(Schema.decodeUnknown(Schema.Array(FoodClass))))
+      Effect.try({
+        try: () => {
+          const foodClasses = JSON.parse(row.food_classes)
+          const allergens = JSON.parse(row.allergens)
+          const fitnessGoals = JSON.parse(row.fitness_goals)
 
-        const allergens = yield* Effect.try(() =>
-          JSON.parse(row.allergens)
-        ).pipe(Effect.flatMap(Schema.decodeUnknown(Schema.Array(Allergen))))
+          return Meal.make({
+            ...row,
+            food_classes: Schema.decodeUnknownSync(Schema.Array(FoodClass))(
+              foodClasses
+            ),
+            allergens: Schema.decodeUnknownSync(Schema.Array(Allergen))(
+              allergens
+            ),
+            fitness_goals: Schema.decodeUnknownSync(Schema.Array(FitnessGoal))(
+              fitnessGoals
+            )
+          })
+        },
+        catch: (error) =>
+          new MealServiceError({
+            message: 'Failed to decode meal',
+            cause: error
+          })
+      })
 
-        const fitnessGoals = yield* Effect.try(() =>
-          JSON.parse(row.fitness_goals)
-        ).pipe(Effect.flatMap(Schema.decodeUnknown(Schema.Array(FitnessGoal))))
+    const toDomainArray = (rows: TMeal.Selectable[]) =>
+      Effect.all(rows.map(toDomain))
 
-        return Meal.make({
-          ...row,
-          food_classes: foodClasses,
-          allergens,
-          fitness_goals: fitnessGoals
-        })
-      }).pipe(
-        Effect.mapError(
-          (error) =>
-            new MealServiceError({
-              message: 'Failed to decode meal',
-              cause: error
-            })
-        )
-      )
+    const serializeComplexFields = (payload: any) => {
+      const result: any = {}
+
+      if (payload.food_classes) {
+        result.food_classes = JSON.stringify(payload.food_classes)
+      }
+
+      if (payload.allergens) {
+        result.allergens = JSON.stringify(payload.allergens)
+      }
+
+      if (payload.fitness_goals) {
+        result.fitness_goals = JSON.stringify(payload.fitness_goals)
+      }
+
+      return result
+    }
 
     return MealService.of({
       create: (payload) =>
@@ -47,9 +65,7 @@ export const MealServiceLive = Layer.effect(
           .create({
             ...payload,
             id: ulid(),
-            food_classes: JSON.stringify(payload.food_classes),
-            allergens: JSON.stringify(payload.allergens),
-            fitness_goals: JSON.stringify(payload.fitness_goals)
+            ...serializeComplexFields(payload)
           })
           .pipe(
             Effect.flatMap(toDomain),
@@ -63,97 +79,163 @@ export const MealServiceLive = Layer.effect(
           ),
 
       findById: (id) =>
-        MealRepository.pipe(Effect.flatMap((repo) => repo.findById(id))),
+        repository.findById(id).pipe(
+          Effect.flatMap(
+            Option.match({
+              onSome: Effect.succeed,
+              onNone: () => Effect.fail(new MealServiceNotFoundError({}))
+            })
+          ),
+          Effect.flatMap(toDomain),
+          Effect.catchTags({
+            MealRepositoryError: (error) =>
+              new MealServiceError({
+                message: error.message,
+                cause: error
+              })
+          })
+        ),
 
       findAll: () =>
-        MealRepository.pipe(Effect.flatMap((repo) => repo.findAll())),
+        repository.findAll().pipe(
+          Effect.flatMap(toDomainArray),
+          Effect.catchTags({
+            MealRepositoryError: (error) =>
+              new MealServiceError({
+                message: error.message,
+                cause: error
+              })
+          })
+        ),
 
       update: (id, updates) =>
-        Effect.gen(function* () {
-          return yield* MealRepository.pipe(
-            Effect.flatMap((repo) => repo.update(id, updates))
-          )
-        }),
+        repository
+          .update(id, {
+            ...updates,
+            ...serializeComplexFields(updates)
+          })
+          .pipe(
+            Effect.flatMap(toDomain),
+            Effect.catchTags({
+              MealRepositoryError: (error) =>
+                new MealServiceError({
+                  message: error.message,
+                  cause: error
+                })
+            })
+          ),
 
       delete: (id) =>
-        Effect.gen(function* () {
-          const existingMeal = yield* MealRepository.pipe(
-            Effect.flatMap((repo) => repo.findById(id))
-          )
-
-          if (existingMeal._tag === 'None') {
-            return yield* new MealServiceNotFoundError({})
-          }
-
-          return yield* MealRepository.pipe(
-            Effect.flatMap((repo) => repo.delete(id))
-          )
-        }),
+        repository.findById(id).pipe(
+          Effect.flatMap(
+            Option.match({
+              onSome: () => Effect.succeed(undefined),
+              onNone: () => Effect.fail(new MealServiceNotFoundError({}))
+            })
+          ),
+          Effect.flatMap(() => repository.delete(id)),
+          Effect.catchTags({
+            MealRepositoryError: (error) =>
+              new MealServiceError({
+                message: error.message,
+                cause: error
+              })
+          })
+        ),
 
       findByFitnessGoals: (goals) =>
-        MealRepository.pipe(
-          Effect.flatMap((repo) => repo.findByFitnessGoals(goals))
+        repository.findByFitnessGoals(goals).pipe(
+          Effect.flatMap(toDomainArray),
+          Effect.catchTags({
+            MealRepositoryError: (error) =>
+              new MealServiceError({
+                message: error.message,
+                cause: error
+              })
+          })
         ),
 
       findByAllergensExcluded: (excludedAllergens) =>
-        MealRepository.pipe(
-          Effect.flatMap((repo) =>
-            repo.findByAllergensExcluded(excludedAllergens)
-          )
+        repository.findByAllergensExcluded(excludedAllergens).pipe(
+          Effect.flatMap(toDomainArray),
+          Effect.catchTags({
+            MealRepositoryError: (error) =>
+              new MealServiceError({
+                message: error.message,
+                cause: error
+              })
+          })
         ),
 
       findByFoodClasses: (foodClasses) =>
-        MealRepository.pipe(
-          Effect.flatMap((repo) => repo.findByFoodClasses(foodClasses))
+        repository.findByFoodClasses(foodClasses).pipe(
+          Effect.flatMap(toDomainArray),
+          Effect.catchTags({
+            MealRepositoryError: (error) =>
+              new MealServiceError({
+                message: error.message,
+                cause: error
+              })
+          })
         ),
 
       findByGoalAndAllergens: (goals, excludedAllergens) =>
-        MealRepository.pipe(
-          Effect.flatMap((repo) =>
-            repo.findByGoalAndAllergens(goals, excludedAllergens)
-          )
+        repository.findByGoalAndAllergens(goals, excludedAllergens).pipe(
+          Effect.flatMap(toDomainArray),
+          Effect.catchTags({
+            MealRepositoryError: (error) =>
+              new MealServiceError({
+                message: error.message,
+                cause: error
+              })
+          })
         ),
 
       getMealNutritionSummary: (mealIds) =>
-        Effect.gen(function* () {
-          const repo = yield* MealRepository
+        Effect.all(mealIds.map((id) => repository.findById(id))).pipe(
+          Effect.map((mealOptions) => {
+            const mealsWithNutrition = []
 
-          const mealsWithNutrition = []
+            for (const mealOption of mealOptions) {
+              if (mealOption._tag === 'Some') {
+                const meal = mealOption.value
 
-          for (const id of mealIds) {
-            const mealResult = yield* repo.findById(id)
-
-            if (mealResult._tag === 'Some') {
-              const meal = mealResult.value
-
-              if (meal.calories && meal.protein && meal.carbs && meal.fat) {
-                mealsWithNutrition.push(meal)
+                if (meal.calories && meal.protein && meal.carbs && meal.fat) {
+                  mealsWithNutrition.push(meal)
+                }
               }
             }
-          }
 
-          const summary: NutritionSummary = {
-            totalCalories: mealsWithNutrition.reduce(
-              (sum, meal) => sum + meal.calories!,
-              0
-            ),
-            totalProtein: mealsWithNutrition.reduce(
-              (sum, meal) => sum + meal.protein!,
-              0
-            ),
-            totalCarbs: mealsWithNutrition.reduce(
-              (sum, meal) => sum + meal.carbs!,
-              0
-            ),
-            totalFat: mealsWithNutrition.reduce(
-              (sum, meal) => sum + meal.fat!,
-              0
-            ),
-            mealCount: mealsWithNutrition.length
-          }
+            const summary: NutritionSummary = {
+              totalCalories: mealsWithNutrition.reduce(
+                (sum, meal) => sum + meal.calories!,
+                0
+              ),
+              totalProtein: mealsWithNutrition.reduce(
+                (sum, meal) => sum + meal.protein!,
+                0
+              ),
+              totalCarbs: mealsWithNutrition.reduce(
+                (sum, meal) => sum + meal.carbs!,
+                0
+              ),
+              totalFat: mealsWithNutrition.reduce(
+                (sum, meal) => sum + meal.fat!,
+                0
+              ),
+              mealCount: mealsWithNutrition.length
+            }
 
-          return summary
-        })
+            return summary
+          }),
+          Effect.catchTags({
+            MealRepositoryError: (error) =>
+              new MealServiceError({
+                message: error.message,
+                cause: error
+              })
+          })
+        )
     })
   })
 )

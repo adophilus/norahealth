@@ -1,7 +1,7 @@
 import type { Allergen, FitnessGoal, FoodClass } from '@nora-health/domain'
 import { Context, type Effect, type Option } from 'effect'
-import type { MealRepositoryError } from './error'
 import type { Meal } from '@/types'
+import type { MealRepositoryError } from './error'
 
 export class MealRepository extends Context.Tag('MealRepository')<
   MealRepository,
@@ -9,6 +9,13 @@ export class MealRepository extends Context.Tag('MealRepository')<
     create(
       payload: Meal.Insertable
     ): Effect.Effect<Meal.Selectable, MealRepositoryError>
+    update(
+      id: string,
+      payload: Meal.Updateable
+    ): Effect.Effect<Option.Option<Meal.Selectable>, MealRepositoryError>
+    delete(
+      id: string
+    ): Effect.Effect<Option.Option<Meal.Selectable>, MealRepositoryError>
     findByFitnessGoals(
       goals: FitnessGoal[]
     ): Effect.Effect<Meal.Selectable[], MealRepositoryError>
