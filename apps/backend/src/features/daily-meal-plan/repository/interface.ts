@@ -9,27 +9,33 @@ export class DailyMealPlanRepository extends Context.Tag(
   {
     create: (
       payload: DailyMealPlan.Insertable
-    ) => Effect.Effect<DailyMealPlan, DailyMealPlanRepositoryError>
+    ) => Effect.Effect<DailyMealPlan.Selectable, DailyMealPlanRepositoryError>
     findByUserIdAndDateRange: (
       userId: string,
       startDate: string,
       endDate: string
-    ) => Effect.Effect<Array<DailyMealPlan>, DailyMealPlanRepositoryError>
+    ) => Effect.Effect<DailyMealPlan.Selectable[], DailyMealPlanRepositoryError>
     updateById: (
       id: string,
-      payload: DailyMealPlanUpdatable
-    ) => Effect.Effect<DailyMealPlan, DailyMealPlanRepositoryError>
+      payload: DailyMealPlan.Updateable
+    ) => Effect.Effect<
+      Option.Option<DailyMealPlan.Selectable>,
+      DailyMealPlanRepositoryError
+    >
     findByUserId: (
       userId: string
-    ) => Effect.Effect<Array<DailyMealPlan>, DailyMealPlanRepositoryError>
+    ) => Effect.Effect<DailyMealPlan.Selectable[], DailyMealPlanRepositoryError>
     deleteById: (
       id: string
-    ) => Effect.Effect<void, DailyMealPlanRepositoryError>
+    ) => Effect.Effect<
+      Option.Option<DailyMealPlan.Selectable>,
+      DailyMealPlanRepositoryError
+    >
     findByUserIdAndDate: (
       userId: string,
       date: string
     ) => Effect.Effect<
-      Option.Option<DailyMealPlan>,
+      Option.Option<DailyMealPlan.Selectable>,
       DailyMealPlanRepositoryError
     >
   }

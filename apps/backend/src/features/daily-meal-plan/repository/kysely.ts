@@ -1,12 +1,8 @@
-import type { DailyMealPlan } from '@nora-health/domain'
 import { Effect, Layer, Option } from 'effect'
-import { ulid } from 'ulidx'
 import { KyselyClient } from '@/features/database/kysely'
-import {
-  DailyMealPlanRepositoryError,
-  DailyMealPlanRepositoryNotFoundError
-} from './error'
+import { DailyMealPlanRepositoryError } from './error'
 import { DailyMealPlanRepository } from './interface'
+import { getUnixTime } from 'date-fns'
 
 export const KyselyDailyMealPlanRepositoryLive = Layer.effect(
   DailyMealPlanRepository,
@@ -19,12 +15,7 @@ export const KyselyDailyMealPlanRepositoryLive = Layer.effect(
           try: () =>
             db
               .insertInto('daily_meal_plans')
-              .values({
-                id: ulid(),
-                ...payload,
-                snacks: JSON.stringify(payload.snacks || []),
-                created_at: Date.now()
-              })
+              .values(payload)
               .returningAll()
               .executeTakeFirstOrThrow(),
           catch: (error) =>
@@ -32,7 +23,7 @@ export const KyselyDailyMealPlanRepositoryLive = Layer.effect(
               message: 'Failed to create daily meal plan',
               cause: error
             })
-        }).pipe(Effect.map(parseDailyMealPlan)),
+        }),
 
       findByUserIdAndDateRange: (userId, startDate, endDate) =>
         Effect.tryPromise({
@@ -51,34 +42,27 @@ export const KyselyDailyMealPlanRepositoryLive = Layer.effect(
               message: `Failed to find daily meal plans for user ${userId} between ${startDate} and ${endDate}`,
               cause: error
             })
-        }).pipe(Effect.map((records) => records.map(parseDailyMealPlan))),
+        }),
 
       updateById: (id, payload) =>
-        Effect.gen(function* () {
-          const updateData: Record<string, any> = {
-            ...payload,
-            updated_at: Date.now()
-          }
-
-          if (updateData.snacks) {
-            updateData.snacks = JSON.stringify(updateData.snacks)
-          }
-
-          return yield* Effect.tryPromise({
-            try: () =>
-              db
-                .updateTable('daily_meal_plans')
-                .set(updateData)
-                .where('id', '=', id)
-                .where('deleted_at', 'is', null)
-                .returningAll()
-                .executeTakeFirstOrThrow(),
-            catch: (error) =>
-              new DailyMealPlanRepositoryError({
-                message: `Failed to update daily meal plan with id ${id}`,
-                cause: error
+        Effect.tryPromise({
+          try: () =>
+            db
+              .updateTable('daily_meal_plans')
+              .set({
+                ...payload,
+                updated_at: getUnixTime(new Date())
               })
-          }).pipe(Effect.map(parseDailyMealPlan))
+              .where('id', '=', id)
+              .where('deleted_at', 'is', null)
+              .returningAll()
+              .executeTakeFirst()
+              .then(Option.fromNullable),
+          catch: (error) =>
+            new DailyMealPlanRepositoryError({
+              message: `Failed to update daily meal plan with id ${id}`,
+              cause: error
+            })
         }),
 
       findByUserId: (userId) =>
@@ -96,7 +80,7 @@ export const KyselyDailyMealPlanRepositoryLive = Layer.effect(
               message: `Failed to find daily meal plans for user ${userId}`,
               cause: error
             })
-        }).pipe(Effect.map((records) => records.map(parseDailyMealPlan))),
+        }),
 
       deleteById: (id) =>
         Effect.tryPromise({
@@ -105,7 +89,9 @@ export const KyselyDailyMealPlanRepositoryLive = Layer.effect(
               .updateTable('daily_meal_plans')
               .set({ deleted_at: Date.now() })
               .where('id', '=', id)
-              .execute(),
+              .returningAll()
+              .executeTakeFirst()
+              .then(Option.fromNullable),
           catch: (error) =>
             new DailyMealPlanRepositoryError({
               message: `Failed to delete daily meal plan with id ${id}`,

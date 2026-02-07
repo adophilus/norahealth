@@ -1,11 +1,11 @@
 import type {
   AgentConversation,
-  Meal,
   AuthSession,
   AuthToken,
   DailyMealPlan,
   DailyTarget,
   HealthProfile,
+  Meal,
   PantryItem,
   ProgressMetric,
   StorageFile,
@@ -65,7 +65,13 @@ type MealsTable = WithImmutableId<
   >
 >
 
-type DailyMealPlansTable = WithImmutableId<WithTimestamp<DailyMealPlan>>
+type DailyMealPlansTable = WithImmutableId<
+  WithTimestamp<
+    Omit<DailyMealPlan, 'snacks'> & {
+      snacks: string
+    }
+  >
+>
 
 type WorkoutsTable = WithImmutableId<WithTimestamp<Workout>>
 

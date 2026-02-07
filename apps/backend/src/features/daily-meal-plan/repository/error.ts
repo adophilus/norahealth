@@ -6,7 +6,3 @@ export class DailyMealPlanRepositoryError extends Data.TaggedError(
   message: string
   cause?: unknown
 }> {}
-
-export class DailyMealPlanRepositoryNotFoundError extends Data.TaggedError(
-  'DailyMealPlanRepositoryNotFoundError'
-)<{ cause?: unknown }> {}
