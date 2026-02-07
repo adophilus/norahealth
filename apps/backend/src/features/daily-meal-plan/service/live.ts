@@ -7,17 +7,12 @@ import {
 import { getUnixTime } from 'date-fns'
 import { Effect, Layer, Option, Schema } from 'effect'
 import { ulid } from 'ulidx'
-import { MealRepository } from '../../meal/repository'
 import { DailyMealPlanRepository } from '../repository'
 import {
   DailyMealPlanServiceError,
   DailyMealPlanServiceNoMealsFoundError
 } from './error'
-import {
-  DailyMealPlanService,
-  type DayPlanUpdate,
-  type WeeklyPlanResult
-} from './interface'
+import { DailyMealPlanService } from './interface'
 import type { DailyMealPlan as TDailyMealPlan } from '@/types'
 import { MealService } from '@/features/meal'
 
