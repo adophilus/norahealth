@@ -592,3 +592,126 @@ return FullUser.make({
 ```
 
 This is especially important when aggregating data from multiple sources.
+
+## 13. Option.match Gotcha
+
+### Understanding the Type Merging Problem
+
+When using `Option.match({ ... })`, both branches (`onSome` and `onNone`) must return types that can be merged. This is a common source of type errors in Effect-TS code.
+
+### How Effect Types Work
+
+An Effect's type is `Effect.Effect<A, E, never>` where:
+- `A` = output (success value)
+- `E` = error type  
+- `R` = requirements (dependencies)
+
+### Option.match Type Compatibility
+
+**✅ Compatible Types (Can be merged):**
+```typescript
+pipe(
+  Option.fromNullable(10),
+  Option.match({
+    onSome: (num) => Effect.succeed(num), // Effect.Effect<number, never, never>
+    onNone: () => Effect.fail(new InvalidDataError()) // Effect.Effect<never, InvalidDataError, never>
+  })
+) // Effect.Effect<number, InvalidDataError, never>
+```
+
+The types merge successfully:
+```
+  Effect.Effect<number, never, never>
++ Effect.Effect<never, InvalidDataError, never>
+-----------------------------------------
+  Effect.Effect<number, InvalidDataError, never>
+```
+
+**❌ Incompatible Types (Cannot be merged):**
+```typescript
+pipe(
+  Option.fromNullable(10),
+  Option.match({
+    onSome: (num) => performComputation(num), // Effect.Effect<number, MemoryLimitReachedError | FailedComputationError, never>
+    onNone: () => Effect.fail(new InvalidDataError()) // Effect.Effect<never, InvalidDataError, never>
+  })
+) // Effect.Effect<unknown, unknown, unknown> - TYPE ERROR!
+```
+
+The types cannot be merged:
+```
+  Effect.Effect<number, MemoryLimitReachedError | FailedComputationError, never>
++ Effect.Effect<never, InvalidDataError, never>
+-----------------------------------------
+  Effect.Effect<unknown, unknown, unknown>
+```
+
+### The Solution Pattern
+
+When branches have incompatible types, use `Effect.succeed` for the simple branch to make it mergeable:
+
+```typescript
+pipe(
+  Option.fromNullable(10),
+  Option.match({
+    // Don't process the value yet, just succeed with it
+    onSome: (num) => Effect.succeed(num), // Effect.Effect<number, never, never>
+    onNone: () => Effect.fail(new InvalidDataError()) // Effect.Effect<never, InvalidDataError, never>
+  }),
+  // Now process the value in a separate step
+  Effect.flatMap((num) => performComputation(num)) // Effect.Effect<number, MemoryLimitReachedError | FailedComputationError, never>
+) // Effect.Effect<number, MemoryLimitReachedError | FailedComputationError | InvalidDataError, never>
+```
+
+### Common Use Cases in This Codebase
+
+**1. Repository Find Operations:**
+```typescript
+findById: (id) =>
+  repository.findById(id).pipe(
+    Effect.flatMap(
+      Option.match({
+        onSome: Effect.succeed, // Just succeed with the found record
+        onNone: () => Effect.fail(new MealServiceNotFoundError({}))
+      })
+    ),
+    Effect.flatMap(toDomain), // Process the record in the next step
+    Effect.catchTags({
+      MealRepositoryError: (error) =>
+        new MealServiceError({
+          message: error.message,
+          cause: error
+        })
+    })
+  )
+```
+
+**2. Existence Checks Before Operations:**
+```typescript
+delete: (id) =>
+  repository.findById(id).pipe(
+    Effect.flatMap(
+      Option.match({
+        onSome: () => Effect.succeed(undefined), // Just confirm existence
+        onNone: () => Effect.fail(new MealServiceNotFoundError({}))
+      })
+    ),
+    Effect.flatMap(() => repository.delete(id)), // Now perform the operation
+    Effect.catchTags({
+      MealRepositoryError: (error) =>
+        new MealServiceError({
+          message: error.message,
+          cause: error
+        })
+    })
+  )
+```
+
+### Key Takeaways
+
+1. **Always use `Effect.succeed` in Option.match when you need to process the value later**
+2. **Keep Option.match simple - just return the value or fail**
+3. **Use subsequent Effect.flatMap calls for complex processing**
+4. **This pattern ensures proper type inference and avoids `unknown` types**
+
+By following this pattern, you avoid the common pitfall of trying to merge incompatible Effect types in Option.match branches.

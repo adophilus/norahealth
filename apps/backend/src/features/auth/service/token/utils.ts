@@ -26,12 +26,10 @@ export const generateOtp = () =>
   Math.floor(1000 + Math.random() * 9000).toString()
 
 export const deserializeToken = (token: TAuthToken.Selectable) =>
-  Effect.gen(function* () {
-    const providerJson = yield* Effect.try(() => JSON.parse(token.provider))
-    const provider =
-      yield* Schema.decodeUnknown(AuthTokenProvider)(providerJson)
-    return AuthToken.make({ ...token, provider })
-  })
+  Effect.try(() => JSON.parse(token.provider)).pipe(
+    Effect.flatMap(Schema.decodeUnknown(AuthTokenProvider)),
+    Effect.map((provider) => AuthToken.make({ ...token, provider }))
+  )
 
 export const create = (input: string) =>
   Effect.gen(function* () {

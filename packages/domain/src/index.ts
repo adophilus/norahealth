@@ -1,6 +1,7 @@
 export { AgentType, default as AgentConversation } from './AgentConversation'
 export { default as AuthSession } from './AuthSession'
 export { default as AuthToken } from './AuthToken'
+export * from './AuthTokenProvider'
 export { default as DailyMealPlan } from './DailyMealPlan'
 export { default as DailyTarget } from './DailyTarget'
 export * from './DietaryExclusion'

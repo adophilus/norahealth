@@ -15,7 +15,7 @@ export const verifyOtpUseCase = (payload: VerifyOtpRequestBody) =>
     yield* authTokenService.verifyVerificationToken(user.id, payload.otp)
 
     if (user.status === 'NOT_VERIFIED') {
-      yield* userService.verifyById(user.id)
+      yield* userService.updateById(user.id, { status: 'ONBOARDING_REQUIRED' })
     }
 
     const session = yield* authSessionService.create(user.id)
