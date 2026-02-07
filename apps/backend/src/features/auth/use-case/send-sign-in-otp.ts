@@ -6,20 +6,19 @@ import { UserService } from '@/features/user'
 import { AuthTokenService } from '../service'
 
 export const sendSignInOtpUseCase = (payload: SendSignInOtpRequestBody) =>
-  Effect.gen(function* () {
+  Effect.gen(function*() {
     const userService = yield* UserService
     const authTokenService = yield* AuthTokenService
     const mailer = yield* Mailer
 
     const user = yield* userService.findByEmail(payload.email).pipe(
       Effect.catchTag('UserServiceNotFoundError', () =>
-        Effect.gen(function* () {
+        Effect.gen(function*() {
           const user = yield* userService.create({
             ...payload,
             status: 'NOT_VERIFIED',
             role: 'USER',
-            profile_picture_id: null,
-            deleted_at: null
+            profile_picture_id: null
           })
           const email = yield* WelcomeMail()
 
