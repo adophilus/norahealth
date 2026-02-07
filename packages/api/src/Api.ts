@@ -23,6 +23,6 @@ const Api = HttpApi.make('API')
   .add(DailyMealPlanApi)
   .add(WorkoutPlanApi)
   // .add(AgentsApi)
-  .add(NotificationsApi)
+  // .add(NotificationsApi)
 
 export default Api

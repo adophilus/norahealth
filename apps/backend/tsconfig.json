@@ -33,7 +33,7 @@
   "include": [
     "scripts",
     "src",
-    // "tests",
+    "tests",
     "migrations",
     "vitest.config.ts",
     "kysely.config.ts"

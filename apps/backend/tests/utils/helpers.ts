@@ -1,19 +1,17 @@
 import { createMockUserSignUpDetails } from './generator'
 import { Effect } from 'effect'
-import { UserRepository } from '@/features/user'
-import { ulid } from 'ulidx'
+import { UserService } from '@/features/user'
 import { AuthSessionService } from '@/features/auth'
 
 export const mockUserWithSession = Effect.gen(function* () {
-  const authUserRepo = yield* UserRepository
+  const userService = yield* UserService
   const authSessionService = yield* AuthSessionService
   const userDetails = createMockUserSignUpDetails()
 
-  const user = yield* authUserRepo.create({
+  const user = yield* userService.create({
     ...userDetails,
-    id: ulid(),
-    has_creator_profile: false,
-    role: 'USER'
+    role: 'USER',
+    status: 'ONBOARDING_COMPLETE'
   })
 
   const session = yield* authSessionService.create(user.id)

@@ -1,5 +1,8 @@
-import { ApiLive } from '@/bootstrap'
+import { ApiLive, DatabaseLayer } from '@/bootstrap'
+import { KyselyAuthTokenRepositoryLive } from '@/features/auth'
+import { DefaultAuthTokenServiceLive } from '@/features/auth/service/token/default'
 import { AppConfigLive, EnvLive } from '@/features/config'
+import { MockMailerLive } from '@/features/mailer'
 import {
   HttpApiBuilder,
   HttpApiClient,
@@ -28,7 +31,11 @@ export const makeApiClient = (accessToken?: string) =>
 export type ApiClient = ReturnType<typeof makeApiClient>
 
 export const ServerLive = HttpApiBuilder.serve().pipe(
-  Layer.provide(ApiLive),
+  Layer.provideMerge(ApiLive),
+  Layer.provideMerge(DefaultAuthTokenServiceLive),
+  Layer.provideMerge(KyselyAuthTokenRepositoryLive),
+  Layer.provideMerge(DatabaseLayer),
+  Layer.provideMerge(MockMailerLive),
   Layer.provide(AppConfigLive),
   Layer.provide(EnvLive),
   Layer.provideMerge(NodeHttpServer.layerTest)

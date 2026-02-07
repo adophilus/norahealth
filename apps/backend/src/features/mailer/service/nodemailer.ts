@@ -78,7 +78,7 @@ const createTransporter = Effect.gen(function* () {
   }
 })
 
-export const NodemailerMailer = Layer.effect(
+export const NodemailerMailerLive = Layer.effect(
   Mailer,
   Effect.gen(function* () {
     const config = yield* AppConfig
@@ -128,5 +128,3 @@ export const NodemailerMailer = Layer.effect(
     })
   })
 )
-
-export const NodemailerMailerLive = NodemailerMailer

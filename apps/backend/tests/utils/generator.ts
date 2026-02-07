@@ -7,14 +7,9 @@ export const createMockUserSignUpDetails = () => {
     firstName,
     lastName
   })
-  const phoneNumber = faker.phone.number({
-    style: 'international'
-  })
 
   return {
-    first_name: firstName,
-    last_name: lastName,
-    phone_number: phoneNumber,
+    display_name: `${firstName} ${lastName}`,
     email
   }
 }
