@@ -1,11 +1,21 @@
 import {
+  HttpApiBuilder,
+  HttpApiClient,
+  HttpClient,
+  HttpClientRequest
+} from '@effect/platform'
+import { NodeHttpServer } from '@effect/platform-node'
+import { Api } from '@nora-health/api'
+import { Effect, Layer, Option } from 'effect'
+import {
   ApiLive,
-  DatabaseLayer,
-  StorageDepLayer,
-  UserDepLayer,
-  HealthProfileDepLayer,
   DailyMealPlanDepLayer,
-  DailyWorkoutPlanDepLayer
+  DailyWorkoutPlanDepLayer,
+  DatabaseLayer,
+  DatabaseMigrationLayer,
+  HealthProfileDepLayer,
+  StorageDepLayer,
+  UserDepLayer
 } from '@/bootstrap'
 import {
   AuthSessionServiceLive,
@@ -16,15 +26,7 @@ import { DefaultAuthTokenServiceLive } from '@/features/auth/service/token/defau
 import { AppConfigLive, EnvLive } from '@/features/config'
 import { KyselyClient } from '@/features/database/kysely'
 import { MockMailerLive } from '@/features/mailer'
-import {
-  HttpApiBuilder,
-  HttpApiClient,
-  HttpClient,
-  HttpClientRequest
-} from '@effect/platform'
-import { NodeHttpServer } from '@effect/platform-node'
-import { Api } from '@nora-health/api'
-import { Layer, Option, Effect } from 'effect'
+import { TestSqliteKyselyClientLive } from './test-db'
 
 export const makeApiClient = (accessToken?: string) =>
   HttpApiClient.make(Api, {
@@ -50,16 +52,9 @@ const AuthDepLayer = Layer.empty.pipe(
   Layer.provideMerge(KyselyAuthSessionRepositoryLive)
 )
 
-const DatabaseTransactionLayer = Layer.effect(
-  KyselyClient,
-  Effect.gen(function* () {
-    const db = yield* KyselyClient
-
-    const tx = yield* Effect.tryPromise(() => db.startTransaction().execute())
-
-    return KyselyClient.of(tx)
-  })
-).pipe(Layer.provide(DatabaseLayer))
+const TestDatabaseLayer = DatabaseMigrationLayer.pipe(
+  Layer.provideMerge(TestSqliteKyselyClientLive)
+)
 
 const DepLayer = Layer.empty.pipe(
   Layer.provideMerge(AuthDepLayer),
@@ -70,7 +65,7 @@ const DepLayer = Layer.empty.pipe(
   // Layer.provideMerge(LLMDepLayer),
   Layer.provideMerge(StorageDepLayer),
   Layer.provideMerge(MockMailerLive),
-  Layer.provideMerge(DatabaseTransactionLayer)
+  Layer.provideMerge(TestDatabaseLayer)
 )
 
 export const ServerLive = HttpApiBuilder.serve().pipe(
