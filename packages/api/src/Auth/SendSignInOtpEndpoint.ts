@@ -20,7 +20,7 @@ const SendSignInOtpEndpoint = HttpApiEndpoint.post(
   '/auth/sign-in/strategy/email'
 )
   .setPayload(SendSignInOtpRequestBody)
-  .addSuccess(EmptyMessage, { status: StatusCodes.NO_CONTENT })
+  .addSuccess(EmptyMessage)
   .addError(TokenNotExpiredError, {
     status: StatusCodes.BAD_REQUEST
   })

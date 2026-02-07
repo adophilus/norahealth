@@ -2,7 +2,8 @@ import { Effect, Layer, Option } from 'effect'
 import { AuthSessionService } from './interface'
 import { AuthSessionRepository } from '../../repository/session/interface'
 import { InvalidSessionError, AuthSessionServiceError } from './error'
-import type { AuthSession } from '@/types'
+import type { AuthSession as TAuthSession } from '@/types'
+import { AuthSession } from '@nora-health/domain'
 import { ulid } from 'ulidx'
 import { getUnixTime } from 'date-fns'
 
@@ -15,7 +16,7 @@ export const AuthSessionServiceLive = Layer.effect(
     const SESSION_EXTEND_THRESHOLD_DAYS = 15 // Extend if less than 15 days remaining
     const SESSION_EXTENSION_DAYS = 15 // Extend by 15 days
 
-    const validateAuthSession = (session: AuthSession.Selectable) =>
+    const validateAuthSession = (session: TAuthSession.Selectable) =>
       Effect.gen(function* () {
         const currentTime = getUnixTime(new Date())
         if (session.expires_at < currentTime) {
@@ -34,13 +35,14 @@ export const AuthSessionServiceLive = Layer.effect(
 
           const expires_at = currentTime + 86400 * SESSION_TTL_DAYS // 30 days initial TTL
 
-          const payload: AuthSession.Insertable = {
+          const payload: TAuthSession.Insertable = {
             id: newSessionId,
             user_id: userId,
             expires_at: expires_at
           }
 
           return yield* sessionRepository.create(payload).pipe(
+            Effect.map((data) => AuthSession.make(data)),
             Effect.mapError(
               (error) =>
                 new AuthSessionServiceError({

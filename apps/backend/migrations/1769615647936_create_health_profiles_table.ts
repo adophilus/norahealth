@@ -18,11 +18,11 @@ export async function up(db: Kysely<any>): Promise<void> {
     .addColumn('allergies', 'text', (col) => col.notNull()) // JSON string
     .addColumn('location', 'text', (col) => col.notNull()) // JSON string
     .addColumn('onboarding_completed', 'integer', (col) => col.defaultTo(0))
-    .addColumn('onboarding_completed_at', 'bigint')
-    .addColumn('created_at', 'bigint', (col) =>
+    .addColumn('onboarding_completed_at', 'integer')
+    .addColumn('created_at', 'integer', (col) =>
       col.defaultTo(sql`(UNIXEPOCH())`).notNull()
     )
-    .addColumn('updated_at', 'bigint', (col) => col.defaultTo(null))
+    .addColumn('updated_at', 'integer', (col) => col.defaultTo(null))
     .addForeignKeyConstraint(
       'health_profiles_user_id_fk',
       ['user_id'],

@@ -127,7 +127,7 @@ export const DefaultAuthTokenServiceLive = Layer.effect(
             code: '1234'
           }
 
-          const token = yield* authTokenRepository
+          const dbToken = yield* authTokenRepository
             .create({
               id: ulid(),
               hash,
@@ -144,8 +144,9 @@ export const DefaultAuthTokenServiceLive = Layer.effect(
               )
             )
 
-          console.log('end of fn')
-          return AuthToken.make({ ...token, provider })
+          const token = AuthToken.make({ ...dbToken, provider })
+
+          return token
         }),
 
       create: (hashInput) =>

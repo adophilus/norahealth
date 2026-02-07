@@ -13,10 +13,10 @@ export const SendSignInOtpEndpointLive = HttpApiBuilder.handler(
   'Auth',
   'sendSignInOtp',
   ({ payload }) =>
-    Effect.gen(function*() {
+    Effect.gen(function* () {
       yield* sendSignInOtpUseCase(payload)
 
-      return new EmptyMessage({})
+      return new EmptyMessage()
     }).pipe(
       Effect.mapError((error) => {
         if (error._tag !== 'AuthTokenServiceTokenNotExpiredError') {

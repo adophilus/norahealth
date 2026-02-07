@@ -1,4 +1,4 @@
-import { Effect } from 'effect'
+import { Effect, Console } from 'effect'
 import { HttpApiBuilder } from '@effect/platform'
 import { Api } from '@nora-health/api'
 import {
@@ -6,7 +6,7 @@ import {
   UnexpectedError
 } from '@nora-health/api/common/index'
 import { verifyOtpUseCase } from '../use-case'
-import { VerifyAuthSuccessResponse } from '@nora-health/api/Auth/Schemas'
+import { VerifyOtpSuccessResponse } from '@nora-health/api/Auth/VerifyOtpEndpoint'
 
 export const VerifyOtpEndpointLive = HttpApiBuilder.handler(
   Api,
@@ -15,8 +15,9 @@ export const VerifyOtpEndpointLive = HttpApiBuilder.handler(
   ({ payload }) =>
     Effect.gen(function* () {
       const { session, user } = yield* verifyOtpUseCase(payload)
+      console.log('Back in verify otp endpoint handler')
 
-      return VerifyAuthSuccessResponse.make({
+      return VerifyOtpSuccessResponse.make({
         access_token: session.id,
         user
       })

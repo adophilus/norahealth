@@ -21,7 +21,6 @@ type Id = ColumnType<string, string, never>
 type TimestampModel = {
   created_at: ColumnType<number, never, never>
   updated_at: ColumnType<number | null, never, number>
-  deleted_at: ColumnType<number | null, never, number>
 }
 
 type WithTimestamp<T> = Omit<T, 'created_at' | 'updated_at' | 'deleted_at'> &

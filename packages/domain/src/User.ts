@@ -14,8 +14,7 @@ class User extends Schema.Class<User>('User')({
   profile_picture_id: Schema.NullOr(Id),
   verified_at: Schema.NullOr(Timestamp),
   created_at: Timestamp,
-  updated_at: Schema.NullOr(Timestamp),
-  deleted_at: Schema.NullOr(Timestamp)
+  updated_at: Schema.NullOr(Timestamp)
 }) {}
 
 export default User

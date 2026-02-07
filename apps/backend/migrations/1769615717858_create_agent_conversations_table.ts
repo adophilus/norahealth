@@ -9,10 +9,10 @@ export async function up(db: Kysely<any>): Promise<void> {
     .addColumn('agent_type', 'text', (col) => col.notNull())
     .addColumn('messages', 'text', (col) => col.notNull())
     .addColumn('context', 'text', (col) => col.defaultTo(null))
-    .addColumn('created_at', 'bigint', (col) =>
+    .addColumn('created_at', 'integer', (col) =>
       col.defaultTo(sql`(UNIXEPOCH())`).notNull()
     )
-    .addColumn('updated_at', 'bigint', (col) => col.defaultTo(null))
+    .addColumn('updated_at', 'integer', (col) => col.defaultTo(null))
     .addForeignKeyConstraint(
       'fk_agent_conversations_user_id',
       ['user_id'],

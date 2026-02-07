@@ -31,7 +31,8 @@ describe('Auth API', () => {
 
       yield* client.Auth.verifyOtp({
         payload: {
-          ...userDetails,
+          // ...userDetails,
+          email: userDetails.email,
           otp: '1234'
         }
       })
