@@ -1,7 +1,8 @@
 import { HttpApiEndpoint } from '@effect/platform'
+import { Id } from '@nora-health/domain'
 import { Schema } from 'effect'
 import { StatusCodes } from 'http-status-codes'
-import { Id, EmptyMessage, UnexpectedError } from '../common'
+import { EmptyMessage, UnexpectedError } from '../common'
 
 export class UpdateUserProfileRequestBody extends Schema.Class<UpdateUserProfileRequestBody>(
   'UpdateUserProfileRequestBody'

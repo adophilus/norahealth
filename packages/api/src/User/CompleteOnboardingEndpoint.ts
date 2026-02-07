@@ -1,13 +1,9 @@
 import { HttpApiEndpoint, OpenApi } from '@effect/platform'
+import { HealthProfile } from '@nora-health/domain'
 import { Schema } from 'effect'
 import { StatusCodes } from 'http-status-codes'
 import _ from 'lodash'
-import {
-  BadRequestError,
-  EmptyMessage,
-  HealthProfile,
-  UnexpectedError
-} from '../common'
+import { BadRequestError, EmptyMessage, UnexpectedError } from '../common'
 
 export class CompleteOnboardingRequestBody extends Schema.Class<CompleteOnboardingRequestBody>(
   'CompleteOnboardingRequestBody'

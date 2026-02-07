@@ -1,6 +1,7 @@
 import { HttpApiEndpoint } from '@effect/platform'
-import { UnexpectedError, UnauthorizedError, FullUser } from '../common'
+import { FullUser } from '@nora-health/domain'
 import { StatusCodes } from 'http-status-codes'
+import { UnauthorizedError, UnexpectedError } from '../common'
 
 const GetProfileEndpoint = HttpApiEndpoint.get('getProfile', '/users/profile')
   .addSuccess(FullUser)

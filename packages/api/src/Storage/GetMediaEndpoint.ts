@@ -1,15 +1,16 @@
-import { HttpApiEndpoint, HttpApiSchema } from '@effect/platform'
+import { HttpApiEndpoint, HttpApiSchema, OpenApi } from '@effect/platform'
+import { Id } from '@nora-health/domain'
+import { Schema } from 'effect'
 import { StatusCodes } from 'http-status-codes'
-import { OpenApi } from '@effect/platform'
 import {
   FileNotFoundError,
   UnauthorizedError,
-  UnexpectedError,
-  Id
+  UnexpectedError
 } from '../common'
-import { Schema } from 'effect'
 
-export class GetMediaRequestPath extends Schema.Class<GetMediaRequestPath>("GetMediaRequestPath")({
+export class GetMediaRequestPath extends Schema.Class<GetMediaRequestPath>(
+  'GetMediaRequestPath'
+)({
   fileId: Id
 }) {}
 

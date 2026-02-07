@@ -22,7 +22,9 @@ export const UserServiceLive = Layer.effect(
             ...payload
           })
           .pipe(
-            Effect.map(User.make),
+            Effect.tap(Console.log),
+            Effect.map(d => User.make(d)),
+            Effect.tap(Console.log),
             Effect.catchTags({
               UserRepositoryEmailAlreadyInUseError: (error) =>
                 new UserServiceEmailAlreadyInUseError({

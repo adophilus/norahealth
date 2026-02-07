@@ -1,16 +1,13 @@
-import { HttpApiEndpoint, HttpApiSchema } from '@effect/platform'
-import { StatusCodes } from 'http-status-codes'
-import { OpenApi } from '@effect/platform'
-import {
-  BadRequestError,
-  UnexpectedError,
-  ImageFiles,
-  MediaDescription
-} from '../common'
+import { HttpApiEndpoint, HttpApiSchema, OpenApi } from '@effect/platform'
+import { MediaDescription } from '@nora-health/domain'
 import { Schema } from 'effect'
+import { StatusCodes } from 'http-status-codes'
 import AuthenticationMiddleware from '../Auth/AuthenticationMiddleware'
+import { BadRequestError, ImageFiles, UnexpectedError } from '../common'
 
-export class UploadMediaRequestBody extends Schema.Class<UploadMediaRequestBody>("UploadMediaRequestBody")({
+export class UploadMediaRequestBody extends Schema.Class<UploadMediaRequestBody>(
+  'UploadMediaRequestBody'
+)({
   files: ImageFiles
 }) {}
 

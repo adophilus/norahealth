@@ -1,16 +1,17 @@
-import { HttpApiEndpoint } from '@effect/platform'
+import { HttpApiEndpoint, OpenApi } from '@effect/platform'
+import { Id } from '@nora-health/domain'
+import { Schema } from 'effect'
 import { StatusCodes } from 'http-status-codes'
-import { OpenApi } from '@effect/platform'
+import AuthenticationMiddleware from '../Auth/AuthenticationMiddleware'
 import {
   FileNotFoundError,
   UnauthorizedError,
-  UnexpectedError,
-  Id
+  UnexpectedError
 } from '../common'
-import { Schema } from 'effect'
-import AuthenticationMiddleware from '../Auth/AuthenticationMiddleware'
 
-export class DeleteMediaRequestPath extends Schema.Class<DeleteMediaRequestPath>("DeleteMediaRequestPath")({
+export class DeleteMediaRequestPath extends Schema.Class<DeleteMediaRequestPath>(
+  'DeleteMediaRequestPath'
+)({
   fileId: Id
 }) {}
 

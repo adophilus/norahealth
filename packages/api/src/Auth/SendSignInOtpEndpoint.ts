@@ -1,9 +1,9 @@
 import { HttpApiEndpoint, OpenApi } from '@effect/platform'
+import { Email } from '@nora-health/domain'
 import { Schema } from 'effect'
 import { StatusCodes } from 'http-status-codes'
 import {
   BadRequestError,
-  Email,
   EmptyMessage,
   TokenNotExpiredError,
   UnexpectedError

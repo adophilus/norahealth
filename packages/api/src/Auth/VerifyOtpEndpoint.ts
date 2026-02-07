@@ -1,9 +1,9 @@
-import { HttpApiEndpoint } from '@effect/platform'
-import { StatusCodes } from 'http-status-codes'
-import InvalidOrExpiredTokenError from '../common/InvalidOrExpiredTokenError'
-import { OpenApi } from '@effect/platform'
+import { HttpApiEndpoint, OpenApi } from '@effect/platform'
+import { Email, Otp } from '@nora-health/domain'
 import { Schema } from 'effect'
-import { Otp, UnexpectedError, SessionToken, Email } from '../common' // Changed PhoneNumber to Email
+import { StatusCodes } from 'http-status-codes'
+import { SessionToken, UnexpectedError } from '../common' // Changed PhoneNumber to Email
+import InvalidOrExpiredTokenError from '../common/InvalidOrExpiredTokenError'
 import { VerifyAuthSuccessResponse } from './Schemas'
 
 export class VerifyOtpRequestBody extends Schema.Class<VerifyOtpRequestBody>(

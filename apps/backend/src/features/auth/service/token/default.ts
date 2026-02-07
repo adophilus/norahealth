@@ -144,6 +144,7 @@ export const DefaultAuthTokenServiceLive = Layer.effect(
               )
             )
 
+          console.log('end of fn')
           return AuthToken.make({ ...token, provider })
         }),
 
