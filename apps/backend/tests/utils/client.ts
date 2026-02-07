@@ -7,9 +7,14 @@ import {
   DailyMealPlanDepLayer,
   DailyWorkoutPlanDepLayer
 } from '@/bootstrap'
-import { AuthSessionServiceLive, KyselyAuthSessionRepositoryLive, KyselyAuthTokenRepositoryLive } from '@/features/auth'
+import {
+  AuthSessionServiceLive,
+  KyselyAuthSessionRepositoryLive,
+  KyselyAuthTokenRepositoryLive
+} from '@/features/auth'
 import { DefaultAuthTokenServiceLive } from '@/features/auth/service/token/default'
 import { AppConfigLive, EnvLive } from '@/features/config'
+import { KyselyClient } from '@/features/database/kysely'
 import { MockMailerLive } from '@/features/mailer'
 import {
   HttpApiBuilder,
@@ -19,7 +24,7 @@ import {
 } from '@effect/platform'
 import { NodeHttpServer } from '@effect/platform-node'
 import { Api } from '@nora-health/api'
-import { Layer, Option } from 'effect'
+import { Layer, Option, Effect } from 'effect'
 
 export const makeApiClient = (accessToken?: string) =>
   HttpApiClient.make(Api, {
@@ -38,14 +43,25 @@ export const makeApiClient = (accessToken?: string) =>
 
 export type ApiClient = ReturnType<typeof makeApiClient>
 
-export const AuthDepLayer = Layer.empty.pipe(
+const AuthDepLayer = Layer.empty.pipe(
   Layer.provideMerge(AuthSessionServiceLive),
   Layer.provideMerge(DefaultAuthTokenServiceLive),
   Layer.provideMerge(KyselyAuthTokenRepositoryLive),
   Layer.provideMerge(KyselyAuthSessionRepositoryLive)
 )
 
-export const DepLayer = Layer.empty.pipe(
+const DatabaseTransactionLayer = Layer.effect(
+  KyselyClient,
+  Effect.gen(function* () {
+    const db = yield* KyselyClient
+
+    const tx = yield* Effect.tryPromise(() => db.startTransaction().execute())
+
+    return KyselyClient.of(tx)
+  })
+).pipe(Layer.provide(DatabaseLayer))
+
+const DepLayer = Layer.empty.pipe(
   Layer.provideMerge(AuthDepLayer),
   Layer.provideMerge(UserDepLayer),
   Layer.provideMerge(HealthProfileDepLayer),
@@ -54,7 +70,7 @@ export const DepLayer = Layer.empty.pipe(
   // Layer.provideMerge(LLMDepLayer),
   Layer.provideMerge(StorageDepLayer),
   Layer.provideMerge(MockMailerLive),
-  Layer.provideMerge(DatabaseLayer)
+  Layer.provideMerge(DatabaseTransactionLayer)
 )
 
 export const ServerLive = HttpApiBuilder.serve().pipe(
