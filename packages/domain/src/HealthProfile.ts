@@ -62,6 +62,8 @@ export const Injury = Schema.Literal(
   'FOOT'
 )
 
+export type Injury = typeof Injury.Type
+
 export const MedicalConditions = Schema.Record({
   key: Schema.String,
   value: Schema.Any

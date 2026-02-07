@@ -1,11 +1,7 @@
 import { createServer } from 'node:http'
 import { DevTools } from '@effect/experimental'
-import {
-  HttpApiBuilder,
-  HttpMiddleware,
-  HttpServer,
-  NodeHttpServer
-} from '@effect/platform-node'
+import { HttpApiBuilder, HttpMiddleware, HttpServer } from '@effect/platform'
+import { NodeHttpServer } from '@effect/platform-node'
 import { Api } from '@nora-health/api'
 import { Console, Data, Effect, Layer, Logger } from 'effect'
 import type { MigrationResultSet } from 'kysely'
@@ -54,7 +50,7 @@ import { MealServiceLive } from './features/meal'
 
 export class DatabaseMigrationFailedError extends Data.TaggedError(
   'DatabaseMigrationFailedError'
-)<{ cause: unknown }> {}
+)<{ cause: unknown }> { }
 
 export const DatabaseClientLayer = SqliteKyselyClientLive
 
@@ -62,7 +58,7 @@ const checkMigrationResultSet = (rs: MigrationResultSet) =>
   rs.error ? Effect.fail(rs.error) : Effect.void
 
 export const DatabaseMigrationLayer = Layer.effectDiscard(
-  Effect.gen(function* () {
+  Effect.gen(function*() {
     const client = yield* KyselyClient
     const config = yield* AppConfig
 
@@ -129,7 +125,7 @@ export const ApiEndpointLayer = Layer.empty.pipe(
   Layer.provideMerge(AuthApiLive),
   Layer.provideMerge(UserApiLive),
   Layer.provideMerge(DailyMealPlanApiLive),
-  Layer.provideMerge(StorageApiLive)
+  Layer.provideMerge(StorageApiLive),
   // Layer.provideMerge(AgentApiLive)
 )
 
@@ -144,7 +140,7 @@ export const HttpLive = HttpApiBuilder.serve(HttpMiddleware.logger).pipe(
   HttpServer.withLogAddress,
   Layer.provide(
     Layer.unwrapEffect(
-      Effect.gen(function* () {
+      Effect.gen(function*() {
         const config = yield* AppConfig
         return NodeHttpServer.layer(createServer, { port: config.server.port })
       })

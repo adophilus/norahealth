@@ -68,5 +68,26 @@ export namespace DailyMealPlan {
   export type Updateable = T['Updateable']
 }
 
+export namespace DailyWorkoutPlan {
+  type T = GenerateTypes<KyselyDatabaseTables['daily_workout_plans']>
+  export type Selectable = T['Selectable']
+  export type Insertable = T['Insertable']
+  export type Updateable = T['Updateable']
+}
+
+export namespace Workout {
+  type T = GenerateTypes<KyselyDatabaseTables['workouts']>
+  export type Selectable = T['Selectable']
+  export type Insertable = T['Insertable']
+  export type Updateable = T['Updateable']
+}
+
+export namespace WorkoutSession {
+  type T = GenerateTypes<KyselyDatabaseTables['workout_sessions']>
+  export type Selectable = T['Selectable']
+  export type Insertable = T['Insertable']
+  export type Updateable = T['Updateable']
+}
+
 export const SIGN_UP_VERIFICATION_TOKEN_PURPOSE_KEY = 'SIGN_UP_VERIFICATION'
 export const SIGN_IN_VERIFICATION_TOKEN_PURPOSE_KEY = 'SIGN_IN_VERIFICATION'

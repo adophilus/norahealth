@@ -4,6 +4,7 @@ import type {
   AuthToken,
   DailyMealPlan,
   DailyTarget,
+  DailyWorkoutPlan,
   HealthProfile,
   Meal,
   PantryItem,
@@ -20,9 +21,11 @@ type Id = ColumnType<string, string, never>
 type TimestampModel = {
   created_at: ColumnType<number, never, never>
   updated_at: ColumnType<number | null, never, number>
+  deleted_at: ColumnType<number | null, never, number>
 }
 
-type WithTimestamp<T> = Omit<T, 'created_at' | 'updated_at'> & TimestampModel
+type WithTimestamp<T> = Omit<T, 'created_at' | 'updated_at' | 'deleted_at'> &
+  TimestampModel
 
 type WithImmutableId<T> = Omit<T, 'id'> & {
   id: Id
@@ -73,9 +76,30 @@ type DailyMealPlansTable = WithImmutableId<
   >
 >
 
-type WorkoutsTable = WithImmutableId<WithTimestamp<Workout>>
+type DailyWorkoutPlansTable = WithImmutableId<
+  WithTimestamp<
+    Omit<
+      DailyWorkoutPlan,
+      'morning_workout' | 'afternoon_workout' | 'evening_workout'
+    > & {
+      morning_workout_id: ColumnType<string | null, never, string>
+      afternoon_workout_id: ColumnType<string | null, never, string>
+      evening_workout_id: ColumnType<string | null, never, string>
+    }
+  >
+>
 
-type WorkoutSessionsTable = WithImmutableId<WorkoutSession>
+type WorkoutsTable = WithImmutableId<
+  WithTimestamp<
+    Omit<Workout, 'body_targets' | 'contraindications' | 'fitness_goals'> & {
+      body_targets: string
+      contraindications: string
+      fitness_goals: string
+    }
+  >
+>
+
+type WorkoutSessionsTable = WithImmutableId<WithTimestamp<WorkoutSession>>
 
 type PantryInventoryTable = WithImmutableId<WithTimestamp<PantryItem>>
 
@@ -95,6 +119,7 @@ export type KyselyDatabaseTables = {
   health_profiles: HealthProfilesTable
   meals: MealsTable
   daily_meal_plans: DailyMealPlansTable
+  daily_workout_plans: DailyWorkoutPlansTable
   workouts: WorkoutsTable
   workout_sessions: WorkoutSessionsTable
   pantry_inventory: PantryInventoryTable
