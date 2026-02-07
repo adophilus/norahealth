@@ -1,25 +1,28 @@
 import type { Kysely } from 'kysely'
+import { sql } from 'kysely'
 
 export async function up(db: Kysely<any>): Promise<void> {
   await db.schema
     .createTable('daily_meal_plans')
     .addColumn('id', 'text', (col) => col.primaryKey())
     .addColumn('user_id', 'text', (col) =>
-      col.notNull().references('users(id)').onDelete('cascade')
+      col.notNull().references('users.id').onDelete('cascade')
     )
     .addColumn('date', 'text', (col) => col.notNull())
     .addColumn('breakfast', 'text', (col) =>
-      col.references('meals(id)').onDelete('set null')
+      col.references('meals.id').onDelete('set null')
     )
     .addColumn('lunch', 'text', (col) =>
-      col.references('meals(id)').onDelete('set null')
+      col.references('meals.id').onDelete('set null')
     )
     .addColumn('dinner', 'text', (col) =>
-      col.references('meals(id)').onDelete('set null')
+      col.references('meals.id').onDelete('set null')
     )
     .addColumn('snacks', 'text', (col) => col.notNull().defaultTo('[]'))
     .addColumn('notes', 'text', (col) => col.notNull().defaultTo(''))
-    .addColumn('created_at', 'integer', (col) => col.notNull())
+    .addColumn('created_at', 'integer', (col) =>
+      col.defaultTo(sql`(UNIXEPOCH())`).notNull()
+    )
     .addColumn('updated_at', 'integer')
     .addColumn('deleted_at', 'integer')
     .execute()
