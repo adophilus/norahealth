@@ -23,8 +23,7 @@ type TimestampModel = {
   updated_at: ColumnType<number | null, never, number>
 }
 
-type WithTimestamp<T> = Omit<T, 'created_at' | 'updated_at' | 'deleted_at'> &
-  TimestampModel
+type WithTimestamp<T> = Omit<T, 'created_at' | 'updated_at'> & TimestampModel
 
 type WithImmutableId<T> = Omit<T, 'id'> & {
   id: Id

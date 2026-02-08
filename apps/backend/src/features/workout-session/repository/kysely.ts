@@ -31,7 +31,7 @@ export const KyselyWorkoutSessionRepositoryLive = Layer.effect(
               .updateTable('workout_sessions')
               .set(payload)
               .where('id', '=', id)
-              .where('deleted_at', 'is', null)
+
               .returningAll()
               .executeTakeFirst(),
           catch: (error) =>
@@ -45,10 +45,9 @@ export const KyselyWorkoutSessionRepositoryLive = Layer.effect(
         Effect.tryPromise({
           try: () =>
             db
-              .updateTable('workout_sessions')
-              .set({ deleted_at: Date.now() })
+              .deleteFrom('workout_sessions')
               .where('id', '=', id)
-              .where('deleted_at', 'is', null)
+
               .returningAll()
               .executeTakeFirst(),
           catch: (error) =>
@@ -65,7 +64,7 @@ export const KyselyWorkoutSessionRepositoryLive = Layer.effect(
               .selectFrom('workout_sessions')
               .selectAll()
               .where('user_id', '=', userId)
-              .where('deleted_at', 'is', null)
+
               .execute(),
           catch: (error) =>
             new WorkoutSessionRepositoryError({
@@ -81,7 +80,7 @@ export const KyselyWorkoutSessionRepositoryLive = Layer.effect(
               .selectFrom('workout_sessions')
               .selectAll()
               .where('workout_id', '=', workoutId)
-              .where('deleted_at', 'is', null)
+
               .execute(),
           catch: (error) =>
             new WorkoutSessionRepositoryError({
@@ -98,7 +97,7 @@ export const KyselyWorkoutSessionRepositoryLive = Layer.effect(
               .selectAll()
               .where('user_id', '=', userId)
               .where('workout_id', '=', workoutId)
-              .where('deleted_at', 'is', null)
+
               .execute(),
           catch: (error) =>
             new WorkoutSessionRepositoryError({
@@ -113,7 +112,7 @@ export const KyselyWorkoutSessionRepositoryLive = Layer.effect(
             db
               .selectFrom('workout_sessions')
               .selectAll()
-              .where('deleted_at', 'is', null)
+
               .execute(),
           catch: (error) =>
             new WorkoutSessionRepositoryError({
@@ -129,7 +128,7 @@ export const KyselyWorkoutSessionRepositoryLive = Layer.effect(
               .selectFrom('workout_sessions')
               .selectAll()
               .where('id', '=', id)
-              .where('deleted_at', 'is', null)
+
               .executeTakeFirst(),
           catch: (error) =>
             new WorkoutSessionRepositoryError({

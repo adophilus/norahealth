@@ -30,7 +30,7 @@ export const KyselyMealRepositoryLive = Layer.effect(
             db
               .selectFrom('meals')
               .selectAll()
-              .where('deleted_at', 'is', null)
+
               .where('fitness_goals', 'like', `%${goals.join(',')}%`)
               .execute(),
           catch: (error) =>
@@ -46,7 +46,7 @@ export const KyselyMealRepositoryLive = Layer.effect(
             db
               .selectFrom('meals')
               .selectAll()
-              .where('deleted_at', 'is', null)
+
               .where((eb) =>
                 eb.or(
                   excludedAllergens.map((allergen) =>
@@ -68,7 +68,7 @@ export const KyselyMealRepositoryLive = Layer.effect(
             db
               .selectFrom('meals')
               .selectAll()
-              .where('deleted_at', 'is', null)
+
               .where((eb) =>
                 eb.or(
                   foodClasses.map((foodClass) =>
@@ -90,7 +90,7 @@ export const KyselyMealRepositoryLive = Layer.effect(
             db
               .selectFrom('meals')
               .selectAll()
-              .where('deleted_at', 'is', null)
+
               .where('fitness_goals', 'like', `%${goals.join(',')}%`)
               .where((eb) =>
                 eb.or(
@@ -113,7 +113,7 @@ export const KyselyMealRepositoryLive = Layer.effect(
             db
               .selectFrom('meals')
               .selectAll()
-              .where('deleted_at', 'is', null)
+
               .execute(),
           catch: (error) =>
             new MealRepositoryError({
@@ -129,7 +129,7 @@ export const KyselyMealRepositoryLive = Layer.effect(
               .selectFrom('meals')
               .selectAll()
               .where('id', '=', id)
-              .where('deleted_at', 'is', null)
+
               .executeTakeFirst()
               .then(Option.fromNullable),
           catch: (error) =>
@@ -165,7 +165,7 @@ export const KyselyMealRepositoryLive = Layer.effect(
               .updateTable('meals')
               .set(serializedPayload)
               .where('id', '=', id)
-              .where('deleted_at', 'is', null)
+
               .returningAll()
               .executeTakeFirst()
               .then(Option.fromNullable)
@@ -179,15 +179,21 @@ export const KyselyMealRepositoryLive = Layer.effect(
 
       delete: (id) =>
         Effect.tryPromise({
-          try: () =>
-            db
-              .updateTable('meals')
-              .set({ deleted_at: Date.now() })
+          try: async () => {
+            const meal = await db
+              .selectFrom('meals')
+              .selectAll()
               .where('id', '=', id)
-              .where('deleted_at', 'is', null)
-              .returningAll()
               .executeTakeFirst()
-              .then(Option.fromNullable),
+
+            if (!meal) {
+              return Option.none()
+            }
+
+            await db.deleteFrom('meals').where('id', '=', id).execute()
+
+            return Option.some(meal)
+          },
           catch: (error) =>
             new MealRepositoryError({
               message: `Failed to delete meal with id ${id}`,

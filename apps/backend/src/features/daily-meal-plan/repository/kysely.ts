@@ -34,7 +34,7 @@ export const KyselyDailyMealPlanRepositoryLive = Layer.effect(
               .where('user_id', '=', userId)
               .where('date', '>=', startDate)
               .where('date', '<=', endDate)
-              .where('deleted_at', 'is', null)
+
               .orderBy('date')
               .execute(),
           catch: (error) =>
@@ -54,7 +54,7 @@ export const KyselyDailyMealPlanRepositoryLive = Layer.effect(
                 updated_at: getUnixTime(new Date())
               })
               .where('id', '=', id)
-              .where('deleted_at', 'is', null)
+
               .returningAll()
               .executeTakeFirst()
               .then(Option.fromNullable),
@@ -72,7 +72,7 @@ export const KyselyDailyMealPlanRepositoryLive = Layer.effect(
               .selectFrom('daily_meal_plans')
               .selectAll()
               .where('user_id', '=', userId)
-              .where('deleted_at', 'is', null)
+
               .orderBy('date', 'desc')
               .execute(),
           catch: (error) =>
@@ -84,14 +84,24 @@ export const KyselyDailyMealPlanRepositoryLive = Layer.effect(
 
       deleteById: (id) =>
         Effect.tryPromise({
-          try: () =>
-            db
-              .updateTable('daily_meal_plans')
-              .set({ deleted_at: Date.now() })
+          try: async () => {
+            const plan = await db
+              .selectFrom('daily_meal_plans')
+              .selectAll()
               .where('id', '=', id)
-              .returningAll()
               .executeTakeFirst()
-              .then(Option.fromNullable),
+
+            if (!plan) {
+              return Option.none()
+            }
+
+            await db
+              .deleteFrom('daily_meal_plans')
+              .where('id', '=', id)
+              .execute()
+
+            return Option.some(plan)
+          },
           catch: (error) =>
             new DailyMealPlanRepositoryError({
               message: `Failed to delete daily meal plan with id ${id}`,
@@ -107,7 +117,7 @@ export const KyselyDailyMealPlanRepositoryLive = Layer.effect(
               .selectAll()
               .where('user_id', '=', userId)
               .where('date', '=', date)
-              .where('deleted_at', 'is', null)
+
               .executeTakeFirst()
               .then(Option.fromNullable),
           catch: (error) =>

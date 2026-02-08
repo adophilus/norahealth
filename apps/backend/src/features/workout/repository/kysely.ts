@@ -31,7 +31,6 @@ export const KyselyWorkoutRepositoryLive = Layer.effect(
               .updateTable('workouts')
               .set(payload)
               .where('id', '=', id)
-              .where('deleted_at', 'is', null)
               .returningAll()
               .executeTakeFirst(),
           catch: (error) =>
@@ -45,10 +44,8 @@ export const KyselyWorkoutRepositoryLive = Layer.effect(
         Effect.tryPromise({
           try: () =>
             db
-              .updateTable('workouts')
-              .set({ deleted_at: Date.now() })
+              .deleteFrom('workouts')
               .where('id', '=', id)
-              .where('deleted_at', 'is', null)
               .returningAll()
               .executeTakeFirst(),
           catch: (error) =>
@@ -64,7 +61,6 @@ export const KyselyWorkoutRepositoryLive = Layer.effect(
             db
               .selectFrom('workouts')
               .selectAll()
-              .where('deleted_at', 'is', null)
               .where('fitness_goals', 'like', `%${goals.join(',')}%`)
               .execute(),
           catch: (error) =>
@@ -80,7 +76,6 @@ export const KyselyWorkoutRepositoryLive = Layer.effect(
             db
               .selectFrom('workouts')
               .selectAll()
-              .where('deleted_at', 'is', null)
               .where('body_targets', 'like', `%${targets.join(',')}%`)
               .execute(),
           catch: (error) =>
@@ -96,7 +91,6 @@ export const KyselyWorkoutRepositoryLive = Layer.effect(
             db
               .selectFrom('workouts')
               .selectAll()
-              .where('deleted_at', 'is', null)
               .where((eb) =>
                 eb.or(
                   excludedInjuries.map((injury) =>
@@ -118,7 +112,6 @@ export const KyselyWorkoutRepositoryLive = Layer.effect(
             db
               .selectFrom('workouts')
               .selectAll()
-              .where('deleted_at', 'is', null)
               .where('fitness_goals', 'like', `%${goals.join(',')}%`)
               .where('body_targets', 'like', `%${targets.join(',')}%`)
               .execute(),
@@ -131,12 +124,7 @@ export const KyselyWorkoutRepositoryLive = Layer.effect(
 
       findAll: () =>
         Effect.tryPromise({
-          try: () =>
-            db
-              .selectFrom('workouts')
-              .selectAll()
-              .where('deleted_at', 'is', null)
-              .execute(),
+          try: () => db.selectFrom('workouts').selectAll().execute(),
           catch: (error) =>
             new WorkoutRepositoryError({
               message: 'Failed to find all workouts',
@@ -151,7 +139,6 @@ export const KyselyWorkoutRepositoryLive = Layer.effect(
               .selectFrom('workouts')
               .selectAll()
               .where('id', '=', id)
-              .where('deleted_at', 'is', null)
               .executeTakeFirst(),
           catch: (error) =>
             new WorkoutRepositoryError({

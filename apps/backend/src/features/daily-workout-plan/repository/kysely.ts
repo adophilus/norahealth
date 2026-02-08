@@ -31,7 +31,7 @@ export const KyselyDailyWorkoutPlanRepositoryLive = Layer.effect(
               .updateTable('daily_workout_plans')
               .set(payload)
               .where('id', '=', id)
-              .where('deleted_at', 'is', null)
+
               .returningAll()
               .executeTakeFirst(),
           catch: (error) =>
@@ -43,20 +43,30 @@ export const KyselyDailyWorkoutPlanRepositoryLive = Layer.effect(
 
       delete: (id) =>
         Effect.tryPromise({
-          try: () =>
-            db
-              .updateTable('daily_workout_plans')
-              .set({ deleted_at: Date.now() })
+          try: async () => {
+            const plan = await db
+              .selectFrom('daily_workout_plans')
+              .selectAll()
               .where('id', '=', id)
-              .where('deleted_at', 'is', null)
-              .returningAll()
-              .executeTakeFirst(),
+              .executeTakeFirst()
+
+            if (!plan) {
+              return Option.none()
+            }
+
+            await db
+              .deleteFrom('daily_workout_plans')
+              .where('id', '=', id)
+              .execute()
+
+            return Option.some(plan)
+          },
           catch: (error) =>
             new DailyWorkoutPlanRepositoryError({
               message: `Failed to delete daily workout plan with id: ${id}`,
               cause: error
             })
-        }).pipe(Effect.map(Option.fromNullable)),
+        }),
 
       findByUserId: (userId) =>
         Effect.tryPromise({
@@ -65,7 +75,7 @@ export const KyselyDailyWorkoutPlanRepositoryLive = Layer.effect(
               .selectFrom('daily_workout_plans')
               .selectAll()
               .where('user_id', '=', userId)
-              .where('deleted_at', 'is', null)
+
               .execute(),
           catch: (error) =>
             new DailyWorkoutPlanRepositoryError({
@@ -82,7 +92,7 @@ export const KyselyDailyWorkoutPlanRepositoryLive = Layer.effect(
               .selectAll()
               .where('user_id', '=', userId)
               .where('date', '=', date)
-              .where('deleted_at', 'is', null)
+
               .executeTakeFirst(),
           catch: (error) =>
             new DailyWorkoutPlanRepositoryError({
@@ -100,7 +110,7 @@ export const KyselyDailyWorkoutPlanRepositoryLive = Layer.effect(
               .where('user_id', '=', userId)
               .where('date', '>=', startDate)
               .where('date', '<=', endDate)
-              .where('deleted_at', 'is', null)
+
               .execute(),
           catch: (error) =>
             new DailyWorkoutPlanRepositoryError({
@@ -115,7 +125,7 @@ export const KyselyDailyWorkoutPlanRepositoryLive = Layer.effect(
             db
               .selectFrom('daily_workout_plans')
               .selectAll()
-              .where('deleted_at', 'is', null)
+
               .execute(),
           catch: (error) =>
             new DailyWorkoutPlanRepositoryError({
@@ -131,7 +141,7 @@ export const KyselyDailyWorkoutPlanRepositoryLive = Layer.effect(
               .selectFrom('daily_workout_plans')
               .selectAll()
               .where('id', '=', id)
-              .where('deleted_at', 'is', null)
+
               .executeTakeFirst(),
           catch: (error) =>
             new DailyWorkoutPlanRepositoryError({
