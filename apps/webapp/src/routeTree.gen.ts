@@ -9,13 +9,21 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as OnboardingRouteImport } from './routes/onboarding'
 import { Route as EmailRouteImport } from './routes/email'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as DashboardRouteImport } from './routes/_dashboard'
 import { Route as IndexRouteImport } from './routes/index'
-import { Route as DashboardDashboardIndexRouteImport } from './routes/_dashboard/dashboard/index'
+import { Route as DashboardDashboardWorkoutsRouteImport } from './routes/_dashboard/dashboard/workouts'
 import { Route as DashboardDashboardSettingsRouteImport } from './routes/_dashboard/dashboard/settings'
+import { Route as DashboardDashboardOverviewRouteImport } from './routes/_dashboard/dashboard/overview'
+import { Route as DashboardDashboardMealplannerRouteImport } from './routes/_dashboard/dashboard/mealplanner'
 
+const OnboardingRoute = OnboardingRouteImport.update({
+  id: '/onboarding',
+  path: '/onboarding',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const EmailRoute = EmailRouteImport.update({
   id: '/email',
   path: '/email',
@@ -35,15 +43,28 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
-const DashboardDashboardIndexRoute = DashboardDashboardIndexRouteImport.update({
-  id: '/dashboard/',
-  path: '/dashboard/',
-  getParentRoute: () => DashboardRoute,
-} as any)
+const DashboardDashboardWorkoutsRoute =
+  DashboardDashboardWorkoutsRouteImport.update({
+    id: '/dashboard/workouts',
+    path: '/dashboard/workouts',
+    getParentRoute: () => DashboardRoute,
+  } as any)
 const DashboardDashboardSettingsRoute =
   DashboardDashboardSettingsRouteImport.update({
     id: '/dashboard/settings',
     path: '/dashboard/settings',
+    getParentRoute: () => DashboardRoute,
+  } as any)
+const DashboardDashboardOverviewRoute =
+  DashboardDashboardOverviewRouteImport.update({
+    id: '/dashboard/overview',
+    path: '/dashboard/overview',
+    getParentRoute: () => DashboardRoute,
+  } as any)
+const DashboardDashboardMealplannerRoute =
+  DashboardDashboardMealplannerRouteImport.update({
+    id: '/dashboard/mealplanner',
+    path: '/dashboard/mealplanner',
     getParentRoute: () => DashboardRoute,
   } as any)
 
@@ -51,15 +72,21 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
   '/email': typeof EmailRoute
+  '/onboarding': typeof OnboardingRoute
+  '/dashboard/mealplanner': typeof DashboardDashboardMealplannerRoute
+  '/dashboard/overview': typeof DashboardDashboardOverviewRoute
   '/dashboard/settings': typeof DashboardDashboardSettingsRoute
-  '/dashboard/': typeof DashboardDashboardIndexRoute
+  '/dashboard/workouts': typeof DashboardDashboardWorkoutsRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
   '/email': typeof EmailRoute
+  '/onboarding': typeof OnboardingRoute
+  '/dashboard/mealplanner': typeof DashboardDashboardMealplannerRoute
+  '/dashboard/overview': typeof DashboardDashboardOverviewRoute
   '/dashboard/settings': typeof DashboardDashboardSettingsRoute
-  '/dashboard': typeof DashboardDashboardIndexRoute
+  '/dashboard/workouts': typeof DashboardDashboardWorkoutsRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -67,22 +94,44 @@ export interface FileRoutesById {
   '/_dashboard': typeof DashboardRouteWithChildren
   '/auth': typeof AuthRoute
   '/email': typeof EmailRoute
+  '/onboarding': typeof OnboardingRoute
+  '/_dashboard/dashboard/mealplanner': typeof DashboardDashboardMealplannerRoute
+  '/_dashboard/dashboard/overview': typeof DashboardDashboardOverviewRoute
   '/_dashboard/dashboard/settings': typeof DashboardDashboardSettingsRoute
-  '/_dashboard/dashboard/': typeof DashboardDashboardIndexRoute
+  '/_dashboard/dashboard/workouts': typeof DashboardDashboardWorkoutsRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/auth' | '/email' | '/dashboard/settings' | '/dashboard/'
+  fullPaths:
+    | '/'
+    | '/auth'
+    | '/email'
+    | '/onboarding'
+    | '/dashboard/mealplanner'
+    | '/dashboard/overview'
+    | '/dashboard/settings'
+    | '/dashboard/workouts'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/auth' | '/email' | '/dashboard/settings' | '/dashboard'
+  to:
+    | '/'
+    | '/auth'
+    | '/email'
+    | '/onboarding'
+    | '/dashboard/mealplanner'
+    | '/dashboard/overview'
+    | '/dashboard/settings'
+    | '/dashboard/workouts'
   id:
     | '__root__'
     | '/'
     | '/_dashboard'
     | '/auth'
     | '/email'
+    | '/onboarding'
+    | '/_dashboard/dashboard/mealplanner'
+    | '/_dashboard/dashboard/overview'
     | '/_dashboard/dashboard/settings'
-    | '/_dashboard/dashboard/'
+    | '/_dashboard/dashboard/workouts'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -90,10 +139,18 @@ export interface RootRouteChildren {
   DashboardRoute: typeof DashboardRouteWithChildren
   AuthRoute: typeof AuthRoute
   EmailRoute: typeof EmailRoute
+  OnboardingRoute: typeof OnboardingRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/onboarding': {
+      id: '/onboarding'
+      path: '/onboarding'
+      fullPath: '/onboarding'
+      preLoaderRoute: typeof OnboardingRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/email': {
       id: '/email'
       path: '/email'
@@ -122,11 +179,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/_dashboard/dashboard/': {
-      id: '/_dashboard/dashboard/'
-      path: '/dashboard'
-      fullPath: '/dashboard/'
-      preLoaderRoute: typeof DashboardDashboardIndexRouteImport
+    '/_dashboard/dashboard/workouts': {
+      id: '/_dashboard/dashboard/workouts'
+      path: '/dashboard/workouts'
+      fullPath: '/dashboard/workouts'
+      preLoaderRoute: typeof DashboardDashboardWorkoutsRouteImport
       parentRoute: typeof DashboardRoute
     }
     '/_dashboard/dashboard/settings': {
@@ -136,17 +193,35 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DashboardDashboardSettingsRouteImport
       parentRoute: typeof DashboardRoute
     }
+    '/_dashboard/dashboard/overview': {
+      id: '/_dashboard/dashboard/overview'
+      path: '/dashboard/overview'
+      fullPath: '/dashboard/overview'
+      preLoaderRoute: typeof DashboardDashboardOverviewRouteImport
+      parentRoute: typeof DashboardRoute
+    }
+    '/_dashboard/dashboard/mealplanner': {
+      id: '/_dashboard/dashboard/mealplanner'
+      path: '/dashboard/mealplanner'
+      fullPath: '/dashboard/mealplanner'
+      preLoaderRoute: typeof DashboardDashboardMealplannerRouteImport
+      parentRoute: typeof DashboardRoute
+    }
   }
 }
 
 interface DashboardRouteChildren {
+  DashboardDashboardMealplannerRoute: typeof DashboardDashboardMealplannerRoute
+  DashboardDashboardOverviewRoute: typeof DashboardDashboardOverviewRoute
   DashboardDashboardSettingsRoute: typeof DashboardDashboardSettingsRoute
-  DashboardDashboardIndexRoute: typeof DashboardDashboardIndexRoute
+  DashboardDashboardWorkoutsRoute: typeof DashboardDashboardWorkoutsRoute
 }
 
 const DashboardRouteChildren: DashboardRouteChildren = {
+  DashboardDashboardMealplannerRoute: DashboardDashboardMealplannerRoute,
+  DashboardDashboardOverviewRoute: DashboardDashboardOverviewRoute,
   DashboardDashboardSettingsRoute: DashboardDashboardSettingsRoute,
-  DashboardDashboardIndexRoute: DashboardDashboardIndexRoute,
+  DashboardDashboardWorkoutsRoute: DashboardDashboardWorkoutsRoute,
 }
 
 const DashboardRouteWithChildren = DashboardRoute._addFileChildren(
@@ -158,6 +233,7 @@ const rootRouteChildren: RootRouteChildren = {
   DashboardRoute: DashboardRouteWithChildren,
   AuthRoute: AuthRoute,
   EmailRoute: EmailRoute,
+  OnboardingRoute: OnboardingRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

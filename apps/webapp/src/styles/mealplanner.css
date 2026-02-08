@@ -1,0 +1,307 @@
+/*  CSS VARIABLES */
+:root {
+    --fit-meal-primary: #3aab8e;
+    --fit-meal-primary-light: #eef8f4;
+    --fit-meal-primary-hover: #329a7e;
+
+    --fit-meal-success: #27ae60;
+    --fit-meal-warning: #f39c12;
+    --fit-meal-danger: #e74c3c;
+    --fit-meal-info: #3498db;
+
+    --fit-meal-bg: #f8f9fa;
+    --fit-meal-card-bg: #ffffff;
+    --fit-meal-text-primary: #2d3436;
+    --fit-meal-text-secondary: #636e72;
+    --fit-meal-text-muted: #95a5a6;
+    --fit-meal-border: #dfe6e9;
+    --fit-meal-border-light: #ecf0f1;
+
+    --fit-meal-shadow-sm: 0 1px 3px rgba(45, 52, 54, 0.08);
+    --fit-meal-shadow-md: 0 4px 12px rgba(45, 52, 54, 0.1);
+    --fit-meal-shadow-lg: 0 8px 24px rgba(45, 52, 54, 0.12);
+
+    --fit-meal-radius: 12px;
+    --fit-meal-radius-sm: 8px;
+}
+
+/*  PAGE LAYOUT */
+.fit-meal-page {
+    min-height: 100vh;
+    background: var(--fit-meal-bg);
+}
+
+.fit-meal-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 32px 20px 100px;
+}
+
+/* Header */
+.fit-meal-header {
+    margin-bottom: 32px;
+}
+
+.fit-meal-title {
+    font-size: 32px;
+    font-weight: 700;
+    color: var(--fit-meal-text-primary);
+    margin: 0 0 6px 0;
+    letter-spacing: -0.02em;
+}
+
+.fit-meal-subtitle {
+    font-size: 15px;
+    color: var(--fit-meal-text-secondary);
+    margin: 0;
+}
+
+/* Main content area */
+.fit-meal-main {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+}
+
+/*  MEAL OVERVIEW */
+.fit-meal-overview {
+    background: var(--fit-meal-card-bg);
+    border-radius: var(--fit-meal-radius);
+    padding: 28px;
+    box-shadow: var(--fit-meal-shadow-md);
+    border: 1px solid var(--fit-meal-border-light);
+    margin-bottom: 8px;
+}
+
+/* Header row */
+.fit-meal-overview__header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 24px;
+}
+
+/* View toggle */
+.fit-meal-overview__view-toggle {
+    display: flex;
+    gap: 8px;
+    background: var(--fit-meal-bg);
+    padding: 4px;
+    border-radius: 24px;
+    border: 1px solid var(--fit-meal-border-light);
+}
+
+.fit-meal-overview__view-btn {
+    padding: 8px 20px;
+    background: transparent;
+    border: none;
+    border-radius: 20px;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--fit-meal-text-secondary);
+    cursor: pointer;
+    transition: all 200ms ease;
+}
+
+.fit-meal-overview__view-btn--active {
+    background: var(--fit-meal-primary);
+    color: white;
+    box-shadow: 0 2px 6px rgba(58, 171, 142, 0.25);
+}
+
+.fit-meal-overview__view-btn:hover:not(.fit-meal-overview__view-btn--active) {
+    background: var(--fit-meal-border-light);
+    color: var(--fit-meal-text-primary);
+}
+
+/* Diet type badge */
+.fit-meal-overview__diet-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 16px;
+    border-radius: 24px;
+    font-size: 14px;
+    font-weight: 600;
+    border: 1px solid;
+}
+
+.fit-meal-overview__diet-icon {
+    font-size: 18px;
+}
+
+/* Calories section */
+.fit-meal-overview__calories {
+    margin-bottom: 24px;
+}
+
+.fit-meal-overview__calories-header {
+    display: flex;
+    align-items: baseline;
+    gap: 6px;
+    margin-bottom: 12px;
+}
+
+.fit-meal-overview__calories-current {
+    display: flex;
+    align-items: baseline;
+    gap: 4px;
+}
+
+.fit-meal-overview__calories-value {
+    font-size: 36px;
+    font-weight: 700;
+    color: var(--fit-meal-text-primary);
+}
+
+.fit-meal-overview__calories-separator {
+    font-size: 24px;
+    color: var(--fit-meal-text-muted);
+    margin: 0 4px;
+}
+
+.fit-meal-overview__calories-target {
+    display: flex;
+    align-items: baseline;
+    gap: 4px;
+}
+
+.fit-meal-overview__calories-target-value {
+    font-size: 24px;
+    font-weight: 600;
+    color: var(--fit-meal-text-secondary);
+}
+
+.fit-meal-overview__calories-unit {
+    font-size: 14px;
+    color: var(--fit-meal-text-secondary);
+}
+
+/* Progress bar */
+.fit-meal-overview__progress-track {
+    width: 100%;
+    height: 12px;
+    background: var(--fit-meal-border-light);
+    border-radius: 6px;
+    overflow: hidden;
+    margin-bottom: 10px;
+}
+
+.fit-meal-overview__progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--fit-meal-primary) 0%, var(--fit-meal-primary-hover) 100%);
+    border-radius: 6px;
+    transition: width 500ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.fit-meal-overview__progress-fill--over {
+    background: linear-gradient(90deg, var(--fit-meal-warning) 0%, var(--fit-meal-danger) 100%);
+}
+
+/* Calories message */
+.fit-meal-overview__calories-message {
+    font-size: 14px;
+    font-weight: 600;
+}
+
+.fit-meal-overview__calories-remaining {
+    color: var(--fit-meal-success);
+}
+
+.fit-meal-overview__calories-over {
+    color: var(--fit-meal-warning);
+}
+
+/* Macros breakdown */
+.fit-meal-overview__macros {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+}
+
+.fit-meal-overview__macro-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 14px;
+    background: var(--fit-meal-bg);
+    border-radius: var(--fit-meal-radius-sm);
+    border: 1px solid var(--fit-meal-border-light);
+}
+
+.fit-meal-overview__macro-icon {
+    font-size: 28px;
+    flex-shrink: 0;
+}
+
+.fit-meal-overview__macro-content {
+    flex: 1;
+    min-width: 0;
+}
+
+.fit-meal-overview__macro-value {
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--fit-meal-text-primary);
+    margin-bottom: 2px;
+}
+
+.fit-meal-overview__macro-target {
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--fit-meal-text-secondary);
+}
+
+.fit-meal-overview__macro-label {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--fit-meal-text-secondary);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+}
+
+/*  RESPONSIVE */
+@media (max-width: 768px) {
+    .fit-meal-container {
+        padding: 24px 16px 80px;
+    }
+
+    .fit-meal-header {
+        margin-bottom: 24px;
+    }
+
+    .fit-meal-title {
+        font-size: 28px;
+    }
+
+    .fit-meal-overview {
+        padding: 24px 20px;
+    }
+
+    .fit-meal-overview__header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 12px;
+    }
+
+    .fit-meal-overview__view-toggle {
+        width: 100%;
+    }
+
+    .fit-meal-overview__view-btn {
+        flex: 1;
+    }
+
+    .fit-meal-overview__calories-value {
+        font-size: 32px;
+    }
+
+    .fit-meal-overview__calories-target-value {
+        font-size: 20px;
+    }
+
+    .fit-meal-overview__macros {
+        grid-template-columns: 1fr;
+        gap: 12px;
+    }
+}

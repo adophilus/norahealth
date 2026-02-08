@@ -6,9 +6,9 @@
   "type": "module",
   "scripts": {
     "build": "vitepress build docs",
-    "dev": "vitepress dev docs --port $DOCS_PORT",
+    "dev": "vitepress dev docs --port 3001",
     "lint": "biome lint",
-    "start": "vitepress serve docs --port $DOCS_PORT",
+    "start": "vitepress serve docs --port 3001",
     "typecheck": "tsc",
     "preview": "vitepress preview docs"
   },

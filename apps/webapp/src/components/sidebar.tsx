@@ -1,11 +1,11 @@
-import { FileText, BarChart3, Settings, Plug, LogOut } from "lucide-react";
+import { Gauge, Dumbbell, Settings, Soup, LogOut } from "lucide-react";
 import { Link, useRouter } from "@tanstack/react-router";
 
 export default function Sidebar() {
 	const navItems = [
-		{ link: "/dashboard/compose", label: "Compose", icon: FileText },
-		{ link: "/dashboard/analytics", label: "Analytics", icon: BarChart3 },
-		{ link: "/dashboard/integrations", label: "Integrations", icon: Plug },
+		{ link: "/dashboard/overview", label: "Overview", icon: Gauge },
+		{ link: "/dashboard/workouts", label: "Workout", icon: Dumbbell },
+		{ link: "/dashboard/mealplanner", label: "Meal Planner", icon: Soup },
 		{ link: "/dashboard/settings", label: "Settings", icon: Settings },
 	];
 
@@ -14,14 +14,15 @@ export default function Sidebar() {
 			{/* Header */}
 			<div className="p-4 md:p-6 border-b border-border">
 				<div className="flex items-center gap-2 mb-1">
-					<div className="w-6 h-6 md:w-8 md:h-8 bg-gradient-to-br from-blue-400 to-purple-600 rounded flex items-center justify-center">
+					{/* <div className="w-6 h-6 md:w-8 md:h-8 bg-gradient-to-br from-blue-400 to-purple-600 rounded flex items-center justify-center">
 						<span className="text-xs md:text-sm font-bold text-white">O</span>
-					</div>
-					<h1 className="text-base md:text-xl font-bold text-foreground">
+					</div> */}
+					<img src="/logo-black.png" alt="nora-health image" width={150} />
+					{/* <h1 className="text-base md:text-xl font-bold text-foreground">
 						nora-health
-					</h1>
+					</h1> */}
 				</div>
-				<p className="text-xs text-muted-foreground">Creator Dashboard</p>
+				{/* <p className="text-xs text-muted-foreground">User Dashboard</p> */}
 			</div>
 
 			{/* Navigation */}
@@ -34,11 +35,10 @@ export default function Sidebar() {
 								<button
 									type="button"
 									key={item.link}
-									className={`w-full flex items-center gap-3 px-3 md:px-4 py-2 md:py-3 rounded-lg transition-all text-sm md:text-base font-medium ${
-										isActive
-											? "bg-primary text-primary-foreground"
-											: "text-muted-foreground hover:bg-secondary hover:text-foreground"
-									}`}
+									className={`w-full flex items-center gap-3 px-3 md:px-4 py-2 md:py-3 rounded-lg transition-all text-sm md:text-base font-medium ${isActive
+										? "bg-primary text-primary-foreground"
+										: "text-muted-foreground hover:bg-secondary hover:text-foreground"
+										}`}
 								>
 									<Icon className="w-5 h-5 flex-shrink-0" />
 									<span>{item.label}</span>

@@ -165,16 +165,14 @@ function AuthPage() {
 			<div className="w-full max-w-md">
 				{/* Logo & Header */}
 				<div className="text-center mb-8 flex flex-row justify-center items-center">
-					<div className="w-20 h-20 mb-6 flex items-center justify-center">
+					<div className="w-40 h-20 mb-6 flex items-center justify-center">
 						<img
-							src="/nora-health-logo.png"
+							src="/logo-black.png"
 							alt="nora-health"
-							width={80}
-							height={80}
-							className="w-full h-full"
+							className="webapplogo"
 						/>
 					</div>
-					<h1 className="text-4xl font-bold text-foreground mb-6">nora-health</h1>
+					{/* <h1 className="text-4xl font-bold text-foreground mb-6">nora-health</h1> */}
 					{/*<p className="text-muted-foreground text-lg">
             Schedule and cross-post content across channels
           </p>*/}
@@ -186,11 +184,10 @@ function AuthPage() {
 				{/* Message Alert */}
 				{message && (
 					<div
-						className={`mb-6 p-4 rounded-lg text-sm font-medium ${
-							message.type === "success"
-								? "bg-green-500/10 border border-green-500 text-green-500"
-								: "bg-destructive/10 border border-destructive text-destructive"
-						}`}
+						className={`mb-6 p-4 rounded-lg text-sm font-medium ${message.type === "success"
+							? "bg-green-500/10 border border-green-500 text-green-500"
+							: "bg-destructive/10 border border-destructive text-destructive"
+							}`}
 					>
 						{message.text}
 					</div>

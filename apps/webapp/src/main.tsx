@@ -3,6 +3,7 @@ import ReactDOM from "react-dom/client";
 import { RouterProvider, createRouter } from "@tanstack/react-router";
 import { sdk } from "@farcaster/miniapp-sdk";
 import "./styles/globals.css";
+import './styles/auth.css'
 
 // Import the generated route tree
 import { routeTree } from "./routeTree.gen";
@@ -36,7 +37,7 @@ if (rootElement && !rootElement.innerHTML) {
       <RouterProvider router={router} />
     </StrictMode>,
   );
-  
+
   // Notify the SDK that the app is ready
   sdk.actions.ready();
 }

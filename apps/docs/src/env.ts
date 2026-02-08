@@ -8,5 +8,6 @@ export const env = createEnv({
     VITE_SERVER_URL: z.url()
   },
   server: {},
-  runtimeEnv: import.meta.env
+  // runtimeEnv: import.meta.env
+  runtimeEnv: { VITE_NODE_ENV: 'development', VITE_SERVER_URL: 'http://localhost:8008' }
 })

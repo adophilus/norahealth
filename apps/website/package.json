@@ -3,9 +3,9 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "dev": "vite --port 5173",
+    "dev": "vite --port 3002",
     "build": "vite build",
-    "start": "serve -d dist -p $WEBSITE_PORT",
+    "start": "serve -d dist -p 3002",
     "typecheck": "tsc",
     "format": "biome format",
     "lint": "biome lint"

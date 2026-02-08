@@ -1,11 +1,14 @@
 import { HttpApi, OpenApi } from '@effect/platform'
-// import AgentsApi from './Agents'
-import AuthApi from './Auth'
-import DailyMealPlanApi from './DailyMealPlan'
-import NotificationsApi from './Notification'
-import StorageApi from './Storage'
-import UserApi from './User'
-import WorkoutPlanApi from './WorkoutPlan'
+import AgentsApi from './Agents/index'
+import AuthApi from './Auth/index'
+import MarketplaceApi from './Marketplace/index'
+import MealsApi from './Meals/index'
+import NotificationsApi from './Notification/index'
+import OnboardingApi from './Onboarding/index'
+import ProgressApi from './Progress/index'
+import StorageApi from './Storage/index'
+import UserApi from './User/index'
+import WorkoutsApi from './Workouts/index'
 
 const Api = HttpApi.make('API')
   .annotate(OpenApi.Title, 'API Documentation')
@@ -22,7 +25,7 @@ const Api = HttpApi.make('API')
   .add(UserApi)
   .add(DailyMealPlanApi)
   .add(WorkoutPlanApi)
-  // .add(AgentsApi)
-  // .add(NotificationsApi)
+// .add(AgentsApi)
+// .add(NotificationsApi)
 
 export default Api
