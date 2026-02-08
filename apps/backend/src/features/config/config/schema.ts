@@ -62,6 +62,14 @@ export const VapidConfigSchema = Schema.Struct({
   privateKey: Schema.String
 })
 
+// Opik Config Schema
+export const OpikConfigSchema = Schema.Struct({
+  apiKey: Schema.String,
+  apiUrl: Schema.String,
+  projectName: Schema.String,
+  workspaceName: Schema.String
+})
+
 export class AppConfigSchema extends Schema.Class<AppConfigSchema>(
   'AppConfigSchema'
 )({
@@ -71,5 +79,6 @@ export class AppConfigSchema extends Schema.Class<AppConfigSchema>(
   server: ServerConfigSchema,
   llm: LLMConfigSchema,
   externalApis: ExternalApiConfigSchema,
-  vapid: VapidConfigSchema
+  vapid: VapidConfigSchema,
+  opik: OpikConfigSchema
 }) {}

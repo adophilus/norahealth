@@ -4,12 +4,12 @@ import { defineConfig } from 'vitest/config'
 export default defineConfig({
   plugins: [tsconfigPaths()],
   test: {
-    silent: false,
-    disableConsoleIntercept: true,
+    // silent: false,
+    // disableConsoleIntercept: true,
     alias: {
       '@/': new URL('./src/', import.meta.url).pathname
     },
-    cache: false,
+    // cache: false,
     bail: 1,
     include: ['tests/**/*.test.ts'],
     maxConcurrency: 1

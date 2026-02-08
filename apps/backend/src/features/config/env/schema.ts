@@ -18,5 +18,9 @@ export class EnvSchema extends Schema.Class<EnvSchema>('EnvSchema')({
   OPENWEATHER_API_KEY: Schema.String,
   GOOGLE_MAPS_API_KEY: Schema.String,
   VAPID_PUBLIC_KEY: Schema.String,
-  VAPID_PRIVATE_KEY: Schema.String
+  VAPID_PRIVATE_KEY: Schema.String,
+  OPIK_API_KEY: Schema.String,
+  OPIK_API_URL: Schema.String,
+  OPIK_PROJECT_NAME: Schema.String,
+  OPIK_WORKSPACE_NAME: Schema.String
 }) {}

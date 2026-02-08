@@ -57,6 +57,12 @@ export const AppConfigLive = Layer.effect(
       vapid: {
         publicKey: env.VAPID_PUBLIC_KEY,
         privateKey: env.VAPID_PRIVATE_KEY
+      },
+      opik: {
+        apiKey: env.OPIK_API_KEY,
+        apiUrl: env.OPIK_API_URL,
+        projectName: env.OPIK_PROJECT_NAME,
+        workspaceName: env.OPIK_WORKSPACE_NAME
       }
     }
 
