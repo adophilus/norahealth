@@ -6,13 +6,12 @@ import {
 } from '@effect/platform'
 import { NodeHttpServer } from '@effect/platform-node'
 import { Api } from '@nora-health/api'
-import { Effect, Layer, Option } from 'effect'
+import { Layer, Option } from 'effect'
 import {
   ApiLive,
   DailyMealPlanDepLayer,
   DailyWorkoutPlanDepLayer,
   DatabaseLayer,
-  DatabaseMigrationLayer,
   HealthProfileDepLayer,
   StorageDepLayer,
   UserDepLayer
@@ -24,9 +23,7 @@ import {
 } from '@/features/auth'
 import { DefaultAuthTokenServiceLive } from '@/features/auth/service/token/default'
 import { AppConfigLive, EnvLive } from '@/features/config'
-import { KyselyClient } from '@/features/database/kysely'
 import { MockMailerLive } from '@/features/mailer'
-import { TestSqliteKyselyClientLive } from './test-db'
 
 export const makeApiClient = (accessToken?: string) =>
   HttpApiClient.make(Api, {
@@ -52,10 +49,6 @@ const AuthDepLayer = Layer.empty.pipe(
   Layer.provideMerge(KyselyAuthSessionRepositoryLive)
 )
 
-const TestDatabaseLayer = DatabaseMigrationLayer.pipe(
-  Layer.provideMerge(TestSqliteKyselyClientLive)
-)
-
 const DepLayer = Layer.empty.pipe(
   Layer.provideMerge(AuthDepLayer),
   Layer.provideMerge(UserDepLayer),
@@ -65,7 +58,7 @@ const DepLayer = Layer.empty.pipe(
   // Layer.provideMerge(LLMDepLayer),
   Layer.provideMerge(StorageDepLayer),
   Layer.provideMerge(MockMailerLive),
-  Layer.provideMerge(TestDatabaseLayer)
+  Layer.provideMerge(DatabaseLayer)
 )
 
 export const ServerLive = HttpApiBuilder.serve().pipe(
