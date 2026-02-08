@@ -25,7 +25,7 @@ const DeleteMediaEndpoint = HttpApiEndpoint.del(
   '/storage/:fileId'
 )
   .setPath(DeleteMediaRequestPath)
-  .addSuccess(DeleteMediaSuccessResponse, { status: StatusCodes.OK })
+  .addSuccess(DeleteMediaSuccessResponse)
   .addError(FileNotFoundError, {
     status: StatusCodes.NOT_FOUND
   })

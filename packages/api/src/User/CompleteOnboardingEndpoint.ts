@@ -22,7 +22,7 @@ const CompleteOnboardingEndpoint = HttpApiEndpoint.put(
   '/user/onboarding'
 )
   .setPayload(CompleteOnboardingRequestBody)
-  .addSuccess(EmptyMessage, { status: StatusCodes.NO_CONTENT })
+  .addSuccess(EmptyMessage)
   .addError(BadRequestError, { status: StatusCodes.BAD_REQUEST })
   .addError(UnexpectedError, { status: StatusCodes.INTERNAL_SERVER_ERROR })
   .annotate(

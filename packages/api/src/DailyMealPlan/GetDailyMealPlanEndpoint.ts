@@ -16,7 +16,7 @@ const GetDailyMealPlanEndpoint = HttpApiEndpoint.get(
   '/daily-meal-plan/:start_date/:end_date'
 )
   .setPath(GetDailyMealPlanPathParams)
-  .addSuccess(Schema.Array(DailyMealPlan), { status: StatusCodes.OK })
+  .addSuccess(Schema.Array(DailyMealPlan))
   .addError(UnexpectedError, { status: StatusCodes.INTERNAL_SERVER_ERROR })
   .annotate(
     OpenApi.Description,

@@ -29,7 +29,7 @@ export const GetMediaSuccessResponse = Schema.Uint8ArrayFromSelf.pipe(
 
 const GetMediaEndpoint = HttpApiEndpoint.get('getMedia', '/storage/:fileId')
   .setPath(GetMediaRequestPath)
-  .addSuccess(GetMediaSuccessResponse, { status: StatusCodes.OK })
+  .addSuccess(GetMediaSuccessResponse)
   .addError(FileNotFoundError, {
     status: StatusCodes.NOT_FOUND
   })

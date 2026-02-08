@@ -29,7 +29,7 @@ const UploadMediaEndpoint = HttpApiEndpoint.post(
   '/storage/upload'
 )
   .setPayload(Request)
-  .addSuccess(UploadMediaSuccessResponse, { status: StatusCodes.OK })
+  .addSuccess(UploadMediaSuccessResponse)
   .addError(BadRequestError, { status: StatusCodes.BAD_REQUEST })
   .addError(UnexpectedError, { status: StatusCodes.INTERNAL_SERVER_ERROR })
   .middleware(AuthenticationMiddleware)

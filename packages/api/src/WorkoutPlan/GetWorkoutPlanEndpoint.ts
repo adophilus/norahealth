@@ -16,7 +16,7 @@ const GetWorkoutPlanEndpoint = HttpApiEndpoint.get(
   '/workout-plan/:start_date/:end_date'
 )
   .setPath(GetWorkoutPlanPathParams)
-  .addSuccess(Schema.Array(DailyWorkoutPlan), { status: StatusCodes.OK })
+  .addSuccess(Schema.Array(DailyWorkoutPlan))
   .addError(UnexpectedError, { status: StatusCodes.INTERNAL_SERVER_ERROR })
   .annotate(
     OpenApi.Description,

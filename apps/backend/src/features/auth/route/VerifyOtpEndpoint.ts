@@ -15,7 +15,6 @@ export const VerifyOtpEndpointLive = HttpApiBuilder.handler(
   ({ payload }) =>
     Effect.gen(function* () {
       const { session, user } = yield* verifyOtpUseCase(payload)
-      console.log('Back in verify otp endpoint handler')
 
       return VerifyOtpSuccessResponse.make({
         access_token: session.id,

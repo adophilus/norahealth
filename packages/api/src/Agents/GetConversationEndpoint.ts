@@ -8,7 +8,7 @@ const GetConversationEndpoint = HttpApiEndpoint.get(
   'getConversation',
   '/agents/conversations/:id'
 )
-  .addSuccess(GetConversationResponse, { status: StatusCodes.OK })
+  .addSuccess(GetConversationResponse)
   .addError(NotFoundError, { status: StatusCodes.NOT_FOUND })
   .addError(UnexpectedError, { status: StatusCodes.INTERNAL_SERVER_ERROR })
   .annotate(OpenApi.Description, 'Get an agent conversation by ID')

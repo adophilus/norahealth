@@ -9,7 +9,7 @@ const SendMessageEndpoint = HttpApiEndpoint.post(
   '/agents/conversations/:id/messages'
 )
   .setPayload(SendMessageRequestBody)
-  .addSuccess(SendMessageResponse, { status: StatusCodes.OK })
+  .addSuccess(SendMessageResponse)
   .addError(NotFoundError, { status: StatusCodes.NOT_FOUND })
   .addError(BadRequestError, { status: StatusCodes.BAD_REQUEST })
   .addError(UnexpectedError, { status: StatusCodes.INTERNAL_SERVER_ERROR })

@@ -9,7 +9,7 @@ const CreateConversationEndpoint = HttpApiEndpoint.post(
   '/agents/conversations'
 )
   .setPayload(CreateConversationRequestBody)
-  .addSuccess(ConversationResponse, { status: StatusCodes.CREATED })
+  .addSuccess(ConversationResponse)
   .addError(BadRequestError, { status: StatusCodes.BAD_REQUEST })
   .addError(UnexpectedError, { status: StatusCodes.INTERNAL_SERVER_ERROR })
   .annotate(OpenApi.Description, 'Create a new agent conversation')
