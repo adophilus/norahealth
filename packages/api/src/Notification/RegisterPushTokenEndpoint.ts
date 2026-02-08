@@ -2,7 +2,7 @@ import { HttpApiEndpoint } from '@effect/platform'
 import { Schema } from 'effect'
 import { StatusCodes } from 'http-status-codes'
 import AuthenticationMiddleware from '../Auth/AuthenticationMiddleware'
-import { Message, PushToken, UnexpectedError } from '../common'
+import { EmptyMessage, PushToken, UnexpectedError } from '../common'
 
 // Register push notification token
 export class RegisterPushTokenRequestBody extends Schema.Class<RegisterPushTokenRequestBody>(
@@ -16,7 +16,7 @@ const RegisterPushTokenEndpoint = HttpApiEndpoint.post(
   '/notifications/push-token'
 )
   .setPayload(RegisterPushTokenRequestBody)
-  .addSuccess(Message)
+  .addSuccess(EmptyMessage)
   .addError(UnexpectedError, { status: StatusCodes.INTERNAL_SERVER_ERROR })
   .middleware(AuthenticationMiddleware)
 
