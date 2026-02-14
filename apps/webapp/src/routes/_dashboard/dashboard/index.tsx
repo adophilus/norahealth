@@ -96,12 +96,12 @@ export const OverviewPageComplete: React.FC = () => {
 export default OverviewPageComplete;
 
 
-// export const Route = createFileRoute("/_dashboard/dashboard/")({
-// 	component: DashboardPage,
-// });
+export const Route = createFileRoute("/_dashboard/dashboard/")({
+	component: DashboardPage,
+});
 
-// function DashboardPage() {
-// 	// return <Navigate to="/dashboard/compose" />;
-// 	// return <div>Dashboard Home</div>;
-// 	return <OverviewPageComplete />;
-// }
+function DashboardPage() {
+	// return <Navigate to="/dashboard/compose" />;
+	// return <div>Dashboard Home</div>;
+	return <OverviewPageComplete />;
+}

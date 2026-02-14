@@ -53,14 +53,14 @@ export default function Sidebar() {
 			<div className="p-3 md:p-6 border-t border-border space-y-3 md:space-y-4">
 				<div className="flex items-center gap-3 p-2 md:p-3 bg-secondary rounded-lg">
 					<div className="w-10 h-10 rounded-full bg-primary flex items-center justify-center text-sm font-bold text-primary-foreground flex-shrink-0">
-						JD
+						DO
 					</div>
 					<div className="flex-1 min-w-0 hidden md:block">
 						<p className="text-sm font-medium text-foreground truncate">
-							John Doe
+							Divine Obinna
 						</p>
 						<p className="text-xs text-muted-foreground truncate">
-							john@example.com
+							divine@gmail.com
 						</p>
 					</div>
 				</div>

@@ -1,3 +1,14 @@
+/*════════════════════════════════════
+   MEAL PLANNER PAGE — SCOPED STYLES
+   
+   Prefix: .fit-meal-* (all classes)
+   Theme: Light only, nutrition/wellness aesthetic
+   Layout: Mobile-first, card-based
+   Brand: Beta-Lyfe teal (#3aab8e) as primary
+   
+   CRITICAL: All classes prefixed .fit-meal-* to avoid global collisions
+════════════════════════════════════ */
+
 /*  CSS VARIABLES */
 :root {
     --fit-meal-primary: #3aab8e;
@@ -260,6 +271,887 @@
     letter-spacing: 0.06em;
 }
 
+/*  MEAL CARD */
+.fit-meal-card {
+    background: var(--fit-meal-card-bg);
+    border-radius: var(--fit-meal-radius);
+    padding: 20px;
+    box-shadow: var(--fit-meal-shadow-sm);
+    border: 1px solid var(--fit-meal-border-light);
+    margin-bottom: 16px;
+    transition: all 200ms ease;
+}
+
+.fit-meal-card:hover {
+    box-shadow: var(--fit-meal-shadow-md);
+}
+
+.fit-meal-card--expanded {
+    box-shadow: var(--fit-meal-shadow-md);
+    border-color: var(--fit-meal-border);
+}
+
+/* Card header (clickable) */
+.fit-meal-card__header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    cursor: pointer;
+    margin-bottom: 14px;
+    user-select: none;
+}
+
+.fit-meal-card__header-left {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    flex: 1;
+    min-width: 0;
+}
+
+.fit-meal-card__icon {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 24px;
+    flex-shrink: 0;
+}
+
+.fit-meal-card__info {
+    flex: 1;
+    min-width: 0;
+}
+
+.fit-meal-card__type-label {
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--fit-meal-text-secondary);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    margin-bottom: 4px;
+}
+
+.fit-meal-card__name {
+    font-size: 17px;
+    font-weight: 700;
+    color: var(--fit-meal-text-primary);
+    margin: 0;
+}
+
+.fit-meal-card__description {
+    font-size: 13px;
+    color: var(--fit-meal-text-secondary);
+    margin: 4px 0 0 0;
+    line-height: 1.4;
+}
+
+.fit-meal-card__header-right {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-shrink: 0;
+}
+
+.fit-meal-card__calories {
+    text-align: right;
+}
+
+.fit-meal-card__calories-value {
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--fit-meal-text-primary);
+}
+
+.fit-meal-card__calories-unit {
+    font-size: 12px;
+    color: var(--fit-meal-text-secondary);
+    margin-left: 2px;
+}
+
+.fit-meal-card__expand-icon {
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--fit-meal-text-muted);
+    transition: transform 200ms ease;
+}
+
+.fit-meal-card__expand-icon--open {
+    transform: rotate(180deg);
+}
+
+/* Macros summary */
+.fit-meal-card__macros-summary {
+    display: flex;
+    gap: 20px;
+    padding: 12px 0;
+    border-top: 1px solid var(--fit-meal-border-light);
+}
+
+.fit-meal-card__macro {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.fit-meal-card__macro-label {
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--fit-meal-text-secondary);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.fit-meal-card__macro-value {
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--fit-meal-text-primary);
+}
+
+/* Expanded content */
+.fit-meal-card__expanded-content {
+    margin-top: 16px;
+    padding-top: 16px;
+    border-top: 1px solid var(--fit-meal-border-light);
+}
+
+.fit-meal-card__time-info {
+    display: flex;
+    gap: 16px;
+    margin-bottom: 12px;
+}
+
+.fit-meal-card__time-item {
+    font-size: 13px;
+    color: var(--fit-meal-text-secondary);
+    font-weight: 500;
+}
+
+.fit-meal-card__description-full {
+    font-size: 14px;
+    color: var(--fit-meal-text-secondary);
+    line-height: 1.6;
+    margin: 0 0 16px 0;
+}
+
+/*  INGREDIENT LIST */
+.fit-ingredient-list {
+    margin-bottom: 20px;
+}
+
+.fit-ingredient-list__header {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    margin-bottom: 12px;
+}
+
+.fit-ingredient-list__title {
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--fit-meal-text-primary);
+    margin: 0;
+}
+
+.fit-ingredient-list__count {
+    font-size: 12px;
+    color: var(--fit-meal-text-secondary);
+    font-weight: 500;
+}
+
+.fit-ingredient-list__items {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+/* Individual ingredient item */
+.fit-ingredient-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px;
+    background: var(--fit-meal-bg);
+    border-radius: var(--fit-meal-radius-sm);
+    border: 1px solid var(--fit-meal-border-light);
+}
+
+.fit-ingredient-item__category {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 13px;
+    font-weight: 700;
+    flex-shrink: 0;
+}
+
+.fit-ingredient-item__content {
+    flex: 1;
+    min-width: 0;
+}
+
+.fit-ingredient-item__name {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--fit-meal-text-primary);
+    margin-bottom: 2px;
+}
+
+.fit-ingredient-item__local-name {
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--fit-meal-text-secondary);
+    font-style: italic;
+    margin-left: 4px;
+}
+
+.fit-ingredient-item__notes {
+    font-size: 12px;
+    color: var(--fit-meal-text-secondary);
+}
+
+.fit-ingredient-item__quantity {
+    display: flex;
+    align-items: baseline;
+    gap: 4px;
+    flex-shrink: 0;
+}
+
+.fit-ingredient-item__quantity-value {
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--fit-meal-text-primary);
+}
+
+.fit-ingredient-item__quantity-unit {
+    font-size: 13px;
+    color: var(--fit-meal-text-secondary);
+    font-weight: 500;
+}
+
+/*  LOCAL MARKET SUGGESTIONS */
+.fit-market-suggestions {
+    margin-top: 20px;
+}
+
+.fit-market-suggestions__header {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    margin-bottom: 12px;
+}
+
+.fit-market-suggestions__title {
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--fit-meal-text-primary);
+    margin: 0;
+}
+
+.fit-market-suggestions__location-tag {
+    font-size: 12px;
+    color: var(--fit-meal-text-secondary);
+    font-weight: 500;
+}
+
+.fit-market-suggestions__list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+/* Individual market item */
+.fit-market-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 14px;
+    background: var(--fit-meal-bg);
+    border-radius: var(--fit-meal-radius-sm);
+    border: 1px solid var(--fit-meal-border-light);
+}
+
+.fit-market-item__content {
+    flex: 1;
+    min-width: 0;
+}
+
+.fit-market-item__name {
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--fit-meal-text-primary);
+    margin-bottom: 4px;
+}
+
+.fit-market-item__location {
+    font-size: 13px;
+    color: var(--fit-meal-text-secondary);
+    margin-bottom: 8px;
+}
+
+.fit-market-item__categories {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+}
+
+.fit-market-item__category-tag {
+    padding: 4px 10px;
+    background: var(--fit-meal-card-bg);
+    border: 1px solid var(--fit-meal-border);
+    border-radius: 12px;
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--fit-meal-text-secondary);
+    text-transform: capitalize;
+}
+
+.fit-market-item__meta {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 6px;
+    flex-shrink: 0;
+}
+
+.fit-market-item__distance {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--fit-meal-primary);
+}
+
+.fit-market-item__availability {
+    padding: 4px 10px;
+    border-radius: 12px;
+    font-size: 11px;
+    font-weight: 600;
+}
+
+.fit-market-item__price {
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--fit-meal-text-secondary);
+}
+
+/* No location state */
+.fit-market-suggestions__no-location {
+    text-align: center;
+    padding: 32px 20px;
+    background: var(--fit-meal-bg);
+    border-radius: var(--fit-meal-radius-sm);
+    border: 2px dashed var(--fit-meal-border);
+}
+
+.fit-market-suggestions__no-location-icon {
+    font-size: 48px;
+    margin-bottom: 12px;
+}
+
+.fit-market-suggestions__no-location-text {
+    font-size: 14px;
+    color: var(--fit-meal-text-secondary);
+    margin: 0 0 16px 0;
+}
+
+.fit-market-suggestions__location-btn {
+    padding: 10px 24px;
+    background: var(--fit-meal-primary);
+    color: white;
+    border: none;
+    border-radius: var(--fit-meal-radius-sm);
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 200ms ease;
+}
+
+.fit-market-suggestions__location-btn:hover {
+    background: var(--fit-meal-primary-hover);
+    transform: translateY(-1px);
+}
+
+/* Empty state */
+.fit-market-suggestions__empty {
+    padding: 24px;
+    text-align: center;
+    background: var(--fit-meal-bg);
+    border-radius: var(--fit-meal-radius-sm);
+}
+
+.fit-market-suggestions__empty-text {
+    font-size: 13px;
+    color: var(--fit-meal-text-secondary);
+    margin: 0;
+}
+
+/* Footer */
+.fit-market-suggestions__footer {
+    margin-top: 12px;
+}
+
+.fit-market-suggestions__note {
+    font-size: 12px;
+    color: var(--fit-meal-text-secondary);
+    font-style: italic;
+}
+
+/*  SHOPPING LIST */
+.fit-shopping-list {
+    background: var(--fit-meal-card-bg);
+    border-radius: var(--fit-meal-radius);
+    padding: 24px;
+    box-shadow: var(--fit-meal-shadow-md);
+    border: 1px solid var(--fit-meal-border-light);
+    margin-bottom: 24px;
+    position: sticky;
+    top: 20px;
+}
+
+.fit-shopping-list__header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 18px;
+}
+
+.fit-shopping-list__header-left {
+    display: flex;
+    align-items: baseline;
+    gap: 10px;
+}
+
+.fit-shopping-list__title {
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--fit-meal-text-primary);
+    margin: 0;
+}
+
+.fit-shopping-list__count {
+    font-size: 13px;
+    color: var(--fit-meal-text-secondary);
+    font-weight: 500;
+}
+
+.fit-shopping-list__toggle-btn {
+    display: none;
+    /* Show only on mobile */
+    padding: 6px 14px;
+    background: var(--fit-meal-primary);
+    color: white;
+    border: none;
+    border-radius: 16px;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 200ms ease;
+}
+
+.fit-shopping-list__toggle-btn:hover {
+    background: var(--fit-meal-primary-hover);
+}
+
+.fit-shopping-list__content {
+    /* Always visible on desktop */
+}
+
+/* Controls */
+.fit-shopping-list__controls {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 16px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid var(--fit-meal-border-light);
+}
+
+.fit-shopping-list__group-toggle {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.fit-shopping-list__group-label {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--fit-meal-text-secondary);
+}
+
+.fit-shopping-list__group-btn {
+    padding: 6px 14px;
+    background: var(--fit-meal-bg);
+    border: 1px solid var(--fit-meal-border);
+    border-radius: 16px;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--fit-meal-text-secondary);
+    cursor: pointer;
+    transition: all 200ms ease;
+}
+
+.fit-shopping-list__group-btn--active {
+    background: var(--fit-meal-primary);
+    color: white;
+    border-color: var(--fit-meal-primary);
+}
+
+.fit-shopping-list__group-btn:hover:not(.fit-shopping-list__group-btn--active) {
+    background: var(--fit-meal-border-light);
+}
+
+.fit-shopping-list__export-btn {
+    padding: 6px 14px;
+    background: var(--fit-meal-card-bg);
+    border: 1px solid var(--fit-meal-border);
+    border-radius: 16px;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--fit-meal-text-primary);
+    cursor: pointer;
+    transition: all 200ms ease;
+}
+
+.fit-shopping-list__export-btn:hover {
+    background: var(--fit-meal-primary);
+    color: white;
+    border-color: var(--fit-meal-primary);
+}
+
+/* Shopping groups */
+.fit-shopping-list__groups {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.fit-shopping-group {
+    border-radius: var(--fit-meal-radius-sm);
+    overflow: hidden;
+}
+
+.fit-shopping-group__header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 14px;
+    background: var(--fit-meal-bg);
+    border: 1px solid var(--fit-meal-border-light);
+    border-bottom: none;
+}
+
+.fit-shopping-group__name {
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--fit-meal-text-primary);
+}
+
+.fit-shopping-group__count {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--fit-meal-text-secondary);
+    background: var(--fit-meal-card-bg);
+    padding: 3px 8px;
+    border-radius: 10px;
+}
+
+.fit-shopping-group__items {
+    border: 1px solid var(--fit-meal-border-light);
+    border-radius: 0 0 var(--fit-meal-radius-sm) var(--fit-meal-radius-sm);
+}
+
+/* Shopping item */
+.fit-shopping-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 14px;
+    background: var(--fit-meal-card-bg);
+    border-bottom: 1px solid var(--fit-meal-border-light);
+}
+
+.fit-shopping-item:last-child {
+    border-bottom: none;
+}
+
+.fit-shopping-item__checkbox {
+    flex-shrink: 0;
+}
+
+.fit-shopping-item__checkbox input[type="checkbox"] {
+    width: 18px;
+    height: 18px;
+    cursor: pointer;
+    accent-color: var(--fit-meal-primary);
+}
+
+.fit-shopping-item__content {
+    flex: 1;
+    min-width: 0;
+}
+
+.fit-shopping-item__name {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--fit-meal-text-primary);
+    margin-bottom: 3px;
+}
+
+.fit-shopping-item__meals {
+    font-size: 12px;
+    color: var(--fit-meal-text-secondary);
+}
+
+.fit-shopping-item__quantity {
+    display: flex;
+    align-items: baseline;
+    gap: 4px;
+    flex-shrink: 0;
+}
+
+.fit-shopping-item__quantity-value {
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--fit-meal-text-primary);
+}
+
+.fit-shopping-item__quantity-unit {
+    font-size: 13px;
+    color: var(--fit-meal-text-secondary);
+}
+
+/*  AI NUTRITION PANEL */
+.fit-ai-nutrition {
+    background: linear-gradient(135deg, var(--fit-meal-primary-light) 0%, rgba(58, 171, 142, 0.08) 100%);
+    border: 2px solid rgba(58, 171, 142, 0.25);
+    border-radius: var(--fit-meal-radius);
+    padding: 28px;
+    box-shadow: var(--fit-meal-shadow-md);
+    margin-bottom: 24px;
+}
+
+.fit-ai-nutrition__header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 16px;
+}
+
+.fit-ai-nutrition__header-left {
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+    flex: 1;
+}
+
+.fit-ai-nutrition__icon {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    background: var(--fit-meal-primary);
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.fit-ai-nutrition__title {
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--fit-meal-text-primary);
+    margin: 0 0 4px 0;
+}
+
+.fit-ai-nutrition__subtitle {
+    font-size: 13px;
+    color: var(--fit-meal-text-secondary);
+    margin: 0;
+    line-height: 1.4;
+}
+
+.fit-ai-nutrition__badge {
+    padding: 6px 12px;
+    background: var(--fit-meal-primary);
+    color: white;
+    border-radius: 14px;
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+}
+
+/* Context tags */
+.fit-ai-nutrition__context {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin-bottom: 16px;
+}
+
+.fit-ai-nutrition__context-tag {
+    padding: 6px 12px;
+    background: var(--fit-meal-card-bg);
+    border: 1px solid var(--fit-meal-border);
+    border-radius: 16px;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--fit-meal-text-secondary);
+}
+
+/* Quick actions */
+.fit-ai-nutrition__quick-actions {
+    margin-bottom: 18px;
+}
+
+.fit-ai-nutrition__quick-label {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--fit-meal-text-secondary);
+    display: block;
+    margin-bottom: 10px;
+}
+
+.fit-ai-nutrition__quick-buttons {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 8px;
+}
+
+.fit-ai-nutrition__quick-btn {
+    padding: 10px 16px;
+    background: var(--fit-meal-card-bg);
+    border: 1px solid var(--fit-meal-border);
+    border-radius: 20px;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--fit-meal-text-primary);
+    cursor: pointer;
+    transition: all 200ms ease;
+    text-align: left;
+}
+
+.fit-ai-nutrition__quick-btn:hover:not(:disabled) {
+    background: var(--fit-meal-primary);
+    color: white;
+    border-color: var(--fit-meal-primary);
+    transform: translateY(-1px);
+    box-shadow: 0 2px 6px rgba(58, 171, 142, 0.2);
+}
+
+.fit-ai-nutrition__quick-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+/* Input form */
+.fit-ai-nutrition__input-form {
+    margin-bottom: 16px;
+}
+
+.fit-ai-nutrition__input-wrapper {
+    display: flex;
+    gap: 10px;
+}
+
+.fit-ai-nutrition__input {
+    flex: 1;
+    padding: 14px 18px;
+    background: var(--fit-meal-card-bg);
+    border: 1.5px solid var(--fit-meal-border);
+    border-radius: var(--fit-meal-radius-sm);
+    font-size: 14px;
+    color: var(--fit-meal-text-primary);
+    outline: none;
+    transition: all 200ms ease;
+}
+
+.fit-ai-nutrition__input:focus {
+    border-color: var(--fit-meal-primary);
+    box-shadow: 0 0 0 3px rgba(58, 171, 142, 0.15);
+}
+
+.fit-ai-nutrition__input::placeholder {
+    color: var(--fit-meal-text-muted);
+}
+
+.fit-ai-nutrition__input:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+.fit-ai-nutrition__send-btn {
+    width: 50px;
+    height: 50px;
+    background: var(--fit-meal-primary);
+    border: none;
+    border-radius: var(--fit-meal-radius-sm);
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 200ms ease;
+    flex-shrink: 0;
+}
+
+.fit-ai-nutrition__send-btn:hover:not(:disabled) {
+    background: var(--fit-meal-primary-hover);
+    transform: translateY(-1px);
+}
+
+.fit-ai-nutrition__send-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.fit-ai-nutrition__loading {
+    font-size: 20px;
+}
+
+/* Footer examples */
+.fit-ai-nutrition__footer {
+    padding-top: 16px;
+    border-top: 1px solid rgba(58, 171, 142, 0.2);
+}
+
+.fit-ai-nutrition__examples-label {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--fit-meal-text-secondary);
+    display: block;
+    margin-bottom: 8px;
+}
+
+.fit-ai-nutrition__examples-list {
+    margin: 0;
+    padding-left: 20px;
+    list-style: none;
+}
+
+.fit-ai-nutrition__examples-list li {
+    font-size: 12px;
+    color: var(--fit-meal-text-secondary);
+    margin-bottom: 4px;
+    position: relative;
+    font-style: italic;
+}
+
+.fit-ai-nutrition__examples-list li::before {
+    content: '→';
+    position: absolute;
+    left: -16px;
+    color: var(--fit-meal-primary);
+}
+
 /*  RESPONSIVE */
 @media (max-width: 768px) {
     .fit-meal-container {
@@ -303,5 +1195,62 @@
     .fit-meal-overview__macros {
         grid-template-columns: 1fr;
         gap: 12px;
+    }
+
+    .fit-meal-card {
+        padding: 16px;
+    }
+
+    .fit-meal-card__header-left {
+        gap: 12px;
+    }
+
+    .fit-meal-card__icon {
+        width: 40px;
+        height: 40px;
+        font-size: 20px;
+    }
+
+    .fit-meal-card__macros-summary {
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .fit-market-item {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .fit-market-item__meta {
+        flex-direction: row;
+        width: 100%;
+        justify-content: flex-start;
+    }
+
+    /* Shopping list becomes collapsible on mobile */
+    .fit-shopping-list {
+        position: static;
+    }
+
+    .fit-shopping-list__toggle-btn {
+        display: block;
+    }
+
+    .fit-shopping-list__content {
+        display: none;
+    }
+
+    .fit-shopping-list__content--expanded {
+        display: block;
+    }
+
+    .fit-shopping-list__controls {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 12px;
+    }
+
+    .fit-ai-nutrition__quick-buttons {
+        grid-template-columns: 1fr;
     }
 }

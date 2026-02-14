@@ -1,18 +1,57 @@
 import React, { useState } from 'react';
 import { MealPlannerLayout } from './mealplanner/MealPlannerLayout';
 import { MealOverview, mockMealOverviewData } from './mealplanner/Mealoverview';
+import { MealCard, mockMeals } from './mealplanner/MealCard';
+import { IngredientList, mockIngredients } from './mealplanner/Ingredientlist ';
+import { LocalMarketSuggestions, mockMarkets, mockUserLocation } from './mealplanner/Localmarketsuggestions ';
+import { ShoppingList, mockShoppingListItems } from './mealplanner/ShoppingList';
+import { AiNutritionPanel } from './mealplanner/AiNutritionPanel'
 import './../styles/mealplanner.css';
 
 
 type ViewMode = 'today' | 'weekly';
+type GroupBy = 'market' | 'category';
 
 export const MealPlanner: React.FC = () => {
     const [viewMode, setViewMode] = useState<ViewMode>('today');
+    const [expandedMealId, setExpandedMealId] = useState<string | null>(null);
+    const [hasLocation, setHasLocation] = useState(true);
+    const [groupBy, setGroupBy] = useState<GroupBy>('market');
+    const [isAiLoading, setIsAiLoading] = useState(false);
 
     const handleViewChange = (mode: ViewMode) => {
         console.log('📅 View mode changed:', mode);
         setViewMode(mode);
     };
+
+    const handleMealToggle = (mealId: string) => {
+        console.log('🍽️ Toggling meal:', mealId);
+        setExpandedMealId(expandedMealId === mealId ? null : mealId);
+    };
+
+    const handleUpdateLocation = () => {
+        console.log('📍 Update location clicked');
+        alert('In production, this would open a location picker modal.\n\nUser would select:\n• Country\n• State/Region\n• City\n\nThen: POST /api/user/location');
+    };
+
+    const handleGroupByChange = (newGroupBy: GroupBy) => {
+        console.log('🏷️ Group by changed:', newGroupBy);
+        setGroupBy(newGroupBy);
+    };
+
+    const handleAiMessage = async (message: string, context?: any) => {
+        console.log('💬 AI message:', message, 'Context:', context);
+        setIsAiLoading(true);
+
+        // Simulate AI response delay
+        await new Promise(resolve => setTimeout(resolve, 2000));
+
+        alert(`AI Nutrition Response\n\nPOST /api/ai/nutrition/adjust\n\nBody:\n${JSON.stringify({ message, context }, null, 2)}\n\nResponse would:\n• Regenerate meal based on constraints\n• Update ingredient list\n• Suggest local alternatives\n• Recalculate calories/macros`);
+
+        setIsAiLoading(false);
+    };
+
+
 
     return (
         <MealPlannerLayout>
@@ -28,25 +67,68 @@ export const MealPlanner: React.FC = () => {
                 targetMacros={mockMealOverviewData.targetMacros}
             />
 
-            {/* ═══ PLACEHOLDER: Next sections will go here ═══ */}
+            {/* ═══ SECTION 2: MEAL CARDS ═══ */}
             <div style={{
-                padding: '40px 24px',
-                background: 'white',
-                borderRadius: '12px',
-                border: '2px dashed #dfe6e9',
-                textAlign: 'center',
-                color: '#95a5a6',
+                display: 'grid',
+                gridTemplateColumns: 'minmax(0, 1fr) 380px',
+                gap: '24px',
                 marginTop: '24px'
             }}>
-                <p style={{ margin: 0, fontSize: '14px', lineHeight: '1.6' }}>
-                    📦 <strong>Next sections (Phase 2):</strong><br />
-                    • Meal Cards (Breakfast, Lunch, Dinner, Snacks)<br />
-                    • Ingredient Lists (per meal)<br />
-                    • Local Market Suggestions<br />
-                    • Shopping List Generator<br />
-                    • AI Nutrition Panel
-                </p>
+
+                {/* LEFT COLUMN: Meal Cards */}
+                <div>
+                    {mockMeals.map((meal) => (
+                        <MealCard
+                            key={meal.id}
+                            meal={meal}
+                            isExpanded={expandedMealId === meal.id}
+                            onToggle={() => handleMealToggle(meal.id)}
+                        >
+                            {expandedMealId === meal.id && (
+                                <>
+                                    <IngredientList ingredients={mockIngredients} />
+                                    <LocalMarketSuggestions
+                                        markets={hasLocation ? mockMarkets : []}
+                                        userLocation={hasLocation ? mockUserLocation : undefined}
+                                        onUpdateLocation={handleUpdateLocation}
+                                    />
+                                </>
+                            )}
+                        </MealCard>
+                    ))}
+                </div>
+
+                {/* RIGHT COLUMN: Shopping List (sticky on desktop) */}
+                <div>
+                    <ShoppingList
+                        items={mockShoppingListItems}
+                        groupBy={groupBy}
+                        onGroupByChange={handleGroupByChange}
+                    />
+                </div>
+
             </div>
+
+
+            {/* ═══ SECTION 3: AI NUTRITION PANEL ═══ */}
+            <AiNutritionPanel
+                onSendMessage={handleAiMessage}
+                quickActions={[
+                    'Make this meal cheaper',
+                    'Replace with local Nigerian food',
+                    'Make this vegetarian',
+                    'Reduce calories by 200',
+                    'Add more protein',
+                    'Suggest meal prep tips',
+                ]}
+                isLoading={isAiLoading}
+                userContext={{
+                    location: hasLocation ? mockUserLocation : undefined,
+                    dietType: mockMealOverviewData.dietType,
+                    budget: 'medium',
+                }}
+            />
+
         </MealPlannerLayout>
     );
 };

@@ -14,6 +14,7 @@ import { Route as EmailRouteImport } from './routes/email'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as DashboardRouteImport } from './routes/_dashboard'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as DashboardDashboardIndexRouteImport } from './routes/_dashboard/dashboard/index'
 import { Route as DashboardDashboardWorkoutsRouteImport } from './routes/_dashboard/dashboard/workouts'
 import { Route as DashboardDashboardSettingsRouteImport } from './routes/_dashboard/dashboard/settings'
 import { Route as DashboardDashboardOverviewRouteImport } from './routes/_dashboard/dashboard/overview'
@@ -42,6 +43,11 @@ const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
+} as any)
+const DashboardDashboardIndexRoute = DashboardDashboardIndexRouteImport.update({
+  id: '/dashboard/',
+  path: '/dashboard/',
+  getParentRoute: () => DashboardRoute,
 } as any)
 const DashboardDashboardWorkoutsRoute =
   DashboardDashboardWorkoutsRouteImport.update({
@@ -77,6 +83,7 @@ export interface FileRoutesByFullPath {
   '/dashboard/overview': typeof DashboardDashboardOverviewRoute
   '/dashboard/settings': typeof DashboardDashboardSettingsRoute
   '/dashboard/workouts': typeof DashboardDashboardWorkoutsRoute
+  '/dashboard/': typeof DashboardDashboardIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -87,6 +94,7 @@ export interface FileRoutesByTo {
   '/dashboard/overview': typeof DashboardDashboardOverviewRoute
   '/dashboard/settings': typeof DashboardDashboardSettingsRoute
   '/dashboard/workouts': typeof DashboardDashboardWorkoutsRoute
+  '/dashboard': typeof DashboardDashboardIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -99,6 +107,7 @@ export interface FileRoutesById {
   '/_dashboard/dashboard/overview': typeof DashboardDashboardOverviewRoute
   '/_dashboard/dashboard/settings': typeof DashboardDashboardSettingsRoute
   '/_dashboard/dashboard/workouts': typeof DashboardDashboardWorkoutsRoute
+  '/_dashboard/dashboard/': typeof DashboardDashboardIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -111,6 +120,7 @@ export interface FileRouteTypes {
     | '/dashboard/overview'
     | '/dashboard/settings'
     | '/dashboard/workouts'
+    | '/dashboard/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -121,6 +131,7 @@ export interface FileRouteTypes {
     | '/dashboard/overview'
     | '/dashboard/settings'
     | '/dashboard/workouts'
+    | '/dashboard'
   id:
     | '__root__'
     | '/'
@@ -132,6 +143,7 @@ export interface FileRouteTypes {
     | '/_dashboard/dashboard/overview'
     | '/_dashboard/dashboard/settings'
     | '/_dashboard/dashboard/workouts'
+    | '/_dashboard/dashboard/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -179,6 +191,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/_dashboard/dashboard/': {
+      id: '/_dashboard/dashboard/'
+      path: '/dashboard'
+      fullPath: '/dashboard/'
+      preLoaderRoute: typeof DashboardDashboardIndexRouteImport
+      parentRoute: typeof DashboardRoute
+    }
     '/_dashboard/dashboard/workouts': {
       id: '/_dashboard/dashboard/workouts'
       path: '/dashboard/workouts'
@@ -215,6 +234,7 @@ interface DashboardRouteChildren {
   DashboardDashboardOverviewRoute: typeof DashboardDashboardOverviewRoute
   DashboardDashboardSettingsRoute: typeof DashboardDashboardSettingsRoute
   DashboardDashboardWorkoutsRoute: typeof DashboardDashboardWorkoutsRoute
+  DashboardDashboardIndexRoute: typeof DashboardDashboardIndexRoute
 }
 
 const DashboardRouteChildren: DashboardRouteChildren = {
@@ -222,6 +242,7 @@ const DashboardRouteChildren: DashboardRouteChildren = {
   DashboardDashboardOverviewRoute: DashboardDashboardOverviewRoute,
   DashboardDashboardSettingsRoute: DashboardDashboardSettingsRoute,
   DashboardDashboardWorkoutsRoute: DashboardDashboardWorkoutsRoute,
+  DashboardDashboardIndexRoute: DashboardDashboardIndexRoute,
 }
 
 const DashboardRouteWithChildren = DashboardRoute._addFileChildren(
